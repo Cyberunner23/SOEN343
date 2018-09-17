@@ -21,12 +21,12 @@ app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 })
 
-//Test route to ensure that front-end receives from back-end
-app.get('/api/customers', (req, res) => {
-    const customers = [
-        {id: 1, firstName: 'John', lastName: 'Doe'},
-        {id: 2, firstName: 'Mary', lastName: 'Swanson'},
-        {id: 3, firstName: 'Steve', lastName: 'Smith'}
-    ];
-    res.json(customers);
+//Test route to ensure that front-end receives from back-end. All this does now
+//is return the clients in the 'clients' table.
+app.get('/api/clients', (req, res) => {
+    let sql = 'SELECT * FROM clients';
+    db.query(sql, (err, results) => {
+        if(err) throw err;
+        res.json(results);
+    });
 });

@@ -1,13 +1,13 @@
 {
   "name": "soen343",
   "version": "1.0.0",
-  "description": "React and Express environment",
+  "description": "SOEN343 project",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
     "server": "nodemon server.js",
-    "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "frontend": "npm start --prefix frontend",
+    "dev": "concurrently \"npm run server\" \"npm run frontend\""
   },
   "repository": {
     "type": "git",
