@@ -5,11 +5,13 @@ node_js:
 
 env:
   - TRAVIS_LINK="https://travis-ci.com/Cyberunner23/SOEN343/builds/${TRAVIS_JOB_ID}"
+  - SLACK_COMMENT="initial_comment=Eslint output for build at ${TRAVIS_LINK}"
+  - SLACK_AUTH="Authorization: Bearer ${SlackAPIToken}"
 
 before_script:
   - npm install -g eslint
   - eslint . | tee eslint-output.txt
-  - curl -F file=@eslint-output.txt -F "initial_comment=Eslint output for build at ${TRAVIS_LINK}" -F channels=${SlackBuildStatChannel} -H "Authorization: Bearer ${SlackAPIToken}" https://slack.com/api/files.upload
+  - curl -F file=./eslint-output.txt -F ${SLACK_COMMENT} -F channels=${SlackBuildStatChannel} -H ${SLACK_AUTH} https://slack.com/api/files.upload
 
 script: npm test
 
