@@ -1,5 +1,5 @@
-
 language: node_js
+
 node_js:
   - "lts/*"
 
@@ -11,7 +11,5 @@ before_script:
 script: npm test
 
 notifications:
-  slack: $SlackNotif
-
-
-
+  slack:
+    secure: S5UuG8DBmejPEI05HtpEZRyJ28ZFE9Zh71bkul8Enjqes9OSBjXY3ahqYGvec95ZN8/exwHNunl0tyf2KI9gsAvARruR2XZg2gcv/aonlTxW+jvDtLsSIN3lqVJkQKLl5mL6L75IOify9k62h9JNHKC6CeuYp8BW2mZ6FcddWwxRWyAfQakMVZvaQy7myG3WReOgfXeuZV9HxBtbKAriBQJfkmAwTHffpwLVJxhTP5EivjBJ/IfPLsc+KHjkTyBX4ZgShq+5SN6dGX/oSiacJyKcNpjN37arYCmimk8meK3u19EBaSwEjvdoCK7+40lTyzSMKQEnnVVNqZvGvrKSdYU4zDHj9xr0HDsoELWIWPohtczwA9FSP9hG1qVySFHmyxh0K1x9nXygtezCkgqr9+BeD7L/ZfH+aqLXIvFNcq1+E2SULNYXMLImlO2CpNKdq4f+wiw8Rq9zVcJRUB742P4kW8/sUGvX6IE4mXAHgxBnHuR0tgCXfpBKTs9CBZfZg87qTAOzwurFpvy+ftKTrwhJpaFN7Tbv54JvnoXP6G+YlVlOYqG3SumkaUwkJJpGI/Q2IMyvF4xY5owycMPAAOuhPW/LuwrZSpLcc0hk0hV1kYXNmDlcbziAAYEK1Rr/hqs9OdSdHDKlJ65Nu0tC0cx4H6vXKBqWGaO16rKTUvs=
