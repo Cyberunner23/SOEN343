@@ -11,7 +11,7 @@ env:
 before_script:
   - npm install -g eslint
   - eslint . | tee eslint-output.txt
-  - curl -F file=./eslint-output.txt -F ${SLACK_COMMENT} -F channels=${SlackBuildStatChannel} -H ${SLACK_AUTH} https://slack.com/api/files.upload
+  - ./upload-eslint-results.sh ${SlackAPIToken} ${SlackBuildStatChannel}
 
 script: npm test
 
