@@ -3,11 +3,6 @@ language: node_js
 node_js:
   - "lts/*"
 
-env:
-  - TRAVIS_LINK="https://travis-ci.com/Cyberunner23/SOEN343/builds/${TRAVIS_JOB_ID}"
-  - SLACK_COMMENT="initial_comment=Eslint output for build at ${TRAVIS_LINK}"
-  - SLACK_AUTH="Authorization: Bearer ${SlackAPIToken}"
-
 before_script:
   - npm install -g eslint
   - eslint . | tee eslint-output.txt
