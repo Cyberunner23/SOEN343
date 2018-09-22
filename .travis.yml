@@ -6,7 +6,7 @@ node_js:
 before_script:
   - npm install -g eslint
   - eslint . | tee eslint-output.txt
-  - ./upload-eslint-results.sh ${SlackAPIToken} ${SlackBuildStatChannel}
+  - ./server_scripts/travis-upload-eslint-results.sh ${SlackAPIToken} ${SlackBuildStatChannel} ./eslint-output.txt
 
 script: npm test
 
