@@ -2,9 +2,6 @@
 
 # Script executed by travis CI that uploads the results of eslint to the #build-status channel
 
-#Usage
-# travis-upload-eslint-results <slack API token> <slack channel tag>
-
 if [ "$#" -ne 3 ]; then
     echo "USAGE: travis-upload-eslint-results <slack API token> <slack channel tag> <eslint result file path>"
 fi
