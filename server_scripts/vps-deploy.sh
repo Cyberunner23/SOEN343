@@ -12,7 +12,7 @@ PKILL_TIMEOUT="10s"
 #############################
 print_and_slack() {
     echo "$1"
-    ${BASEDIR}/slack.sh ${SlackAPIToken} ${SlackServerStatChannel} "$1"
+    ${BASEDIR}/slack.sh ${SlackAPIToken} ${SlackServerStatChannel} "$1" >> /dev/null 2>&1
 }  
 
 
