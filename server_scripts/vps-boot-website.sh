@@ -9,15 +9,16 @@ BASEDIR=$(dirname "$0")
 #############################
 
 npm start > server.log 2>&1
+ERROR_CODE=$?
 
 
 #############################
 # Crash Detection
 #############################
 
-if [ "$?" -eq 137 ]; then
+if [ "$ERROR_CODE" -eq 137 ]; then
     ${BASEDIR}/slack.sh ${SlackAPIToken} ${SlackServerStatChannel} "WARNING: Node returned with error code 137 -> process manually killed."
-elif [ "$?" -ne 0 ]; then
-    ${BASEDIR}/slack.sh ${SlackAPIToken} ${SlackServerStatChannel} "<!channel> !!CRASH!! Node returned with error code $?, please view logs attached." ${BASEDIR}/server.log
+elif [ "$ERROR_CODE" -ne 0 ]; then
+    ${BASEDIR}/slack.sh ${SlackAPIToken} ${SlackServerStatChannel} "<!channel> !!CRASH!! Node returned with error code $ERROR_CODE, please view logs attached." ${BASEDIR}/server.log
 fi
 
