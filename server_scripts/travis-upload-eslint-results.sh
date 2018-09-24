@@ -4,6 +4,7 @@
 
 if [ "$#" -ne 3 ]; then
     echo "USAGE: travis-upload-eslint-results <slack API token> <slack channel tag> <eslint result file path>"
+    exit 1
 fi
 
 export TRAVIS_LINK="https://travis-ci.com/Cyberunner23/SOEN343/jobs/${TRAVIS_JOB_ID}"

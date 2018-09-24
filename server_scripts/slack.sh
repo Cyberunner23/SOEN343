@@ -10,6 +10,7 @@ elif [ "$#" -eq 4 ]; then
     curl -F file=@$4 --form-string "initial_comment=$3" -F channels=$2 -H "${SLACK_AUTH}" https://slack.com/api/files.upload
 else
     echo "Usage: slack.sh <slack API token> <slack channel tag> \"<message>\" [file path]"
+    exit 1
 fi
 
 
