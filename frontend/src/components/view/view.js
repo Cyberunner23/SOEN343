@@ -6,7 +6,8 @@ class View extends Component {
     constructor(props) {
         super();
         this.state = {
-            color: props.color
+            color: props.color,
+            component: props.component
         }
     }
 
@@ -21,7 +22,7 @@ class View extends Component {
         return (
             <div className = 'view' style = {style}>
                 <div id = 'padding-top'/>
-                {this.state.content}
+                {this.state.component}
             </div>
         );
     }
