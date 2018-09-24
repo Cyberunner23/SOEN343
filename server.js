@@ -30,3 +30,13 @@ app.get('/api/clients', (req, res) => {
         res.json(results);
     });
 });
+
+//Test route to ensure that front-end receives from back-end. All this does now
+//is return the clients in the 'clients' table.
+app.get('/api/activeUsers', (req, res) => {
+    let sql = 'SELECT * FROM activeUsers';
+    db.query(sql, (err, results) => {
+        if(err) throw err;
+        res.json(results);
+    });
+});
