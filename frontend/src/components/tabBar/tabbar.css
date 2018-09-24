@@ -1,0 +1,8 @@
+.tab {
+    float: left;
+}
+
+.tabbar {
+    overflow: hidden;
+    height: 6%;
+}
