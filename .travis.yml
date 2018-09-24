@@ -1,10 +1,10 @@
 language: node_js
 
+addons:
+  ssh_known_hosts: AlexFL.net
+
 node_js:
   - "lts/*"
-
-before_install:
-  - openssl aes-256-cbc -K $encrypted_8f8918896de5_key -iv $encrypted_8f8918896de5_iv -in deploy_key.enc -out deploy_key -d
 
 before_script:
   - npm install -g eslint
@@ -12,6 +12,17 @@ before_script:
   - ./server_scripts/travis-upload-eslint-results.sh ${SlackAPIToken} ${SlackBuildStatChannel} ./eslint-output.txt
 
 script: npm test
+
+
+before_deploy:
+  - openssl aes-256-cbc -K $encrypted_8f8918896de5_key -iv $encrypted_8f8918896de5_iv -in server_scripts/deploy_key.enc -out /tmp/deploy_key -d
+
+deploy:
+  provider: script
+  skip_cleanup: true
+  script: ./server_scripts/travis-deploy.sh /tmp/deploy_key
+  on:
+    branch: master
 
 notifications:
   slack:
