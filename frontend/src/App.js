@@ -3,7 +3,6 @@ import './App.css';
 import Tab from './components/tabBar/tab.js';
 import TabBar from './components/tabBar/tabbar.js';
 import View from './components/view/view.js';
-import ActiveUsersComponent from './components/useCaseComponents/activeUsersComponent.js'
 
 class App extends Component {
   constructor() {
