@@ -3,15 +3,19 @@ const mysql = require('mysql');
 const app = express();
 const port = 5000;
 
+const SQLUser = process.env.SQLUser;
+const SQLPassword = process.env.SQLPassword;
+
 const db = mysql.createConnection({
     host     : 'localhost',
-    user     : 'root',
-    password : '',
+    user     : SQLUser,
+    password : SQLPassword,
     database : 'soen343'
 });
 
 db.connect((err) => {
     if(err) {
+        console.log("Failed to connect to SQL database...")
         throw err;
     }
     console.log('MySql connected...');
