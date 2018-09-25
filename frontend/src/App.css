@@ -1,12 +1,17 @@
 .App {
   text-align: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.App * {
+  margin: 0;
 }
 
 .App-header {
   background-color: #222;
-  height: 55px;
-  padding: 20px;
   color: white;
+  padding: 3%;
 }
 
 .App-title {
