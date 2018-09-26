@@ -1,13 +1,21 @@
 import React, { Component } from 'react';
 import './App.css';
+<<<<<<< Updated upstream
 import Tab from './components/tabBar/tab.js';
 import TabBar from './components/tabBar/tabbar.js';
 import View from './components/view/view.js';
+=======
+import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
+import 'react-tabs/style/react-tabs.css';
+import LoginView from './components/view/loginView';
+import RegisterClientView from './components/view/registerClientView.js';
+>>>>>>> Stashed changes
 
 class App extends Component {
   constructor() {
     super();
 
+<<<<<<< Updated upstream
     // Bind callBacks
     this.setView = this.setView.bind(this);
     this.setTabBar = this.setTabBar.bind(this);
@@ -38,31 +46,31 @@ class App extends Component {
       view: loginView,
       tabBar: <TabBar tabs = {tabs} color = 'grey'/>
     }
+=======
+>>>>>>> Stashed changes
   }
 
   render() {
-
     return (
       <div className="App">
         <header className="App-header">
           <h1 className="App-title">Welcome to SOEN 343</h1>
         </header>
-        {this.state.tabBar}
-        {this.state.view}
+        <Tabs>
+          <TabList>
+            <Tab>Login</Tab>
+            <Tab>Register</Tab>
+          </TabList>
+
+          <TabPanel>
+            <LoginView/>
+          </TabPanel>
+          <TabPanel>
+            <RegisterClientView/>
+          </TabPanel>
+        </Tabs>
       </div>
     );
-  }
-
-  // tabs can use this method to set the app's view
-  setView(newView)
-  {
-    this.setState({view: newView});
-  }
-
-  // views can use this method to set the app's tabbar. Example: tabbar changes after successul login.
-  setTabBar(newTabBar)
-  {
-    this.setState({tabBar: newTabBar})
   }
 }
 
