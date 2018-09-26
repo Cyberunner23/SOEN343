@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import './App.css';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import LoginView from './components/view/loginView';
-import RegisterClientView from './components/view/registerClientView.js';
 
 class App extends Component {
   constructor() {
@@ -23,10 +21,10 @@ class App extends Component {
           </TabList>
 
           <TabPanel>
-            <LoginView/>
+            <h1>Login Component</h1>
           </TabPanel>
           <TabPanel>
-            <RegisterClientView/>
+            <h1>Register Component</h1>
           </TabPanel>
         </Tabs>
       </div>
