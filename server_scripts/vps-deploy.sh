@@ -32,7 +32,16 @@ do
 done
 
 # Start our node server
-nohup ${BASEDIR}/vps-boot-website.sh > /dev/null 2>&1 &
+cd ../
+npm install
+
+cd frontend
+npm install
+
+cd ${BASEDIR}
+
+nohup ${BASEDIR}/vps-boot-frontend.sh > /dev/null 2>&1 &
+nohup ${BASEDIR}/vps-boot-backend.sh > /dev/null 2>&1 &
 disown
 
 print_and_slack "Started the server, website should be online any second now..."

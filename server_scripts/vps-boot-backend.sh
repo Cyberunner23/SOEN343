@@ -8,7 +8,6 @@ BASEDIR=$(dirname "$0")
 # Boot
 #############################
 
-npm install > install.log 2>&1
 node ../server.js > server.log 2>&1
 ERROR_CODE=$?
 
