@@ -26,15 +26,8 @@ print_and_slack "Initiating deployment..."
 pgrep node | while IFS= read -r pid
 do
 
-	# Terminate node instance
-    print_and_slack "Waiting ${PKILL_TIMEOUT} for graceful shutdown of node (PID: $pid)..."
-    timeout $PKILL_TIMEOUT tail --pid=$pid -f /dev/null
-
-	# Timed out
-	if [ "$#" -eq 124 ]; then
-		print_and_slack "Instance of node (PID: $pid) filed to shutdown gracefully after ${PKILL_TIMEOUT}, killing process..."
-		kill --signal 9 $pid
-	fi
+    # Terminate node instance, no longer trying for graceful shutdown, node doesnt rly shuts down gracefully ever...
+    kill -9 $pid
 
 done
 
