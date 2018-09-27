@@ -9,6 +9,7 @@ BASEDIR=$(dirname "$0")
 #############################
 
 cd ../frontend
+export HOST="alexfl.net"
 node node_modules/react-scripts/scripts/start.js > server.log 2>&1
 ERROR_CODE=$?
 
