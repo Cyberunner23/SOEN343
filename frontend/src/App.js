@@ -1,34 +1,30 @@
 import React, { Component } from 'react';
 import './App.css';
-import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
-import 'react-tabs/style/react-tabs.css';
+import {TabsState, TabsFactory} from './components/TabsFactory/TabsFactory.js'
 
 class App extends Component {
   constructor() {
     super();
+    this.state = {
+      tabs : TabsState.Welcome
+    }
+    this.tabsFactory = new TabsFactory();
   }
 
   render() {
+    var tabs = this.tabsFactory.buildTabs(this.state.tabs, this);
     return (
       <div className="App">
         <header className="App-header">
           <h1 className="App-title">Welcome to SOEN 343</h1>
         </header>
-        <Tabs>
-          <TabList>
-            <Tab>Login</Tab>
-            <Tab>Register</Tab>
-          </TabList>
-
-          <TabPanel>
-            <h1>Login Component</h1>
-          </TabPanel>
-          <TabPanel>
-            <h1>Register Component</h1>
-          </TabPanel>
-        </Tabs>
+        {tabs}
       </div>
     );
+  }
+
+  setTabsState(newTabsState) {
+    this.state.tabsState = newTabsState;
   }
 }
 
