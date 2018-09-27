@@ -5,7 +5,7 @@ import 'react-tabs/style/react-tabs.css';
 var TabsState = Object.freeze({'Welcome' : 0, 'Admin' : 1, 'Client' : 2});
 
 class TabsFactory {
-    buildTabs(tabsState, app) { // a reference to app can be used by components to call app.setTabsState()
+    static buildTabs(tabsState, app) { // a reference to app can be used by components to call app.setTabsState()
         switch(tabsState)
         {
             case TabsState.Welcome:

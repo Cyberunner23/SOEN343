@@ -8,11 +8,10 @@ class App extends Component {
     this.state = {
       tabs : TabsState.Welcome
     }
-    this.tabsFactory = new TabsFactory();
   }
 
   render() {
-    var tabs = this.tabsFactory.buildTabs(this.state.tabs, this);
+    var tabs = TabsFactory.buildTabs(this.state.tabs, this);
     return (
       <div className="App">
         <header className="App-header">
