@@ -13,5 +13,5 @@ ssh-add $1
 
 git config --global push.default matching
 git remote add deploy ssh://git@alexfl.net:/srv/SOEN343.git
-git push deploy master
+git push -f deploy master
 
