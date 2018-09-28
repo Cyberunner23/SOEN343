@@ -39,7 +39,7 @@ app.get('/api/clients', (req, res) => {
 });
 
 app.post('/api/users/login', (req, res, next) => {
-    let sql = 'SELECT id, IsAdmin FROM users WHERE email = ' + '\'' + req.body.EMail + '\'' + ' AND password = '+ '\'' + req.body.Password + '\'';
+    let sql = 'SELECT id, IsAdmin FROM users WHERE EMail = ' + '\'' + req.body.EMail + '\'' + ' AND Password = '+ '\'' + req.body.Password + '\'';
     db.query(sql, (err, results) => {
         if(err) throw err;
         res.json(results);
