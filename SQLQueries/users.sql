@@ -45,7 +45,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `IsAdmin`, `EMail`, `Password`, `Salt`, `FirstName`, `LastName`, `Phone`, `Address`) VALUES
-(1, 0, 'One', 'One', 'soen343', 'One', 'One', 'One', 'One'),
+(1, 1, 'One', 'One', 'soen343', 'One', 'One', 'One', 'One'),
 (2, 0, 'Two', 'Two', 'soen343', 'Two', 'Two', 'Two', 'Two'),
 (3, 0, 'Three', 'Three', 'soen343', 'Three', 'Three', 'Three', 'Three'),
 (4, 0, 'Four', 'Four', 'soen343', 'Four', 'Four', 'Four', 'Four'),

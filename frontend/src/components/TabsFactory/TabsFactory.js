@@ -1,9 +1,10 @@
 import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import Login from './../../Login'
+import Login from '../useCaseComponents/Login'
 import './TabsFactory.css'
 import ActiveUsersComponent from '../useCaseComponents/activeUsersComponent.js';
+import LogoutComponent from '../useCaseComponents/LogoutComponent.js';
 import {Register} from "../user/register";
 
 var TabsState = Object.freeze({'Welcome' : 0, 'Admin' : 1, 'Client' : 2});
@@ -20,7 +21,7 @@ class TabsFactory {
                             <Tab>Register</Tab>
                         </TabList>
                         <TabPanel>
-                            <Login/>
+                            <Login app = {app} />
                         </TabPanel>
                         <TabPanel>
                             <Register app = {app} isAdmin = {0}/>
@@ -34,12 +35,16 @@ class TabsFactory {
                         <TabList>
                             <Tab>Register Admin</Tab>
                             <Tab>View Active Users</Tab>
+                            <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
                             <Register app = {app} isAdmin = {1}/>
                         </TabPanel>
                         <TabPanel>
                             <ActiveUsersComponent app = {this}/>
+                        </TabPanel>
+                        <TabPanel>
+                            <LogoutComponent app = {app}/>
                         </TabPanel>
                     </Tabs>
                 )
@@ -49,9 +54,13 @@ class TabsFactory {
                     <Tabs>
                         <TabList>
                             <Tab>Oops!</Tab>
+                            <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
                             Oops! Nothing to see here...
+                        </TabPanel>
+                        <TabPanel>
+                            <LogoutComponent app = {app}/>
                         </TabPanel>
                     </Tabs>
                 )

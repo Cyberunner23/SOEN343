@@ -48,13 +48,13 @@ export class Register extends Component {
             }
             return response.json();
         }).then(() => {
-            console.log("Registration Completed");
             if (this.state.isAdmin) {
                 this.state.app.setTabsState(TabsState.Admin);
             } else {
                 this.state.app.setTabsState(TabsState.Client);
             }
             this.setState({registrationComplete: true})
+            console.log("Registration Completed");
         }).catch(function(err) {
             console.log(err)
         });
@@ -69,9 +69,17 @@ export class Register extends Component {
             )
         }
 
+        var header;
+        if (this.state.isAdmin) {
+            header = <h1>Register New Administrator</h1>
+        }
+        else {
+            header = <h1>Register</h1>
+        }
+
         return (
             <div className='UseCaseComponent'>
-                <h1>Register</h1>
+                {header}
                 <form onSubmit={this.handleSubmit} method="POST">
                     <label>
                         Email:
