@@ -22,7 +22,7 @@ class TabsFactory {
                             Login Component
                         </TabPanel>
                         <TabPanel>
-                            <Register isAdmin = {0}/>
+                            <Register app = {app} isAdmin = {0}/>
                         </TabPanel>
                     </Tabs>
                 )
@@ -35,7 +35,7 @@ class TabsFactory {
                             <Tab>View Active Users</Tab>
                         </TabList>
                         <TabPanel>
-                            <Register isAdmin = {1}/>
+                            <Register app = {app} isAdmin = {1}/>
                         </TabPanel>
                         <TabPanel>
                             <ActiveUsersComponent app = {this}/>

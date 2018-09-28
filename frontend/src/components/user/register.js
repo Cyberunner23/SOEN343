@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './register.css';
+import {TabsState} from '../TabsFactory/TabsFactory.js'
 
 export class Register extends Component {
 
@@ -13,14 +14,16 @@ export class Register extends Component {
             firstName: '',
             lastName: '',
             phone: '',
-            address: ''
+            address: '',
+            app: props.app,
+            registrationComplete: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value });
+        this.setState({ [e.target.name]: e.target.value, registrationComplete: false});
     }
 
     handleSubmit(event) {
@@ -44,14 +47,28 @@ export class Register extends Component {
                 throw new Error("Bad response from server");
             }
             return response.json();
-        }).then(function(data) {
+        }).then(() => {
             console.log("Registration Completed");
+            if (this.state.isAdmin) {
+                this.state.app.setTabsState(TabsState.Admin);
+            } else {
+                this.state.app.setTabsState(TabsState.Client);
+            }
+            this.setState({registrationComplete: true})
         }).catch(function(err) {
             console.log(err)
         });
     }
 
     render() {
+
+        var registrationCompleteMessage;
+        if (this.state.isAdmin && this.state.registrationComplete) {
+            registrationCompleteMessage = (
+                <div>Registration complete for {this.state.firstName}</div>
+            )
+        }
+
         return (
             <div className='UseCaseComponent'>
                 <h1>Register</h1>
@@ -82,6 +99,7 @@ export class Register extends Component {
                     </label>
                     <input type="submit" value="Submit"/>
                 </form>
+                {registrationCompleteMessage}
             </div>
         );
     }

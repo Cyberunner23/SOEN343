@@ -8,7 +8,9 @@ class App extends Component {
     this.state = {
       tabs : TabsState.Admin // We can change this manually to see what our components look like until the login/logout code works
     }
+    this.setTabsState = this.setTabsState.bind(this);
   }
+
 
   render() {
     var tabs = TabsFactory.buildTabs(this.state.tabs, this);
