@@ -6,7 +6,6 @@ class ActiveUsersComponent extends Component {
     constructor(props) {
         super();
         this.state = {
-            color: props.color,
             app: props.app,
             activeUsers: [],
             serverReturnedAnError: false
@@ -28,10 +27,6 @@ class ActiveUsersComponent extends Component {
     }
 
     render() {
-        var style = {
-            'background-color' : this.state.color
-        };
-
         var content;
         if (!this.state.serverReturnedAnError) {
             content = (
@@ -47,7 +42,7 @@ class ActiveUsersComponent extends Component {
         }
 
         return (
-            <div className = 'ActiveUsersComponent UseCaseComponent' style = {style}>
+            <div className = 'ActiveUsersComponent UseCaseComponent'>
                 <h2>Active Users</h2>
                 {content}
             </div>
