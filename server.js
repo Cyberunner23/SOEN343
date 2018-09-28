@@ -2,6 +2,7 @@ const express = require('express');
 const mysql = require('mysql');
 const app = express();
 const port = 5000;
+const bodyParser = require('body-parser');
 
 const SQLUser = process.env.SQLUser;
 const SQLPassword = process.env.SQLPassword;
@@ -19,16 +20,28 @@ db.connect((err) => {
         throw err;
     }
     console.log('MySql connected...');
-})
+});
 
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
-})
+});
+
+app.use(bodyParser.json());
 
 //Test route to ensure that front-end receives from back-end. All this does now
 //is return the clients in the 'clients' table.
 app.get('/api/clients', (req, res) => {
     let sql = 'SELECT * FROM clients';
+    db.query(sql, (err, results) => {
+        if(err) throw err;
+        res.json(results);
+    });
+});
+
+app.post('/api/users/new', (req, res, next) => {
+    let sql = 'INSERT INTO users (IsAdmin, EMail, Password, Salt, FirstName, LastName, Phone, Address) VALUES ' +
+        '(\''+req.body.IsAdmin+'\',\''+req.body.EMail+'\', \''+req.body.Password+'\',\''+req.body.Salt+'\', ' +
+        '\''+req.body.FirstName+'\',\''+req.body.LastName+'\', \''+req.body.Phone+'\',\''+req.body.Address+'\')';
     db.query(sql, (err, results) => {
         if(err) throw err;
         res.json(results);
