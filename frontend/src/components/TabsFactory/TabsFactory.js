@@ -17,7 +17,7 @@ class TabsFactory {
                             <Tab>Register</Tab>
                         </TabList>
                         <TabPanel>
-                            <Login></Login>
+                            <Login/>
                         </TabPanel>
                         <TabPanel>
                             Register Component
