@@ -6,7 +6,7 @@ class App extends Component {
   constructor() {
     super();
     this.state = {
-      tabs : TabsState.Welcome
+      tabs : TabsState.Admin // We can change this manually to see what our components look like until the login/logout code works
     }
   }
 
@@ -23,7 +23,7 @@ class App extends Component {
   }
 
   setTabsState(newTabsState) {
-    this.state.tabsState = newTabsState;
+    this.setState({tabs : newTabsState});
   }
 }
 

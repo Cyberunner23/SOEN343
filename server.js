@@ -45,3 +45,28 @@ app.post('/api/users/login', (req, res, next) => {
         res.json(results);
     });
 });
+
+app.post('/api/users/new', (req, res, next) => {
+    let sql = 'INSERT INTO users (IsAdmin, EMail, Password, Salt, FirstName, LastName, Phone, Address) VALUES ' +
+        '(\''+req.body.IsAdmin+'\',\''+req.body.EMail+'\', \''+req.body.Password+'\',\''+req.body.Salt+'\', ' +
+        '\''+req.body.FirstName+'\',\''+req.body.LastName+'\', \''+req.body.Phone+'\',\''+req.body.Address+'\')';
+    db.query(sql, (err, results) => {
+        if(err) throw err;
+        res.json(results);
+    });
+});
+
+app.get('/api/activeUsers', (req, res) => {
+    let sql = 'SELECT FirstName, LastName FROM users WHERE id IN (SELECT id from activeUsers)';
+    db.query(sql, (err, results) => {
+        if(err) {
+            console.log(err);
+            res.status(500);
+            res.send();
+        }
+        else {
+            res.status(200);
+            res.json(results);
+        }
+    });
+}); 

@@ -2,6 +2,9 @@ import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import Login from './../../Login'
+import './TabsFactory.css'
+import ActiveUsersComponent from '../useCaseComponents/activeUsersComponent.js';
+import {Register} from "../user/register";
 
 var TabsState = Object.freeze({'Welcome' : 0, 'Admin' : 1, 'Client' : 2});
 
@@ -20,7 +23,7 @@ class TabsFactory {
                             <Login/>
                         </TabPanel>
                         <TabPanel>
-                            Register Component
+                            <Register/>
                         </TabPanel>
                     </Tabs>
                 )
@@ -33,10 +36,10 @@ class TabsFactory {
                             <Tab>View Active Users</Tab>
                         </TabList>
                         <TabPanel>
-                            Register Admin Component
+                            <Register/>
                         </TabPanel>
                         <TabPanel>
-                            View Active Users Component
+                            <ActiveUsersComponent app = {this}/>
                         </TabPanel>
                     </Tabs>
                 )
