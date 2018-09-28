@@ -45,11 +45,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `IsAdmin`, `EMail`, `Password`, `Salt`, `FirstName`, `LastName`, `Phone`, `Address`) VALUES
-(1, 1, 'One', 'One', 'soen343', 'One', 'One', 'One', 'One'),
-(2, 0, 'Two', 'Two', 'soen343', 'Two', 'Two', 'Two', 'Two'),
-(3, 0, 'Three', 'Three', 'soen343', 'Three', 'Three', 'Three', 'Three'),
-(4, 0, 'Four', 'Four', 'soen343', 'Four', 'Four', 'Four', 'Four'),
-(5, 0, 'Five', 'Five', 'soen343', 'Five', 'Five', 'Five', 'Five');
+(1, 1, 'One', 'One', 'soen343_1', 'One', 'One', 'One', 'One'),
+(2, 0, 'Two', 'Two', 'soen343_2', 'Two', 'Two', 'Two', 'Two'),
+(3, 0, 'Three', 'Three', 'soen343_3', 'Three', 'Three', 'Three', 'Three'),
+(4, 0, 'Four', 'Four', 'soen343_4', 'Four', 'Four', 'Four', 'Four'),
+(5, 0, 'Five', 'Five', 'soen343_5', 'Five', 'Five', 'Five', 'Five');
 
 --
 -- Indexes for dumped tables
@@ -70,6 +70,13 @@ ALTER TABLE `users`
 --
 ALTER TABLE `users`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+COMMIT;
+
+--
+-- Enforce uniqueness for email
+--
+ALTER TABLE `users`
+  ADD UNIQUE(`EMail`(255));
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
