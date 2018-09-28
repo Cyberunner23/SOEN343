@@ -26,20 +26,22 @@ print_and_slack "Initiating deployment..."
 pgrep node | while IFS= read -r pid
 do
 
-	# Terminate node instance
-    print_and_slack "Waiting ${PKILL_TIMEOUT} for graceful shutdown of node (PID: $pid)..."
-    timeout $PKILL_TIMEOUT tail --pid=$pid -f /dev/null
-
-	# Timed out
-	if [ "$#" -eq 124 ]; then
-		print_and_slack "Instance of node (PID: $pid) filed to shutdown gracefully after ${PKILL_TIMEOUT}, killing process..."
-		kill --signal 9 $pid
-	fi
+    # Terminate node instance, no longer trying for graceful shutdown, node doesnt rly shuts down gracefully ever...
+    kill -9 $pid
 
 done
 
 # Start our node server
-nohup ${BASEDIR}/vps-boot-website.sh > /dev/null 2>&1 &
+cd ../
+npm install
+
+cd frontend
+npm install
+
+cd ${BASEDIR}
+
+nohup ${BASEDIR}/vps-boot-frontend.sh > /dev/null 2>&1 &
+nohup ${BASEDIR}/vps-boot-backend.sh > /dev/null 2>&1 &
 disown
 
 print_and_slack "Started the server, website should be online any second now..."
