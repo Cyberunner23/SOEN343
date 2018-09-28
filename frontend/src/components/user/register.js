@@ -2,14 +2,11 @@ import React, { Component } from 'react';
 import './register.css';
 
 export class Register extends Component {
-    isAdmin = 0;
-
-    //TODO when admin is logged in, isAdmin = 1;
 
     constructor(props) {
         super(props);
         this.state = {
-            isAdmin: this.isAdmin,
+            isAdmin: props.isAdmin,
             email: '',
             password: '',
             salt: 'soen343',
