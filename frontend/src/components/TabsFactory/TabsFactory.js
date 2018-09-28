@@ -37,7 +37,7 @@ class TabsFactory {
                             Register Admin Component
                         </TabPanel>
                         <TabPanel>
-                            <ActiveUsersComponent color = 'lightblue' app = {this}/>
+                            <ActiveUsersComponent app = {this}/>
                         </TabPanel>
                     </Tabs>
                 )

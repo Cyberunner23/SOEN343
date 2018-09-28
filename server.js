@@ -38,7 +38,14 @@ app.get('/api/clients', (req, res) => {
 app.get('/api/activeUsers', (req, res) => {
     let sql = 'SELECT first_name, last_name FROM users WHERE id IN (SELECT id from activeUsers)';
     db.query(sql, (err, results) => {
-        if(err) throw err;
-        res.json(results);
+        if(err) {
+            console.log(err);
+            res.status(500);
+            res.send();
+        }
+        else {
+            res.status(200);
+            res.json(results);
+        }
     });
 });
