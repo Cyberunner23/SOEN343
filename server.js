@@ -33,16 +33,30 @@ app.use(bodyParser.json());
 app.get('/api/clients', (req, res) => {
     let sql = 'SELECT * FROM clients';
     db.query(sql, (err, results) => {
-        if(err) throw err;
-        res.json(results);
+        if(err) {
+            console.log(err);
+            res.status(500);
+            res.send();
+        }
+        else {
+            res.status(200);
+            res.json(results);
+        }
     });
 });
 
 app.post('/api/users/login', (req, res, next) => {
     let sql = 'SELECT id, IsAdmin, EMail, FirstName, LastName, Phone, Address FROM users WHERE EMail = ' + '\'' + req.body.EMail + '\'' + ' AND Password = '+ '\'' + req.body.Password + '\'';
     db.query(sql, (err, results) => {
-        if(err) throw err;
-        res.json(results);
+        if(err) {
+            console.log(err);
+            res.status(500);
+            res.send();
+        }
+        else {
+            res.status(200);
+            res.json(results);
+        }
     });
 });
 
@@ -51,8 +65,15 @@ app.post('/api/users/new', (req, res, next) => {
         '(\''+req.body.IsAdmin+'\',\''+req.body.EMail+'\', \''+req.body.Password+'\',\''+req.body.Salt+'\', ' +
         '\''+req.body.FirstName+'\',\''+req.body.LastName+'\', \''+req.body.Phone+'\',\''+req.body.Address+'\')';
     db.query(sql, (err, results) => {
-        if(err) throw err;
-        res.json(results);
+        if(err) {
+            console.log(err);
+            res.status(500);
+            res.send();
+        }
+        else {
+            res.status(200);
+            res.json(results);
+        }
     });
 });
 
