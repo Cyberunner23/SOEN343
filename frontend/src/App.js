@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
 import './App.css';
-import {TabsState, TabsFactory} from './components/TabsFactory/TabsFactory.js'
+import {TabsState, TabsFactory} from './components/TabsFactory/TabsFactory.js';
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      tabs : TabsState.Admin // We can change this manually to see what our components look like until the login/logout code works
+      tabs : TabsState.Welcome // We can change this manually to see what our components look like until the login/logout code works
     }
     this.setTabsState = this.setTabsState.bind(this);
   }

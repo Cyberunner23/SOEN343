@@ -38,6 +38,14 @@ app.get('/api/clients', (req, res) => {
     });
 });
 
+app.post('/api/users/login', (req, res, next) => {
+    let sql = 'SELECT id, IsAdmin FROM users WHERE EMail = ' + '\'' + req.body.EMail + '\'' + ' AND Password = '+ '\'' + req.body.Password + '\'';
+    db.query(sql, (err, results) => {
+        if(err) throw err;
+        res.json(results);
+    });
+});
+
 app.post('/api/users/new', (req, res, next) => {
     let sql = 'INSERT INTO users (IsAdmin, EMail, Password, Salt, FirstName, LastName, Phone, Address) VALUES ' +
         '(\''+req.body.IsAdmin+'\',\''+req.body.EMail+'\', \''+req.body.Password+'\',\''+req.body.Salt+'\', ' +

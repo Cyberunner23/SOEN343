@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import Login from './../../Login'
 import './TabsFactory.css'
 import ActiveUsersComponent from '../useCaseComponents/activeUsersComponent.js';
 import {Register} from "../user/register";
@@ -19,7 +20,7 @@ class TabsFactory {
                             <Tab>Register</Tab>
                         </TabList>
                         <TabPanel>
-                            Login Component
+                            <Login/>
                         </TabPanel>
                         <TabPanel>
                             <Register app = {app} isAdmin = {0}/>
