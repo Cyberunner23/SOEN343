@@ -1,6 +1,8 @@
 import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
+import './TabsFactory.css'
+import ActiveUsersComponent from '../useCaseComponents/activeUsersComponent.js';
 
 var TabsState = Object.freeze({'Welcome' : 0, 'Admin' : 1, 'Client' : 2});
 
@@ -35,7 +37,7 @@ class TabsFactory {
                             Register Admin Component
                         </TabPanel>
                         <TabPanel>
-                            View Active Users Component
+                            <ActiveUsersComponent color = 'lightblue' app = {this}/>
                         </TabPanel>
                     </Tabs>
                 )

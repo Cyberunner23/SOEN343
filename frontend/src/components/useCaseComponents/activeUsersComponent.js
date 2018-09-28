@@ -7,7 +7,7 @@ class ActiveUsersComponent extends Component {
         super();
         this.state = {
             color: props.color,
-            callBacks: props.callBacks,
+            app: props.app,
             activeUsers: []
         }
     }
@@ -20,8 +20,11 @@ class ActiveUsersComponent extends Component {
     }
 
     render() {
+        var style = {
+            'background-color' : this.state.color
+        }
         return (
-            <div className = 'activeUsersComponent'>
+            <div className = 'ActiveUsersComponent UseCaseComponent' style = {style}>
                 <h2>Active Users</h2>
                 <ul>
                     {this.state.activeUsers.map(user =>
