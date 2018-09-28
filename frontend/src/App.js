@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import {TabsState, TabsFactory} from './components/TabsFactory/TabsFactory.js'
+import {TabsState, TabsFactory} from './components/TabsFactory/TabsFactory.js';
+import Login from './Login';
 
 class App extends Component {
   constructor() {
