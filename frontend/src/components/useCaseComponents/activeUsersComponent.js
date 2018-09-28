@@ -32,7 +32,7 @@ class ActiveUsersComponent extends Component {
             content = (
                 <ul>
                     {this.state.activeUsers.map(user =>
-                        <li key={user.id}>{user.first_name} {user.last_name} </li>
+                        <li key={user.id}>{user.FirstName} {user.LastName} </li>
                     )}
                 </ul>
             );
