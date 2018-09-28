@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
-import './registerAdmin.css';
+import './register.css';
 
 export class Register extends Component {
+    isAdmin = 0;
+
+    //TODO when admin is logged in, isAdmin = 1;
+
     constructor(props) {
         super(props);
         this.state = {
-            isAdmin: 0,
+            isAdmin: this.isAdmin,
             email: '',
             password: '',
             salt: 'soen343',
@@ -34,7 +38,6 @@ export class Register extends Component {
             Phone: this.state.phone,
             Address: this.state.address
         };
-        console.log(data);
         fetch('/api/users/new', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
@@ -45,10 +48,7 @@ export class Register extends Component {
             }
             return response.json();
         }).then(function(data) {
-            console.log(data);
-            if(data == "success"){
-                this.setState({msg: "Thanks for registering"});
-            }
+            console.log("Registration Completed");
         }).catch(function(err) {
             console.log(err)
         });
