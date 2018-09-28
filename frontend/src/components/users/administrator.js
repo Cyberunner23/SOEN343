@@ -1,7 +1,7 @@
 //import React, { Component } from 'react';
-import UserController from '../UserController/UserController.js'
+import UserController from '../../controllers//UserController.js'
 
-export class Administrator {
+export default class Administrator {
 
     constructor(userID, email, firstName, lastName, phoneNumber, homeAddress) {
         this.userID = userID;
@@ -18,6 +18,6 @@ export class Administrator {
     }
 
     createAdmin = function(authToken, userID, email, firstName, lastName, phoneNumber, homeAddress) {
-        UserController.createAdmin(this.userID, authToken, userId, email, firstName, lastName, phoneNumber, homeAddress);
+        UserController.createAdmin(this.userID, authToken, userID, email, firstName, lastName, phoneNumber, homeAddress);
     }
 }
