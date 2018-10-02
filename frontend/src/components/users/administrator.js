@@ -3,21 +3,22 @@ import UserController from '../../controllers//UserController.js'
 
 export default class Administrator {
 
-    constructor(userID, email, firstName, lastName, phoneNumber, homeAddress) {
-        this.userID = userID;
-        this.email = email;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-        this.homeAddress = homeAddress;
+    constructor(id, EMail, FirstName, LastName, Phone, Address) {
+        this.id = id;
+        this.EMail = EMail;
+        this.FirstName = FirstName;
+        this.LastName = LastName;
+        this.Phone = Phone;
+        this.Address = Address;
     }
 
     // Always pass the authToken from the cookies
     refreshActiveToken = function(authToken) {
-        UserController.refreshUserToken(this.userID, authToken);
+        UserController.refreshUserToken(this.id, authToken);
     }
 
-    createAdmin = function(authToken, userID, email, firstName, lastName, phoneNumber, homeAddress) {
-        UserController.createAdmin(this.userID, authToken, userID, email, firstName, lastName, phoneNumber, homeAddress);
-    }
+    // Commented because there is no function UserController.createAdmin with the specified signature
+    // createAdmin = function(authToken, id, EMail, FirstName, LastName, Phone, Address) {
+    //     UserController.createAdmin(this.id, authToken, id, EMail, FirstName, LastName, Phone, Address);
+    // }
 }

@@ -6,48 +6,69 @@ export default class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            isAdmin: props.isAdmin,
-            email: '',
-            password: '',
+            IsAdmin: props.IsAdmin,
+            EMail: '',
+            Password: '',
             salt: 'soen343',
-            firstName: '',
-            lastName: '',
-            phone: '',
-            address: '',
+            FirstName: '',
+            LastName: '',
+            Phone: '',
+            Address: '',
             app: props.app,
-            registrationComplete: false
+            registrationSubmitted: false
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
+
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, registrationComplete: false });
+        this.setState({ [e.target.name]: e.target.value, registrationSubmitted: false});
     }
-    handleSubmit(event) {
-        console.log("hit!");
+
+    async handleSubmit(event) {
         event.preventDefault();
         var data = {
-            isAdmin: this.state.isAdmin,
-            email: this.state.email,
-            password: this.state.password,
+            EMail: this.state.EMail,
+            Password: this.state.Password,
             salt: this.state.salt,
-            firstName: this.state.firstName,
-            lastName: this.state.lastName,
-            phone: this.state.phone,
-            address: this.state.address
+            FirstName: this.state.FirstName,
+            LastName: this.state.LastName,
+            Phone: this.state.Phone,
+            Address: this.state.Address
         };
-        console.log(data);
-        UserController.createClient(data.email, data.password, data.firstName, data.lastName, data.phone, data.address);
+        if (this.state.IsAdmin) {
+            console.log('this is an admin')
+            UserController.createAdmin(data.EMail, data.Password, data.FirstName, data.LastName, data.Phone, data.Address).then((user) => {
+                if (user !== null) {
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New admin ' + data.FirstName + ' created'})
+                } else {
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'Email already used'})
+                    console.log('Email already used');
+                }
+            })
+        } else {
+            console.log('this is not an admin');
+            UserController.createClient(data.EMail, data.Password, data.FirstName, data.LastName, data.Phone, data.Address).then((user) => {
+                if (user !== null) {
+                    console.log('FirstName: ' + user.FirstName);
+                    this.state.app.setCurrentUser(user);
+                    this.state.app.setTabsState(TabsState.Client);
+                } else {
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'Email already used'})
+                    console.log('Email already used');
+                }
+            })
+        }
     }
     render() {
-        var registrationCompleteMessage;
-        if (this.state.isAdmin && this.state.registrationComplete) {
-            registrationCompleteMessage = (
-                <div>Registration complete for {this.state.firstName}</div>
+        var registrationSubmittedMessage;
+        if (this.state.registrationSubmitted) {
+            registrationSubmittedMessage = (
+                <div>{this.state.registrationSubmittedMessage}</div>
             )
         }
         var header;
-        if (this.state.isAdmin) {
+        if (this.state.IsAdmin) {
             header = <h1>Register New Administrator</h1>
         }
         else {
@@ -59,31 +80,31 @@ export default class Register extends Component {
                 <form onSubmit={this.handleSubmit} method="POST">
                     <label>
                         Email:
-                        <input type="text" name="email" onChange={this.handleChange} />
+                        <input type="text" name="EMail" onChange={this.handleChange} />
                     </label>
                     <label>
                         Password:
-                        <input type="password" name="password" onChange={this.handleChange} />
+                        <input type="password" name="Password" onChange={this.handleChange} />
                     </label>
                     <label>
                         First Name:
-                        <input type="text" name="firstName" onChange={this.handleChange} />
+                        <input type="text" name="FirstName" onChange={this.handleChange} />
                     </label>
                     <label>
                         Last Name:
-                        <input type="text" name="lastName" onChange={this.handleChange} />
+                        <input type="text" name="LastName" onChange={this.handleChange} />
                     </label>
                     <label>
                         Phone Number:
-                        <input type="text" name="phone" onChange={this.handleChange} />
+                        <input type="text" name="Phone" onChange={this.handleChange} />
                     </label>
                     <label>
                         Address:
-                        <input type="text" name="address" onChange={this.handleChange} />
+                        <input type="text" name="Address" onChange={this.handleChange} />
                     </label>
                     <button onClick={this.handleSubmit}>Submit</button>
                 </form>
-                {registrationCompleteMessage}
+                {registrationSubmittedMessage}
             </div>
         );
     }

@@ -5,7 +5,7 @@ import Login from '../useCaseComponents/Login'
 import './TabsFactory.css'
 import ActiveUsersComponent from '../useCaseComponents/activeUsersComponent.js';
 import LogoutComponent from '../useCaseComponents/LogoutComponent.js';
-import {Register} from "../user/register";
+import Register from '../useCaseComponents/Register.js';
 
 var TabsState = Object.freeze({'Welcome' : 0, 'Admin' : 1, 'Client' : 2});
 
@@ -24,7 +24,7 @@ class TabsFactory {
                             <Login app = {app} />
                         </TabPanel>
                         <TabPanel>
-                            <Register app = {app} isAdmin = {0}/>
+                            <Register app = {app} IsAdmin = {0}/>
                         </TabPanel>
                     </Tabs>
                 )
@@ -38,7 +38,7 @@ class TabsFactory {
                             <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
-                            <Register app = {app} isAdmin = {1}/>
+                            <Register app = {app} IsAdmin = {1}/>
                         </TabPanel>
                         <TabPanel>
                             <ActiveUsersComponent app = {this}/>
