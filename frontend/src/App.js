@@ -1,21 +1,35 @@
 import React, { Component } from 'react';
 import './App.css';
-import {TabsState, TabsFactory} from './components/TabsFactory/TabsFactory.js'
+import {TabsState, TabsFactory} from './components/TabsFactory/TabsFactory.js';
 
 class App extends Component {
   constructor() {
     super();
     this.state = {
-      tabs : TabsState.Welcome
+      tabs : TabsState.Welcome, // We can change this manually to see what our components look like until the login/logout code works
+      title: 'Oops! Title not set',
+      currentUser: {}
     }
+    // do not call these methods in App.render() --> infinite loop
+    this.setTabsState = this.setTabsState.bind(this);
+    this.setCurrentUser = this.setCurrentUser.bind(this);
   }
+
 
   render() {
     var tabs = TabsFactory.buildTabs(this.state.tabs, this);
+    var title;
+    if (this.state.tabs === TabsState.Welcome) {
+      title = 'Welcome to SOEN 343';
+    }
+    else {
+      title = 'Hello ' + this.state.currentUser.FirstName;
+    }
+
     return (
       <div className="App">
         <header className="App-header">
-          <h1 className="App-title">Welcome to SOEN 343</h1>
+          <h1 className="App-title">{title}</h1>
         </header>
         {tabs}
       </div>
@@ -23,7 +37,11 @@ class App extends Component {
   }
 
   setTabsState(newTabsState) {
-    this.state.tabsState = newTabsState;
+    this.setState({tabs : newTabsState});
+  }
+
+  setCurrentUser(newUser) {
+    this.setState({currentUser: newUser});
   }
 }
 

@@ -1,7 +1,10 @@
 import React from 'react';
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
-import Login from '../useCaseComponents/Login.js';
+import Login from '../useCaseComponents/Login'
+import './TabsFactory.css'
+import ActiveUsers from '../useCaseComponents/ActiveUsers.js';
+import Logout from '../useCaseComponents/Logout.js';
 import Register from '../useCaseComponents/Register.js';
 
 var TabsState = Object.freeze({'Welcome' : 0, 'Admin' : 1, 'Client' : 2});
@@ -18,10 +21,10 @@ class TabsFactory {
                             <Tab>Register</Tab>
                         </TabList>
                         <TabPanel>
-                            <Login></Login>
+                            <Login app = {app} />
                         </TabPanel>
                         <TabPanel>
-                            <Register></Register>
+                            <Register app = {app} IsAdmin = {0}/>
                         </TabPanel>
                     </Tabs>
                 )
@@ -32,12 +35,16 @@ class TabsFactory {
                         <TabList>
                             <Tab>Register Admin</Tab>
                             <Tab>View Active Users</Tab>
+                            <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
-                            Register Admin Component
+                            <Register app = {app} IsAdmin = {1}/>
                         </TabPanel>
                         <TabPanel>
-                            View Active Users Component
+                            <ActiveUsers app = {this}/>
+                        </TabPanel>
+                        <TabPanel>
+                            <Logout app = {app}/>
                         </TabPanel>
                     </Tabs>
                 )
@@ -47,9 +54,13 @@ class TabsFactory {
                     <Tabs>
                         <TabList>
                             <Tab>Oops!</Tab>
+                            <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
                             Oops! Nothing to see here...
+                        </TabPanel>
+                        <TabPanel>
+                            <Logout app = {app}/>
                         </TabPanel>
                     </Tabs>
                 )

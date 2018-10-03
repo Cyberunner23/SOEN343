@@ -29,93 +29,74 @@ app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 })
 
-app.post('/api/users/registerClient', (req, res) => {
-            sql = 'SELECT id FROM users WHERE EMail=' + req.body.email;
-            console.log("eyyy " + req)
-            db.query(sql, (err, result) => {
-                if (result == null) {
-                    let email = req.body.email;
-                    let password = req.body.password;
-                    let salt = "bon matin";
-                    let firstName = req.body.firstName;
-                    let lastName = req.body.lastName;
-                    let phone = req.body.phone;
-                    let address = req.body.address;
-
-                    sql = 'INSERT INTO users (IsAdmin, EMail, Password, Salt, FirstName, LastName, Phone, Address) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-                    var inserts = [false, email, password, salt, firstName, lastName, phone, address];
-                    sql = mysql.format(sql, inserts);
-                    db.query(sql, (err, results) => {
-                        if (err) {
-                            console.log(err);
-                            res.status(500);
-                            res.send();
-                        } else {
-                            res.status(200);
-                            res.json(email, firstName, lastName, phone, address);
-                        }
-                    });
-                } else {
-                    res.status(400);
-                    res.send("Email already registered");
-                }
-            });
-});
-
-app.post('/api/users/registerAdmin', (req, res) => {
-    let sql = 'SELECT EMail FROM users WHERE id=' + req.body.id + ' AND auth_token=' + req.body.authToken + ";";
+app.post('/api/users/registerUser', (req, res) => {
+    sql = "SELECT id FROM users WHERE EMail='" + req.body.EMail + "'";
     db.query(sql, (err, result) => {
-        if (result != null) {
-            let sql = 'SELECT id FROM users WHERE EMail IS ' + req.body.EMail;
-            db.query(sql, (err, result) => {
-                if (result == null) {
-                    let email = req.body.email;
-                    let password = req.body.password;
-                    let salt = req.body.salt;
-                    let firstName = req.body.firstName;
-                    let lastName = req.body.lastName;
-                    let phone = req.body.phone;
-                    let address = req.body.address;
-
-                    let sql = 'INSERT INTO users (IsAdmin, EMail, Password, Salt, FirstName, LastName, Phone, Address) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-                    var inserts = [true, email, password, salt, firstName, lastName, phone, address];
-                    sql = mysql.format(sql, inserts);
-                    db.query(sql, (err, results) => {
-                        if (err) {
-                            console.log(err);
-                            res.status(500);
-                            res.send();
-                        } else {
-                            res.status(200);
-                            res.json(new Client(email, firstName, lastName, phone, address));
-                        }
-                    });
-                } else {
-                    res.status(400);
-                    res.send("Email already registered");
-                }
-            });
+        if (!err) {
+            if (result.length === 0) {
+                let IsAdmin = req.body.IsAdmin;
+                let EMail = req.body.EMail;
+                let Password = req.body.Password;
+                let salt = "bon matin";
+                let FirstName = req.body.FirstName;
+                let LastName = req.body.LastName;
+                let Phone = req.body.Phone;
+                let Address = req.body.Address;
+    
+                sql = 'INSERT INTO users (IsAdmin, EMail, Password, Salt, FirstName, LastName, Phone, Address) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+                var inserts = [IsAdmin, EMail, Password, salt, FirstName, LastName, Phone, Address];
+                sql = mysql.format(sql, inserts);
+                db.query(sql, (err, response) => {
+                    if (err) {
+                        console.log(err);
+                        res.status(500);
+                        res.send();
+                    } else {
+                        res.status(200);
+                        res.json({id: response.insertId, EMail, FirstName, LastName, Phone, Address});
+                    }
+                });
+            } else {
+                console.log('Email already exists');
+                res.status(400);
+                res.send();
+            }
+        } else {
+            console.log(err);
+            res.status(500);
+            res.send();
         }
     });
 });
 
-app.post('/api/users/login', (req, res, next) => {
-    let sql = 'SELECT id, IsAdmin, EMail, FirstName, LastName, Phone, Address FROM users WHERE EMail=' + req.body.EMail  +' AND Password=' + req.body.Password;
-    db.query(sql, (err, results) => {
+app.post('/api/users/login', (req, res) => {
+    let sql = "SELECT id, IsAdmin, EMail, FirstName, LastName, Phone, Address FROM users WHERE EMail='" + req.body.EMail  + "' AND Password='" + req.body.Password + "'";
+    db.query(sql, (err, result) => {
         if (err) {
             console.log(err);
             res.status(500);
             res.send();
         }
-        else {
+        else if (result.length === 0) {
+            console.log('invalid login');
+            res.status(400);
+            res.send();
+        }
+        else if (result.length === 1) {
+            console.log('login success')
             res.status(200);
-            res.json(results);
+            res.json(result[0]);
+        }
+        else {
+            console.log('There is more than one user with the same email and password in the database. Fix it!');
+            res.status(500);
+            res.send();
         }
     });
 });
 
 app.get('/api/activeUsers', (req, res) => {
-    let sql = 'SELECT FirstName, LastName FROM users WHERE id IN (SELECT id from activeUsers)';
+    let sql = 'SELECT id, FirstName, LastName FROM users WHERE id IN (SELECT id from activeUsers)';
     db.query(sql, (err, results) => {
         if (err) {
             console.log(err);
