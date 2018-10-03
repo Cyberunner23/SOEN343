@@ -3,8 +3,8 @@ import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import Login from '../useCaseComponents/Login'
 import './TabsFactory.css'
-import ActiveUsersComponent from '../useCaseComponents/activeUsersComponent.js';
-import LogoutComponent from '../useCaseComponents/LogoutComponent.js';
+import ActiveUsers from '../useCaseComponents/ActiveUsers.js';
+import Logout from '../useCaseComponents/Logout.js';
 import Register from '../useCaseComponents/Register.js';
 
 var TabsState = Object.freeze({'Welcome' : 0, 'Admin' : 1, 'Client' : 2});
@@ -41,10 +41,10 @@ class TabsFactory {
                             <Register app = {app} IsAdmin = {1}/>
                         </TabPanel>
                         <TabPanel>
-                            <ActiveUsersComponent app = {this}/>
+                            <ActiveUsers app = {this}/>
                         </TabPanel>
                         <TabPanel>
-                            <LogoutComponent app = {app}/>
+                            <Logout app = {app}/>
                         </TabPanel>
                     </Tabs>
                 )
@@ -60,7 +60,7 @@ class TabsFactory {
                             Oops! Nothing to see here...
                         </TabPanel>
                         <TabPanel>
-                            <LogoutComponent app = {app}/>
+                            <Logout app = {app}/>
                         </TabPanel>
                     </Tabs>
                 )

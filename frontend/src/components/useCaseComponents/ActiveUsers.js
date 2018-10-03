@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import './activeUsersComponent.css';
+import './ActiveUsers.css';
 
-class ActiveUsersComponent extends Component {
+export default class ActiveUsers extends Component {
 
     constructor(props) {
         super();
@@ -49,5 +49,3 @@ class ActiveUsersComponent extends Component {
         );
     }
 }
-
-export default ActiveUsersComponent;

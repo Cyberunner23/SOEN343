@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import {TabsState} from '../TabsFactory/TabsFactory.js'
 
-class LogoutComponent extends Component {
+class Logout extends Component {
 
     constructor(props) {
         super();
@@ -25,4 +25,4 @@ class LogoutComponent extends Component {
     }
 }
 
-export default LogoutComponent;
+export default Logout;
