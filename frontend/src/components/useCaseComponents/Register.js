@@ -38,29 +38,29 @@ export default class Register extends Component {
             Address: this.state.Address
         };
         if (this.state.IsAdmin) {
-            console.log('this is an admin')
             UserController.createAdmin(data.EMail, data.Password, data.FirstName, data.LastName, data.Phone, data.Address).then((user) => {
                 if (user !== null) {
+                    console.log('Admin created successfully');
                     this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New admin ' + data.FirstName + ' created'})
                 } else {
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'Email already used'})
                     console.log('Email already used');
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'Email already used'})
                 }
             })
         } else {
-            console.log('this is not an admin');
             UserController.createClient(data.EMail, data.Password, data.FirstName, data.LastName, data.Phone, data.Address).then((user) => {
                 if (user !== null) {
-                    console.log('FirstName: ' + user.FirstName);
+                    console.log('Client created successfully');
                     this.state.app.setCurrentUser(user);
                     this.state.app.setTabsState(TabsState.Client);
                 } else {
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'Email already used'})
                     console.log('Email already used');
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'Email already used'})
                 }
             })
         }
     }
+
     render() {
         var registrationSubmittedMessage;
         if (this.state.registrationSubmitted) {

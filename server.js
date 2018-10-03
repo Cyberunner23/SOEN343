@@ -31,10 +31,8 @@ app.listen(port, () => {
 
 app.post('/api/users/registerUser', (req, res) => {
     sql = "SELECT id FROM users WHERE EMail='" + req.body.EMail + "'";
-    console.log('SQL: ' + sql);
     db.query(sql, (err, result) => {
         if (!err) {
-            console.log('Result.length: ' + result.length);
             if (result.length === 0) {
                 let IsAdmin = req.body.IsAdmin;
                 let EMail = req.body.EMail;
@@ -48,43 +46,51 @@ app.post('/api/users/registerUser', (req, res) => {
                 sql = 'INSERT INTO users (IsAdmin, EMail, Password, Salt, FirstName, LastName, Phone, Address) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
                 var inserts = [IsAdmin, EMail, Password, salt, FirstName, LastName, Phone, Address];
                 sql = mysql.format(sql, inserts);
-                db.query(sql, (err, results) => {
+                db.query(sql, (err, response) => {
                     if (err) {
                         console.log(err);
                         res.status(500);
-                        res.send(err);
+                        res.send();
                     } else {
                         res.status(200);
-                        res.json({EMail, FirstName, LastName, Phone, Address});
+                        res.json({id: response.insertId, EMail, FirstName, LastName, Phone, Address});
                     }
                 });
             } else {
                 console.log('Email already exists');
                 res.status(400);
-                res.send("Email already registered");
+                res.send();
             }
         } else {
-            console.log('Err: ' + err);
+            console.log(err);
             res.status(500);
-            res.send(err);
+            res.send();
         }
     });
 });
 
 app.post('/api/users/login', (req, res) => {
     let sql = "SELECT id, IsAdmin, EMail, FirstName, LastName, Phone, Address FROM users WHERE EMail='" + req.body.EMail  + "' AND Password='" + req.body.Password + "'";
-    console.log('SQL: ' + sql);
     db.query(sql, (err, result) => {
         if (err) {
             console.log(err);
             res.status(500);
             res.send();
         }
-        else {
-            console.log('api login success')
-            console.log('result: ' + JSON.stringify(result))
+        else if (result.length === 0) {
+            console.log('invalid login');
+            res.status(400);
+            res.send();
+        }
+        else if (result.length === 1) {
+            console.log('login success')
             res.status(200);
-            res.json(result);
+            res.json(result[0]);
+        }
+        else {
+            console.log('There is more than one user with the same email and password in the database. Fix it!');
+            res.status(500);
+            res.send();
         }
     });
 });

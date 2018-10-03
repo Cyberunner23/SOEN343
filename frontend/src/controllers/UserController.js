@@ -10,29 +10,16 @@ export default class UserController {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({EMail, Password})
             }).then((response) => {
-                console.log('Json: ' + JSON.stringify({EMail, Password}))
                 if (response.status === 200) {
-                    console.log('200')
-                    response.json().then((users) => {
-                        console.log('users: ' + JSON.stringify(users));
-                        if (users.length === 1) {
-                            var user = users[0];
-                            console.log('ControllerUser: ' + JSON.stringify(user))
-                            if (user.IsAdmin) {
-                                resolve({IsAdmin: true, user: new Administrator(user.id, user.EMail, user.FirstName, user.LastName, user.Phone, user.Address)});
-                            } else {
-                                resolve({IsAdmin: false, user: new Client(user.id, user.EMail, user.FirstName, user.LastName, user.Phone, user.Address)});
-                            }
-                        }
-                        else if (users.length === 0) {
-                            resolve(null);
-                        }
-                        else {
-                            console.log('Something is very wrong!');
+                    response.json().then((user) => {
+                        if (user.IsAdmin) {
+                            resolve({IsAdmin: true, user: new Administrator(user.id, user.EMail, user.FirstName, user.LastName, user.Phone, user.Address)});
+                        } else {
+                            resolve({IsAdmin: false, user: new Client(user.id, user.EMail, user.FirstName, user.LastName, user.Phone, user.Address)});
                         }
                     })
-                } else {
-                    console.log('fail')
+                }
+                else {
                     resolve(null);
                 }
             });
@@ -63,7 +50,7 @@ export default class UserController {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({IsAdmin: true, EMail, Password, FirstName, LastName, Phone, Address})
-            }).then(function (response) {
+            }).then((response) => {
                 if (response.status === 200) {
                     resolve(new Administrator(response.id, EMail, Password, FirstName, LastName, Phone, Address));
                 }

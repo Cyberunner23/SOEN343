@@ -29,7 +29,6 @@ async handleSubmit(event) {
     };
 
     UserController.authenticate(data.EMail, data.Password).then((response) => {
-        console.log('Response: ' + JSON.stringify(response));
         if (response !== null) {
             if (response.IsAdmin) {
                 this.state.app.setTabsState(TabsState.Admin);
@@ -38,7 +37,6 @@ async handleSubmit(event) {
                 this.state.app.setTabsState(TabsState.Client);
                 console.log("Client Login Completed");
             }
-            console.log('User: ' + JSON.stringify(response.user));
             this.state.app.setCurrentUser(response.user);
         } else {
             console.log('invalid authentication');
