@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { TabsState } from '../TabsFactory/TabsFactory.js'
 import UserController from '../../controllers/UserController.js';
+import './Register.css'
 
 export default class Register extends Component {
     constructor(props) {
