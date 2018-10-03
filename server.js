@@ -96,7 +96,7 @@ app.post('/api/users/login', (req, res) => {
 });
 
 app.get('/api/activeUsers', (req, res) => {
-    let sql = 'SELECT FirstName, LastName FROM users WHERE id IN (SELECT id from activeUsers)';
+    let sql = 'SELECT id, FirstName, LastName FROM users WHERE id IN (SELECT id from activeUsers)';
     db.query(sql, (err, results) => {
         if (err) {
             console.log(err);
