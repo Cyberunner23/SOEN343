@@ -1,8 +1,5 @@
-const mysql = require('mysql');
-const DatabaseConnection = require('../DatabaseConnection');
 const UserMapper = require('../mappers/UserMapper');
 
-const db = DatabaseConnection.getInstance();
 const userMapper = UserMapper.getInstance();
 
 exports.authenticate = async function (req, res) {
