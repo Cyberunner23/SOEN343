@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { TabsState } from '../TabsFactory/TabsFactory.js'
-import UserController from '../../controllers/UserController.js';
+import Administrator from '../users/administrator';
+import Client from '../users/client';
 import './Register.css'
 
 export default class Register extends Component {
@@ -38,7 +39,7 @@ export default class Register extends Component {
             Address: this.state.Address
         };
         if (this.state.IsAdmin) {
-            UserController.createAdmin(data.EMail, data.Password, data.FirstName, data.LastName, data.Phone, data.Address).then((user) => {
+            this.createAdmin(data.EMail, data.Password, data.FirstName, data.LastName, data.Phone, data.Address).then((user) => {
                 if (user !== null) {
                     console.log('Admin created successfully');
                     this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New admin ' + data.FirstName + ' created'})
@@ -48,7 +49,7 @@ export default class Register extends Component {
                 }
             })
         } else {
-            UserController.createClient(data.EMail, data.Password, data.FirstName, data.LastName, data.Phone, data.Address).then((user) => {
+            this.createClient(data.EMail, data.Password, data.FirstName, data.LastName, data.Phone, data.Address).then((user) => {
                 if (user !== null) {
                     console.log('Client created successfully');
                     this.state.app.setCurrentUser(user);
@@ -108,5 +109,39 @@ export default class Register extends Component {
                 {registrationSubmittedMessage}
             </div>
         );
+    }
+
+    async createClient (EMail, Password, FirstName, LastName, Phone, Address) {
+        return new Promise((resolve, reject) => {
+            fetch('/api/users/registerUser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({IsAdmin: false, EMail, Password, FirstName, LastName, Phone, Address})
+            }).then((response) => {
+                if (response.status === 200) {
+                    resolve(new Client(EMail, Password, FirstName, LastName, Phone, Address));
+                }
+                else {
+                    resolve(null);
+                }
+            });
+        })
+    }
+
+    async createAdmin (EMail, Password, FirstName, LastName, Phone, Address) {
+        return new Promise((resolve, reject) => {
+            fetch('/api/users/registerUser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({IsAdmin: true, EMail, Password, FirstName, LastName, Phone, Address})
+            }).then((response) => {
+                if (response.status === 200) {
+                    resolve(new Administrator(response.id, EMail, Password, FirstName, LastName, Phone, Address));
+                }
+                else {
+                    resolve(null);
+                }
+            });
+        })
     }
 } 

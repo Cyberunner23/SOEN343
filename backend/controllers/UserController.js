@@ -1,4 +1,5 @@
-const DatabaseConnection = require('../databaseConnection');
+const mysql = require('mysql');
+const DatabaseConnection = require('../DatabaseConnection');
 const db = DatabaseConnection.getInstance();
 
 exports.authenticate = async function (req, res) {

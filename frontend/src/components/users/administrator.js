@@ -1,5 +1,4 @@
 //import React, { Component } from 'react';
-import UserController from '../../controllers//UserController.js'
 
 export default class Administrator {
 
@@ -13,9 +12,9 @@ export default class Administrator {
     }
 
     // Always pass the authToken from the cookies
-    refreshActiveToken = function(authToken) {
-        UserController.refreshUserToken(this.id, authToken);
-    }
+    // refreshActiveToken = function(authToken) {
+    //     UserController.refreshUserToken(this.id, authToken);
+    // }
 
     // Commented because there is no function UserController.createAdmin with the specified signature
     // createAdmin = function(authToken, id, EMail, FirstName, LastName, Phone, Address) {
