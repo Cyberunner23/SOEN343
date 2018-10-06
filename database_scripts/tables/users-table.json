@@ -1,0 +1,18 @@
+{
+    "tableName": "test",
+    "columns": {
+        "id": "int",
+        "first_name": "varchar(255)",
+        "last_name": "varchar(255)"
+    },
+
+    "notNulls" : ["id", "last_name"],
+
+    "autoIncrement": "id",
+
+    "primaryKey": "id",
+
+    "defaults": {
+        "last_name": "Joejohnjohnson"
+    }
+}
