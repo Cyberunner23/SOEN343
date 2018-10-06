@@ -2,15 +2,13 @@ import React, { Component } from 'react';
 import Input from '@material-ui/core/Input';
 import TextField from '@material-ui/core/TextField';
 import {TabsState} from '../TabsFactory/TabsFactory.js'
-import Administrator from '../users/administrator';
-import Client from '../users/client';
 
 class Login extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            EMail:'',
-            Password:'',
+            email:'',
+            password:'',
             app: props.app,
             loginFailed: false
         };
@@ -25,20 +23,20 @@ class Login extends Component {
     async handleSubmit(event) {
         event.preventDefault();
         var data = {
-            EMail: this.state.EMail,
-            Password: this.state.Password
+            email: this.state.email,
+            password: this.state.password
         };
 
-        this.authenticate(data.EMail, data.Password).then((response) => {
+        this.authenticate(data.email, data.password).then((response) => {
             if (response !== null) {
-                if (response.IsAdmin) {
+                this.state.app.setCurrentUser(response);
+                if (response.is_admin) {
                     this.state.app.setTabsState(TabsState.Admin);
                     console.log("Admin Login Completed");
                 } else {
                     this.state.app.setTabsState(TabsState.Client);
                     console.log("Client Login Completed");
                 }
-                this.state.app.setCurrentUser(response.user);
             } else {
                 console.log('invalid authentication');
                 this.setState({loginFailed: true})
@@ -61,8 +59,8 @@ class Login extends Component {
             <div className = 'UseCaseComponent'>
                 <form onSubmit={this.handleSubmit} method="POST">
                     <TextField
-                        label="Email"
-                        name="EMail"
+                        label="email"
+                        name="email"
                         placeholder="johndoe@gmail.com"
                         margin="normal"
                         variant="outlined"
@@ -71,8 +69,8 @@ class Login extends Component {
                         <br/>
                     <TextField
                         type="password"
-                        name="Password"
-                        placeholder="Password"
+                        name="password"
+                        placeholder="password"
                         margin="normal"
                         variant="outlined"
                         onChange={this.handleChange}
@@ -90,20 +88,16 @@ class Login extends Component {
         );
     }
 
-    async authenticate(EMail, Password) {
+    async authenticate(email, password) {
         return new Promise((resolve, reject) => {
             fetch('/api/users/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({EMail, Password})
+                body: JSON.stringify({email, password})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((user) => {
-                        if (user.IsAdmin) {
-                            resolve({IsAdmin: true, user: new Administrator(user.id, user.EMail, user.FirstName, user.LastName, user.Phone, user.Address)});
-                        } else {
-                            resolve({IsAdmin: false, user: new Client(user.id, user.EMail, user.FirstName, user.LastName, user.Phone, user.Address)});
-                        }
+                        resolve(user);
                     })
                 }
                 else {

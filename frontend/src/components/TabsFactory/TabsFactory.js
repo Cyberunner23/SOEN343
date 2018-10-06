@@ -24,7 +24,7 @@ class TabsFactory {
                             <Login app = {app} />
                         </TabPanel>
                         <TabPanel>
-                            <Register app = {app} IsAdmin = {0}/>
+                            <Register app = {app} is_admin = {0}/>
                         </TabPanel>
                     </Tabs>
                 )
@@ -38,7 +38,7 @@ class TabsFactory {
                             <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
-                            <Register app = {app} IsAdmin = {1}/>
+                            <Register app = {app} is_admin = {1}/>
                         </TabPanel>
                         <TabPanel>
                             <ActiveUsers app = {this}/>

@@ -1,84 +1,76 @@
 const mysql = require('mysql');
 const DatabaseConnection = require('../DatabaseConnection');
+const UserMapper = require('../mappers/UserMapper');
+
 const db = DatabaseConnection.getInstance();
+const userMapper = UserMapper.getInstance();
 
 exports.authenticate = async function (req, res) {
-    let query = "SELECT id, IsAdmin, EMail, FirstName, LastName, Phone, Address FROM users WHERE EMail='" + req.body.EMail  + "' AND Password='" + req.body.Password + "'";
-    db.query(query, (err, result) => {
-        if (err) {
-            console.log(err);
-            res.status(500);
-            res.send();
-        }
-        else if (result.length === 0) {
+
+    userMapper.getUsers({email: req.body.email, password: req.body.password})
+    .then((users) => {
+        if (users.length === 0) {
             console.log('invalid login');
             res.status(400);
-            res.send();
+            res.json({err: 'Invalid credentials'});
         }
-        else if (result.length === 1) {
+        else if (users.length === 1) {
             console.log('login success')
             res.status(200);
-            res.json(result[0]);
+            res.json(users[0]);
         }
         else {
             console.log('There is more than one user with the same email and password in the database. Fix it!');
             res.status(500);
-            res.send();
+            res.send({err: 'Internal server error'});
         }
+    })
+    .catch((exception) => {
+        handleException(res, exception);
     });
 }
 
 exports.registerUser = async function (req, res) {
-    sql = "SELECT id FROM users WHERE EMail='" + req.body.EMail + "'";
-    db.query(sql, (err, result) => {
-        if (!err) {
-            if (result.length === 0) {
-                let IsAdmin = req.body.IsAdmin;
-                let EMail = req.body.EMail;
-                let Password = req.body.Password;
-                let salt = "bon matin";
-                let FirstName = req.body.FirstName;
-                let LastName = req.body.LastName;
-                let Phone = req.body.Phone;
-                let Address = req.body.Address;
-    
-                sql = 'INSERT INTO users (IsAdmin, EMail, Password, Salt, FirstName, LastName, Phone, Address) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-                var inserts = [IsAdmin, EMail, Password, salt, FirstName, LastName, Phone, Address];
-                sql = mysql.format(sql, inserts);
-                db.query(sql, (err, response) => {
-                    if (err) {
-                        console.log(err);
-                        res.status(500);
-                        res.send();
-                    } else {
-                        res.status(200);
-                        res.json({id: response.insertId, EMail, FirstName, LastName, Phone, Address});
-                    }
-                });
-            } else {
-                console.log('Email already exists');
-                res.status(400);
-                res.send();
-            }
+
+    userMapper.getUsers({email: req.body.email})
+    .then((result) => {
+        if (result.length === 0) {
+            console.log('here here');
+            userMapper.addUser(req.body)
+            .then((user) => {
+                res.status(200);
+                res.json(user);
+            })
+            .catch((exception) => {
+                handleException(res, exception);
+            });
         } else {
-            console.log(err);
-            res.status(500);
+            console.log('email already exists');
+            res.status(400);
             res.send();
         }
+    })
+    .catch((exception) => {
+        handleException(res, exception);
     });
 }
 
 exports.activeUsers = async function (req, res) {
-    let sql = 'SELECT id, FirstName, LastName FROM users WHERE id IN (SELECT id from activeUsers)';
-    db.query(sql, (err, results) => {
-        if (err) {
-            console.log(err);
+    userMapper.getActiveUsers()
+    .then((activeUsers) => {
+        res.status(200);
+        res.json(activeUsers);
+    })
+    .catch((exception) => {
+        handleException(res, exception);
+    });
+}
+
+handleException = function (res, exception) {
+    switch(exception) {
+        case UserMapper.Exceptions.InternalServerError:
+        default:
             res.status(500);
             res.send();
-        }
-        else {
-            res.status(200);
-            res.json(results);
-        }
-    });
+    }
 }
