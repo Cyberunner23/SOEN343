@@ -9,7 +9,6 @@ export default class Register extends Component {
             is_admin: props.is_admin,
             email: '',
             password: '',
-            salt: 'soen343',
             first_name: '',
             last_name: '',
             phone: '',
@@ -107,7 +106,6 @@ export default class Register extends Component {
         let is_admin = props.is_admin;
         let email = props.email;
         let password = props.password;
-        let salt = props.salt;
         let first_name = props.first_name;
         let last_name = props.last_name;
         let phone = props.phone;
@@ -117,7 +115,7 @@ export default class Register extends Component {
             fetch('/api/users/registerUser', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({is_admin, email, password, salt, first_name, last_name, phone, address})
+                body: JSON.stringify({is_admin, email, password, first_name, last_name, phone, address})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((user) => {
