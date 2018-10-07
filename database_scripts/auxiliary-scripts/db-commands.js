@@ -1,121 +1,108 @@
+/**
+ * High level commands which allow the deletion of tables and the creation of
+ * tables based a JSON table format
+ * 
+ * @author Paul Lane
+ * @since 7.10.2018
+ */
+
 const utilities = require('./utilities.js');
-const sqltools = require('./sql-tools.js');
+const sqlUtils = require('./sql-utilities');
+const sqlGen = require('./sql-generators.js');
 
 module.exports.createTables = createTables;
-module.exports.dropTables = dropTables;
-module.exports.refreshTables = refreshTables;
+module.exports.dropAllTables = dropAllTables;
 
-function createTables(tables) {
-    return new Promise((resolve, reject) => {
-        // Authenticate sql
-        let SQLUser = utilities.getPropertyIfExists(process.env, 'SQLUser', 'root');
-        let SQLpassword = utilities.getPropertyIfExists(process.env, 'SQLPassword', '');
-        const connection = sqltools.initMySQL(SQLUser, SQLpassword);
+/**
+ * Create the supplied JSON tables in the given database.
+ * 
+ * @param {string} databaseName - Database in which to create the tables
+ * @param {*[]} tables - JSON tables to create
+ */
+async function createTables(databaseName, tables) {
+    // Prepare Queries
+    let queries = [];
+    queries.push('SET AUTOCOMMIT = 0;');
+    queries.push('START TRANSACTION;');
+    queries = queries.concat(prepareCreateQueries(tables));
+    queries.push('COMMIT;');
 
-        let queries = [];
-        queries.push('SET AUTOCOMMIT = 0;');
-        queries.push('START TRANSACTION;');
-        queries = queries.concat(prepareCreateQueries(tables));
-        queries.push('COMMIT;');
+    let connection = await defaultedMySQLAuth(databaseName);
 
-        console.log(queries);
+    // Execute Queries
+    let queriesLength = queries.length;
+    for(let i = 0; i < queriesLength; ++i) {
+        await sqlUtils.query(connection, queries[i]);
+    }
 
-        let chain = Promise.resolve();
-        chain = chain.then(() => sqltools.promiseConnect(connection));
-        let queriesLength = queries.length;
-        for(let i = 0; i < queriesLength; ++i) {
-            chain = chain.then(() => sqltools.promiseQuery(connection, queries[i]));
-        }
-        chain = chain.then(() => connection.end(function(err) {
-            if (err) {
-                console.log('Failed to disconnect from SQL database...\n');
-            }
-            console.log('Disconnected from SQL database...\n');
-        }));
-        resolve();
-    })
+    // Disconnect queries
+    await sqlUtils.disconnectMySQL(connection);
 }
 
-function promiseDisconnect(connection) {
-    return new Promise((resolve, reject) => {
-        connection.end(function(err) {
-            if (err) {
-                console.log('Failed to disconnect from SQL database...\n');
-            }
-            console.log('Disconnected from SQL database...\n');
-        });
-    });
+/**
+ * Drop all the tables from the database
+ * 
+ * @param {string} databaseName - Database to drop all tables from
+ */
+async function dropAllTables(databaseName) {
+    // Note: We connect first to query the names of all the tables
+    let connection = await defaultedMySQLAuth(databaseName);
+
+    // Prepare the queries
+    let queries = [];
+    queries.push('SET FOREIGN_KEY_CHECKS = 0;');
+    queries = queries.concat(await sqlGen.generateAllTableDropStatements(connection, databaseName));
+    queries.push('SET FOREIGN_KEY_CHECKS = 1;');
+
+    // Execute the queries
+    let queriesLength = queries.length;
+    for(let i = 0; i < queriesLength; ++i) {
+        await sqlUtils.query(connection, queries[i]);
+    }
+
+    // Disconnect from database
+    await sqlUtils.disconnectMySQL(connection);
 }
 
-function dropTables(tables) {
-    return new Promise((resolve, reject) => {
-        // Authenticate sql
-        let SQLUser = utilities.getPropertyIfExists(process.env, 'SQLUser', 'root');
-        let SQLpassword = utilities.getPropertyIfExists(process.env, 'SQLPassword', '');
-        const connection = sqltools.initMySQL(SQLUser, SQLpassword);
-
-        let queries = [];
-        queries.push('SET FOREIGN_KEY_CHECKS = 0;');
-        queries = queries.concat(prepareDropQueries(tables));
-        queries.push('SET FOREIGN_KEY_CHECKS = 1;');
-
-        let chain = Promise.resolve();
-        chain = chain.then(() => sqltools.promiseConnect(connection));
-        let queriesLength = queries.length;
-        for(let i = 0; i < queriesLength; ++i) {
-            chain = chain.then(() => sqltools.promiseQuery(connection, queries[i]));
-        }
-        chain = chain.then(() => connection.end(function(err) {
-            if (err) {
-                console.log('Failed to disconnect from SQL database...\n');
-            }
-            console.log('Disconnected from SQL database...\n');
-        }));
-        resolve();
-    });
-}
-
-function refreshTables(tables) {
-        // Authenticate sql
-        let SQLUser = utilities.getPropertyIfExists(process.env, 'SQLUser', 'root');
-        let SQLpassword = utilities.getPropertyIfExists(process.env, 'SQLPassword', '');
-        const connection = sqltools.initMySQL(SQLUser, SQLpassword);
-}
-
+/**
+ * Returns the generated list of all queries necessary to create the supplied
+ * JSON tables in a database
+ * 
+ * @param {*} tables - JSON tables to generate create queries for
+ */
 function prepareCreateQueries(tables) {
     let queries = [];
+
     // Enqueue table create and primary key queries
     let tablesLength = tables.length;
     for(let i = 0; i < tablesLength; ++i) {
         console.log(`Generating queries for table '${tables[i].tableName}'`);
-        queries.push(sqltools.generateTableCreateStatement(tables[i]));
-        queries.push(sqltools.generatePrimaryKeyStatment(tables[i]));
+        queries.push(sqlGen.generateTableCreateStatement(tables[i]));
+        queries.push(sqlGen.generatePrimaryKeyStatment(tables[i]));
         if(tables[i].hasOwnProperty('autoIncrement')) {
-            queries.push(sqltools.generateAutoIncrementStatement(tables[i]));
+            queries.push(sqlGen.generateAutoIncrementStatement(tables[i]));
         }
     }
 
     // Then once all tables are created, enqueue foreign key queries
     for(let i = 0; i < tablesLength; ++i) {
         if(tables[i].hasOwnProperty('foreignKeys')) {
-            queries = queries.concat(sqltools.generateForeignKeyStatements(tables[i]));
+            queries = queries.concat(sqlGen.generateForeignKeyStatements(tables[i]));
         }
     }
 
-
-    console.log(queries);
     return queries;
 }
 
-function prepareDropQueries(tables) {
-    let queries = [];
-
-    let tablesLength = tables.length;
-    for(let i = 0; i < tablesLength; ++i) {
-        console.log(`Generating queries for table '${tables[i].tableName}'`);
-        queries.push(sqltools.generateDropStatement(tables[i]));
-    }
-
-    return queries;
+/**
+ * Create and start a MySQL connection with credentials supplied via the 
+ * environment variables 'SQLUser' and 'SQLPassword'. If these values are not
+ * set, then 'root' and '' are used for the user and password respectively
+ * 
+ * @param {string} databaseName - The database to connect to
+ */
+async function defaultedMySQLAuth(databaseName) {
+    let SQLUser = utilities.getPropertyIfExists(process.env, 'SQLUser', 'root');
+    let SQLpassword = utilities.getPropertyIfExists(process.env, 'SQLPassword', '');
+    return await sqlUtils.connectMySQL(SQLUser, SQLpassword, databaseName);
 }
-
