@@ -32,7 +32,6 @@ exports.registerUser = async function (req, res) {
     userMapper.getUsers({email: req.body.email})
     .then((result) => {
         if (result.length === 0) {
-            console.log('here here');
             userMapper.addUser(req.body)
             .then((user) => {
                 res.status(200);
