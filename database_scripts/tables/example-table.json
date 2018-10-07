@@ -1,0 +1,22 @@
+{
+    "tableName": "example",
+
+    "columns": {
+        "id": "int",
+        "favorite_fruit": "varchar(255)",
+        "preferred_letter": "varchar(1)",
+        "personal_note": "text",
+        "last_ate": "datetime"
+    },
+
+    "primaryKey": "id",
+
+    "autoIncrement": "id",
+
+    "notNulls": ["id", "personal_note"],
+
+    "defaults": {
+        "favorite_fruit": "Rambutan",
+        "preferred_letter": "h"
+    }
+}
