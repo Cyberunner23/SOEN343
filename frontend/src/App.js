@@ -23,7 +23,7 @@ class App extends Component {
       title = 'Welcome to SOEN 343';
     }
     else {
-      title = 'Hello ' + this.state.currentUser.FirstName;
+      title = 'Hello ' + this.state.currentUser.first_name;
     }
 
     return (

@@ -1,20 +1,19 @@
 import React, { Component } from 'react';
 import { TabsState } from '../TabsFactory/TabsFactory.js'
-import UserController from '../../controllers/UserController.js';
 import './Register.css'
 
 export default class Register extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            IsAdmin: props.IsAdmin,
-            EMail: '',
-            Password: '',
+            is_admin: props.is_admin,
+            email: '',
+            password: '',
             salt: 'soen343',
-            FirstName: '',
-            LastName: '',
-            Phone: '',
-            Address: '',
+            first_name: '',
+            last_name: '',
+            phone: '',
+            address: '',
             app: props.app,
             registrationSubmitted: false
         };
@@ -29,33 +28,34 @@ export default class Register extends Component {
     async handleSubmit(event) {
         event.preventDefault();
         var data = {
-            EMail: this.state.EMail,
-            Password: this.state.Password,
+            is_admin: this.state.is_admin || false,
+            email: this.state.email,
+            password: this.state.password,
             salt: this.state.salt,
-            FirstName: this.state.FirstName,
-            LastName: this.state.LastName,
-            Phone: this.state.Phone,
-            Address: this.state.Address
+            first_name: this.state.first_name,
+            last_name: this.state.last_name,
+            phone: this.state.phone,
+            address: this.state.address
         };
-        if (this.state.IsAdmin) {
-            UserController.createAdmin(data.EMail, data.Password, data.FirstName, data.LastName, data.Phone, data.Address).then((user) => {
+        if (data.is_admin) {
+            this.registerUser(data.is_admin, data.email, data.password, data.first_name, data.last_name, data.phone, data.address).then((user) => {
                 if (user !== null) {
                     console.log('Admin created successfully');
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New admin ' + data.FirstName + ' created'})
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New admin ' + data.first_name + ' created'})
                 } else {
-                    console.log('Email already used');
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'Email already used'})
+                    console.log('email already used');
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'email already used'})
                 }
             })
         } else {
-            UserController.createClient(data.EMail, data.Password, data.FirstName, data.LastName, data.Phone, data.Address).then((user) => {
+            this.registerUser(data.is_admin, data.email, data.password, data.first_name, data.last_name, data.phone, data.address).then((user) => {
                 if (user !== null) {
                     console.log('Client created successfully');
                     this.state.app.setCurrentUser(user);
                     this.state.app.setTabsState(TabsState.Client);
                 } else {
-                    console.log('Email already used');
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'Email already used'})
+                    console.log('email already used');
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'email already used'})
                 }
             })
         }
@@ -69,7 +69,7 @@ export default class Register extends Component {
             )
         }
         var header;
-        if (this.state.IsAdmin) {
+        if (this.state.is_admin) {
             header = <h1>Register New Administrator</h1>
         }
         else {
@@ -80,33 +80,52 @@ export default class Register extends Component {
                 {header}
                 <form onSubmit={this.handleSubmit} method="POST">
                     <label>
-                        Email:
-                        <input type="text" name="EMail" onChange={this.handleChange} />
+                        EMail:
+                        <input type="text" name="email" onChange={this.handleChange} />
                     </label>
                     <label>
                         Password:
-                        <input type="password" name="Password" onChange={this.handleChange} />
+                        <input type="password" name="password" onChange={this.handleChange} />
                     </label>
                     <label>
                         First Name:
-                        <input type="text" name="FirstName" onChange={this.handleChange} />
+                        <input type="text" name="first_name" onChange={this.handleChange} />
                     </label>
                     <label>
                         Last Name:
-                        <input type="text" name="LastName" onChange={this.handleChange} />
+                        <input type="text" name="last_name" onChange={this.handleChange} />
                     </label>
                     <label>
                         Phone Number:
-                        <input type="text" name="Phone" onChange={this.handleChange} />
+                        <input type="text" name="phone" onChange={this.handleChange} />
                     </label>
                     <label>
                         Address:
-                        <input type="text" name="Address" onChange={this.handleChange} />
+                        <input type="text" name="address" onChange={this.handleChange} />
                     </label>
                     <button onClick={this.handleSubmit}>Submit</button>
                 </form>
                 {registrationSubmittedMessage}
             </div>
         );
+    }
+
+    async registerUser (is_admin, email, password, first_name, last_name, phone, address) {
+        return new Promise((resolve, reject) => {
+            fetch('/api/users/registerUser', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({is_admin, email, password, first_name, last_name, phone, address})
+            }).then((response) => {
+                if (response.status === 200) {
+                    response.json().then((user) => {
+                        resolve(user);
+                    })
+                }
+                else {
+                    resolve(null);
+                }
+            });
+        })
     }
 } 

@@ -30,21 +30,21 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `users` (
   `id` int(11) NOT NULL,
-  `IsAdmin` tinyint(1) NOT NULL,
-  `EMail` text NOT NULL,
-  `Password` text NOT NULL,
-  `Salt` text NOT NULL,
-  `FirstName` text NOT NULL,
-  `LastName` text NOT NULL,
-  `Phone` text NOT NULL,
-  `Address` text NOT NULL
+  `is_admin` tinyint(1) NOT NULL,
+  `email` text NOT NULL,
+  `password` text NOT NULL,
+  `salt` text NOT NULL,
+  `first_name` text NOT NULL,
+  `last_name` text NOT NULL,
+  `phone` text NOT NULL,
+  `address` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `IsAdmin`, `EMail`, `Password`, `Salt`, `FirstName`, `LastName`, `Phone`, `Address`) VALUES
+INSERT INTO `users` (`id`, `is_admin`, `email`, `password`, `salt`, `first_name`, `last_name`, `phone`, `address`) VALUES
 (1, 1, 'One', 'One', 'soen343_1', 'One', 'One', 'One', 'One'),
 (2, 0, 'Two', 'Two', 'soen343_2', 'Two', 'Two', 'Two', 'Two'),
 (3, 0, 'Three', 'Three', 'soen343_3', 'Three', 'Three', 'Three', 'Three'),
@@ -76,7 +76,7 @@ COMMIT;
 -- Enforce uniqueness for email
 --
 ALTER TABLE `users`
-  ADD UNIQUE(`EMail`(255));
+  ADD UNIQUE(`email`(255));
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
