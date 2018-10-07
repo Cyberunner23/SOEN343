@@ -6,6 +6,8 @@ class User {
         this.id = props.id;
         this.is_admin = props.is_admin;
         this.email = props.email;
+        this.password = props.password;
+        this.salt = props.salt;
         this.first_name = props.first_name;
         this.last_name = props.last_name;
         this.phone = props.phone;

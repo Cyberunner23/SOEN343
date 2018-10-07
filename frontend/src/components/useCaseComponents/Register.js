@@ -9,7 +9,6 @@ export default class Register extends Component {
             is_admin: props.is_admin,
             email: '',
             password: '',
-            salt: 'soen343',
             first_name: '',
             last_name: '',
             phone: '',
@@ -27,28 +26,21 @@ export default class Register extends Component {
 
     async handleSubmit(event) {
         event.preventDefault();
-        var data = {
-            is_admin: this.state.is_admin || false,
-            email: this.state.email,
-            password: this.state.password,
-            salt: this.state.salt,
-            first_name: this.state.first_name,
-            last_name: this.state.last_name,
-            phone: this.state.phone,
-            address: this.state.address
-        };
-        if (data.is_admin) {
-            this.registerUser(data.is_admin, data.email, data.password, data.first_name, data.last_name, data.phone, data.address).then((user) => {
+
+        if (this.state.is_admin) {
+            this.registerUser(this.state)
+            .then((user) => {
                 if (user !== null) {
                     console.log('Admin created successfully');
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New admin ' + data.first_name + ' created'})
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New admin ' + user.first_name + ' created'})
                 } else {
                     console.log('email already used');
                     this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'email already used'})
                 }
             })
         } else {
-            this.registerUser(data.is_admin, data.email, data.password, data.first_name, data.last_name, data.phone, data.address).then((user) => {
+            this.registerUser(this.state)
+            .then((user) => {
                 if (user !== null) {
                     console.log('Client created successfully');
                     this.state.app.setCurrentUser(user);
@@ -110,7 +102,15 @@ export default class Register extends Component {
         );
     }
 
-    async registerUser (is_admin, email, password, first_name, last_name, phone, address) {
+    async registerUser (props) {
+        let is_admin = props.is_admin;
+        let email = props.email;
+        let password = props.password;
+        let first_name = props.first_name;
+        let last_name = props.last_name;
+        let phone = props.phone;
+        let address = props.address;
+
         return new Promise((resolve, reject) => {
             fetch('/api/users/registerUser', {
                 method: 'POST',
