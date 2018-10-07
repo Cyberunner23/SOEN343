@@ -18,13 +18,9 @@ class TabsFactory {
                     <Tabs>
                         <TabList>
                             <Tab>Login</Tab>
-                            <Tab>Register</Tab>
                         </TabList>
                         <TabPanel>
                             <Login app = {app} />
-                        </TabPanel>
-                        <TabPanel>
-                            <Register app = {app} is_admin = {0}/>
                         </TabPanel>
                     </Tabs>
                 )
@@ -34,11 +30,15 @@ class TabsFactory {
                     <Tabs>
                         <TabList>
                             <Tab>Register Admin</Tab>
+                            <Tab>Register User</Tab>
                             <Tab>View Active Users</Tab>
                             <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
                             <Register app = {app} is_admin = {1}/>
+                        </TabPanel>
+                        <TabPanel>
+                            <Register app = {app} is_admin = {0}/>
                         </TabPanel>
                         <TabPanel>
                             <ActiveUsers app = {this}/>
