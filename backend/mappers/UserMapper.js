@@ -1,6 +1,6 @@
 const mysql = require('mysql');
 const DatabaseConnection = require('../DatabaseConnection');
-const User = require('../business objects/user').User;
+const User = require('../business_objects/user').User;
 
 const db = DatabaseConnection.getInstance();
 
