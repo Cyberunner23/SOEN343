@@ -43,8 +43,7 @@ export default class Register extends Component {
             .then((user) => {
                 if (user !== null) {
                     console.log('Client created successfully');
-                    this.state.app.setCurrentUser(user);
-                    this.state.app.setTabsState(TabsState.Client);
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New user ' + data.first_name + ' created'})
                 } else {
                     console.log('email already used');
                     this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'email already used'})
@@ -65,7 +64,7 @@ export default class Register extends Component {
             header = <h1>Register New Administrator</h1>
         }
         else {
-            header = <h1>Register</h1>
+            header = <h1>Register New User</h1>
         }
         return (
             <div className='UseCaseComponent'>
