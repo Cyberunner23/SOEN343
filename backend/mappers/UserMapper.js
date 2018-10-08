@@ -137,6 +137,43 @@ class UserMapper {
             }
         })
     }
+
+    async removeActiveUsers (id) {
+        return new Promise((resolve, reject) => {
+            var query;
+            var removedUsers = [];
+    
+            if (id) {
+                var index = this.activeUsers.findIndex(user => {
+                    return user.id === id;
+                });
+                if (index >= 0) {
+                    removedUsers = this.activeUsers.splice(index, 1);
+                    query = 'DELETE FROM activeUsers WHERE id=' + id;
+                }
+                else {
+                    console.log('Requested active user does not exist');
+                    reject(Exceptions.UserDoesNotExist);
+                    return;
+                }
+            }
+            else {
+                console.log('Removing all active users. Hopefully this is actually what you wanted to do.');
+                removedUsers = this.activeUsers.splice(0, this.activeUsers.length);
+                query = 'DELETE FROM activeUsers'
+            }
+    
+            db.query(query, (err, result) => {
+                if (!err) {
+                    resolve(removedUsers);
+                }
+                else {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+            })
+        })
+    }
 }
 
 getUserArray = (jsonUsers) => {

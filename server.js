@@ -14,3 +14,4 @@ app.listen(port, () => {
 app.post('/api/users/registerUser', UserController.registerUser);
 app.post('/api/users/login', UserController.authenticate);
 app.get('/api/activeUsers', UserController.activeUsers);
+app.post('/api/users/logout', UserController.logout);

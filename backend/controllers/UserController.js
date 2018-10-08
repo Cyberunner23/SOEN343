@@ -89,18 +89,46 @@ exports.activeUsers = async (req, res) => {
     res.json(convertToFrontendActiveUsers(userPairs));
 }
 
+exports.logout = async (req, res) => {
+
+    var userArray = userMapper.getUsers({email: req.body.email});
+    if (userArray.length > 1) {
+        console.log('There is more than 1 user with the same email. Fix it!');
+        handleException(res, Exceptions.InternalServerError);
+    }
+    else if (userArray.length === 0) {
+        console.log('The requested user does not exist');
+        handleException(res, Exceptions.UserDoesNotExist);
+    }
+    else { // userArray.length must be 1
+        var user = userArray[0];
+        userMapper.removeActiveUsers(user.id)
+        .then(removedUsersArray => {
+            console.log('logout success');
+            res.status(200);
+            res.send();
+        })
+        .catch(exception => {
+            handleException(res, exception);
+        })
+    }
+}
+
 handleException = function (res, exception) {
     console.log('An exception occured');
+    var message;
     switch(exception) {
         case Exceptions.EmailAlreadyUsed:
             res.status(400);
-            res.json('Email already used');
+            message = 'Email already used';
             break;
         case Exceptions.InternalServerError:
         default:
             res.status(500);
-            res.json('Internal Server Error');
+            message = 'Internal Server Error';
+            break;
     }
+    res.json({err: message});
 }
 
 convertToFrontendUsers = (users) => {
