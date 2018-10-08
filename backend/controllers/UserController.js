@@ -1,5 +1,4 @@
 const UserMapper = require('../mappers/UserMapper');
-const User = require('../business_objects/user').User;
 const Exceptions = require('../Exceptions').Exceptions;
 
 const userMapper = UserMapper.getInstance();
