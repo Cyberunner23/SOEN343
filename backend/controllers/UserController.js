@@ -1,4 +1,6 @@
 const UserMapper = require('../mappers/UserMapper');
+const User = require('../business_objects/user').User;
+const Exceptions = require('../Exceptions').Exceptions;
 
 const userMapper = UserMapper.getInstance();
 
@@ -78,7 +80,7 @@ exports.registerUser = async function (req, res) {
             });
         } else {
             console.log('email already exists');
-            handleException(res, Exception.InternalServerError);
+            handleException(res, Exceptions.EmailAlreadyUsed);
         }
     })
     .catch((exception) => {
@@ -89,31 +91,30 @@ exports.registerUser = async function (req, res) {
 exports.activeUsers = async (req, res) => {
     userMapper.getActiveUsers()
     .then(async activeUsers => { // activeUsers only have index, id and timestamp. Must convert to users before sending to frontend
-        var users = [];
-        var success = true;
+        var userPairs = [];
         await asyncForEach(activeUsers, async activeUser => {
             userMapper.getUsers({id: activeUser.id})
-            .then(result => {
-                if (result.length === 1) {
-                    users.push(result[0]);
+            .then(userArray => {
+                if (userArray.length === 1) {
+                    var userPair = {user: userArray[0], activeUser};
+                    userPairs.push(userPair);
                 }
                 else {
                     console.log('There should be exactly 1 user with the supplied id. Something is wrong.');
-                    handleException(res, Exception.InternalServerError);
-                    success = false;
-                    return;
+                    throw Exception.InternalServerError;
                 }
             })
             .catch(exception => {
-                handleException(exception);
-                success = false;
-                return;
+                throw exception;
             })
         })
-        if (success) {
+        .then(() => {
             res.status(200);
-            res.json(convertToFrontendUsers(users));
-        }
+            res.json(convertToFrontendActiveUsers(userPairs));
+        })
+        .catch(exception => {
+            handleException(exception);
+        })
     })
     .catch((exception) => {
         handleException(res, exception);
@@ -121,12 +122,13 @@ exports.activeUsers = async (req, res) => {
 }
 
 handleException = function (res, exception) {
+    console.log('An exception occured');
     switch(exception) {
-        case UserMapper.Exceptions.UserNotFound:
+        case Exceptions.EmailAlreadyUsed:
             res.status(400);
-            res.json('User not found');
+            res.json('Email already used');
             break;
-        case UserMapper.Exceptions.InternalServerError:
+        case Exceptions.InternalServerError:
         default:
             res.status(500);
             res.json('Internal Server Error');
@@ -138,6 +140,19 @@ convertToFrontendUsers = (users) => {
         frontendUsers = [];
         users.forEach((user) => {
             frontendUsers.push(convertToFrontendUser(user));
+        })
+        return frontendUsers;
+    }
+    catch (err) {
+        console.log(err);
+    }
+}
+
+convertToFrontendActiveUsers = (userPairs) => {
+    try {
+        frontendUsers = [];
+        userPairs.forEach(pair => {
+            frontendUsers.push(convertToFrontendActiveUser(pair));
         })
         return frontendUsers;
     }
@@ -158,14 +173,14 @@ convertToFrontendUser = (user) => {
     )
 }
 
+convertToFrontendActiveUser = pair => {
+    var jsonUser = convertToFrontendUser(pair.user);
+    jsonUser.timestamp = pair.activeUser.timestamp.toLocaleString();
+    return jsonUser;
+}
+
 asyncForEach = async (array, callback) => {
-    console.log('for each');
-    try {
-        for (var i = 0; i < array.length; i++) {
-            await callback(array[i]);
-        }
-    }
-    catch (e) {
-        console.log(e);
+    for (var i = 0; i < array.length; i++) {
+        await callback(array[i]);
     }
 }

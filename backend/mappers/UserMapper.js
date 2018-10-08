@@ -3,13 +3,9 @@ const DatabaseConnection = require('../DatabaseConnection');
 const User = require('../business_objects/user').User;
 const ActiveUser = require('../business_objects/activeUser').ActiveUser;
 
-const db = DatabaseConnection.getInstance();
+const Exceptions = require('../Exceptions').Exceptions;
 
-const Exceptions = Object.freeze({
-    'InternalServerError' : 0,
-    'UserNotFound' : 1
-});
-exports.Exceptions = Exceptions;
+const db = DatabaseConnection.getInstance();
 
 class UserMapper {
 
@@ -114,7 +110,7 @@ class UserMapper {
             })
             if (activeUsersWithMatchingId.length === 0) {
                 console.log('Could not update the requested active user because it does not exist');
-                reject(Exceptions.UserNotFound);
+                reject(Exceptions.InternalServerError);
             }
             else if (activeUsersWithMatchingId.length > 1) {
                 console.log('There is more than one activeUser with the same id. Fix this!')
@@ -152,7 +148,7 @@ getUserArray = (jsonUsers) => {
 
 loadUsers = async () => {
     return new Promise((resolve, reject) => {
-        var query = "SELECT id, is_admin, email, password, salt, first_name, last_name, phone, address FROM users";
+        var query = "SELECT * FROM users";
         db.query(query, (err, result) => {
             if (!err) {
                 resolve(getUserArray(result));
@@ -165,12 +161,20 @@ loadUsers = async () => {
     })
 }
 
+getActiveUserArray = (jsonUsers) => {
+    var users = [];
+    jsonUsers.forEach((jsonUser) => {
+        users.push(new ActiveUser(jsonUser));
+    })
+    return users;
+}
+
 loadActiveUsers = async () => {
     return new Promise((resolve, reject) => {
-        let sql = 'SELECT id, is_admin, email, password, salt, first_name, last_name, phone, address FROM users WHERE id IN (SELECT id from activeUsers)';
+        let sql = 'SELECT * FROM activeUsers';
         db.query(sql, (err, result) => {
             if (!err) {
-                resolve(getUserArray(result));
+                resolve(getActiveUserArray(result));
             }
             else {
                 console.log(err);

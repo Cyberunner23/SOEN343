@@ -32,7 +32,7 @@ export default class ActiveUsers extends Component {
             content = (
                 <ul>
                     {this.state.activeUsers.map(user =>
-                        <li key={user.email}>{user.first_name} {user.last_name}</li>
+                        <li key={user.email}><b>{user.first_name} {user.last_name}</b> {user.timestamp}</li>
                     )}
                 </ul>
             );
