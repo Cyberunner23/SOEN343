@@ -64,7 +64,6 @@ exports.authenticate = async function (req, res) {
 }
 
 exports.registerUser = async function (req, res) {
-
     userMapper.getUsers({email: req.body.email})
     .then((result) => {
         if (result.length === 0) {
@@ -87,11 +86,34 @@ exports.registerUser = async function (req, res) {
     });
 }
 
-exports.activeUsers = async function (req, res) {
+exports.activeUsers = async (req, res) => {
     userMapper.getActiveUsers()
-    .then((activeUsers) => {
-        res.status(200);
-        res.json(convertToFrontendUsers(activeUsers));
+    .then(async activeUsers => { // activeUsers only have index, id and timestamp. Must convert to users before sending to frontend
+        var users = [];
+        var success = true;
+        await asyncForEach(activeUsers, async activeUser => {
+            userMapper.getUsers({id: activeUser.id})
+            .then(result => {
+                if (result.length === 1) {
+                    users.push(result[0]);
+                }
+                else {
+                    console.log('There should be exactly 1 user with the supplied id. Something is wrong.');
+                    handleException(res, Exception.InternalServerError);
+                    success = false;
+                    return;
+                }
+            })
+            .catch(exception => {
+                handleException(exception);
+                success = false;
+                return;
+            })
+        })
+        if (success) {
+            res.status(200);
+            res.json(convertToFrontendUsers(users));
+        }
     })
     .catch((exception) => {
         handleException(res, exception);
@@ -100,6 +122,10 @@ exports.activeUsers = async function (req, res) {
 
 handleException = function (res, exception) {
     switch(exception) {
+        case UserMapper.Exceptions.UserNotFound:
+            res.status(400);
+            res.json('User not found');
+            break;
         case UserMapper.Exceptions.InternalServerError:
         default:
             res.status(500);
@@ -108,11 +134,16 @@ handleException = function (res, exception) {
 }
 
 convertToFrontendUsers = (users) => {
-    frontendUsers = [];
-    users.forEach((user) => {
-        frontendUsers.push(convertToFrontendUser(user));
-    })
-    return frontendUsers;
+    try {
+        frontendUsers = [];
+        users.forEach((user) => {
+            frontendUsers.push(convertToFrontendUser(user));
+        })
+        return frontendUsers;
+    }
+    catch (err) {
+        console.log(err);
+    }
 }
 
 convertToFrontendUser = (user) => {
@@ -125,4 +156,16 @@ convertToFrontendUser = (user) => {
     return (
         {is_admin, email, first_name, last_name, phone, address}
     )
+}
+
+asyncForEach = async (array, callback) => {
+    console.log('for each');
+    try {
+        for (var i = 0; i < array.length; i++) {
+            await callback(array[i]);
+        }
+    }
+    catch (e) {
+        console.log(e);
+    }
 }

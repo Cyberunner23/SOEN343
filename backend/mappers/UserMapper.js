@@ -43,16 +43,21 @@ class UserMapper {
     // Doesn't apply to InventoryMapper
     async getActiveUsers (jsonCriteria) {
         return new Promise((resolve, reject) => {
-            var keys = Object.keys(jsonCriteria);
-            var filteredActiveUsers =  this.activeUsers.filter(activeUser => {
-                for (var key of keys) {
-                    if (activeUser[key] !== jsonCriteria[key]) {
-                        return false; // filter out
+            if (jsonCriteria) {
+                var keys = Object.keys(jsonCriteria);
+                var filteredActiveUsers =  this.activeUsers.filter(activeUser => {
+                    for (var key of keys) {
+                        if (activeUser[key] !== jsonCriteria[key]) {
+                            return false; // filter out
+                        }
                     }
-                }
-                return true; // keep
-            })
-            resolve(filteredActiveUsers);
+                    return true; // keep
+                })
+                resolve(filteredActiveUsers);
+            }
+            else {
+                resolve(this.activeUsers);
+            }
         })
     }
     
@@ -108,6 +113,7 @@ class UserMapper {
                 return user.id === jsonActiveUser.id;
             })
             if (activeUsersWithMatchingId.length === 0) {
+                console.log('Could not update the requested active user because it does not exist');
                 reject(Exceptions.UserNotFound);
             }
             else if (activeUsersWithMatchingId.length > 1) {

@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { TabsState } from '../TabsFactory/TabsFactory.js'
 import './Register.css'
 
 export default class Register extends Component {
@@ -43,7 +42,7 @@ export default class Register extends Component {
             .then((user) => {
                 if (user !== null) {
                     console.log('Client created successfully');
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New user ' + data.first_name + ' created'})
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New user ' + user.first_name + ' created'})
                 } else {
                     console.log('email already used');
                     this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'email already used'})
