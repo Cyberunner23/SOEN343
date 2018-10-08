@@ -21,8 +21,8 @@ class UserMapper {
     }
 
     // The InventoryMapper will need 4 get methods (one for each item type)
-    async getUsers (jsonCriteria) {
-        return new Promise((resolve, reject) => {
+    getUsers (jsonCriteria) {
+        if (jsonCriteria) {
             var keys = Object.keys(jsonCriteria);
             var filteredUsers =  this.users.filter(user => {
                 for (var key of keys) {
@@ -32,29 +32,30 @@ class UserMapper {
                 }
                 return true; // keep
             })
-            resolve(filteredUsers);
-        })
+            return filteredUsers;
+        }
+        else {
+            return this.users;
+        }
     }
 
     // Doesn't apply to InventoryMapper
-    async getActiveUsers (jsonCriteria) {
-        return new Promise((resolve, reject) => {
-            if (jsonCriteria) {
-                var keys = Object.keys(jsonCriteria);
-                var filteredActiveUsers =  this.activeUsers.filter(activeUser => {
-                    for (var key of keys) {
-                        if (activeUser[key] !== jsonCriteria[key]) {
-                            return false; // filter out
-                        }
+    getActiveUsers (jsonCriteria) {
+        if (jsonCriteria) {
+            var keys = Object.keys(jsonCriteria);
+            var filteredActiveUsers =  this.activeUsers.filter(activeUser => {
+                for (var key of keys) {
+                    if (activeUser[key] !== jsonCriteria[key]) {
+                        return false; // filter out
                     }
-                    return true; // keep
-                })
-                resolve(filteredActiveUsers);
-            }
-            else {
-                resolve(this.activeUsers);
-            }
-        })
+                }
+                return true; // keep
+            })
+            return filteredActiveUsers;
+        }
+        else {
+            return this.activeUsers;
+        }
     }
     
     // The InventoryMapper will need 4 add methods (one for each item type)
