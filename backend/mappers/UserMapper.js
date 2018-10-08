@@ -21,16 +21,10 @@ class UserMapper {
     }
 
     // The InventoryMapper will need 4 get methods (one for each item type)
-    getUsers (jsonCriteria) {
-        if (jsonCriteria) {
-            var keys = Object.keys(jsonCriteria);
+    getUsers (callback) {
+        if (callback) {
             var filteredUsers =  this.users.filter(user => {
-                for (var key of keys) {
-                    if (user[key] !== jsonCriteria[key]) {
-                        return false; // filter out
-                    }
-                }
-                return true; // keep
+                return callback(user);
             })
             return filteredUsers;
         }
@@ -40,16 +34,10 @@ class UserMapper {
     }
 
     // Doesn't apply to InventoryMapper
-    getActiveUsers (jsonCriteria) {
-        if (jsonCriteria) {
-            var keys = Object.keys(jsonCriteria);
+    getActiveUsers (callback) {
+        if (callback) {
             var filteredActiveUsers =  this.activeUsers.filter(activeUser => {
-                for (var key of keys) {
-                    if (activeUser[key] !== jsonCriteria[key]) {
-                        return false; // filter out
-                    }
-                }
-                return true; // keep
+                return callback(activeUser);
             })
             return filteredActiveUsers;
         }

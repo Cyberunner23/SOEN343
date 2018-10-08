@@ -22,7 +22,12 @@ cron.schedule("* * * * *", () => {
 const userMapper = UserMapper.getInstance();
 
 exports.authenticate = async (req, res) => {
-    var users = userMapper.getUsers({email: req.body.email, password: req.body.password});
+    var users = userMapper.getUsers(user => {
+        return(
+            user.email === req.body.email &&
+            user.password === req.body.password
+        );
+    });
     if (users.length === 0) {
         console.log('invalid login');
         res.status(400);
@@ -31,11 +36,15 @@ exports.authenticate = async (req, res) => {
     else if (users.length === 1) {
         console.log('login success')
         var user = users[0];
-        var activeUsersArray = userMapper.getActiveUsers({id: user.id});
+        var activeUsersArray = userMapper.getActiveUsers(activeUser => {
+            return (
+                activeUser.id === user.id
+            )
+        });
 
         if (activeUsersArray.length > 1) {
             console.log('There is more than one active user with the same id in the database. Fix it!');
-            handleException(res, Exception.InternalServerError);
+            handleException(res, Exceptions.InternalServerError);
             return; // terminate callback
         }
 
@@ -64,12 +73,16 @@ exports.authenticate = async (req, res) => {
     }
     else {
         console.log('There is more than one user with the same email and password in the database. Fix it!');
-        handleException(res, Exception.InternalServerError);
+        handleException(res, Exceptions.InternalServerError);
     }
 }
 
 exports.registerUser = async function (req, res) {
-    var result = userMapper.getUsers({email: req.body.email});
+    var result = userMapper.getUsers(user => {
+        return (
+            user.email === req.body.email
+        )
+    });
     if (result.length === 0) {
         req.body.salt = 'bon matin'; // change this when encryption is implemented
         userMapper.addUser(req.body)
@@ -91,14 +104,18 @@ exports.activeUsers = async (req, res) => {
     var userPairs = [];
     
     activeUsers.forEach(activeUser => {
-        var userArray = userMapper.getUsers({id: activeUser.id});
+        var userArray = userMapper.getUsers(user => {
+            return (
+                user.id === activeUser.id
+            )
+        });
         if (userArray.length === 1) {
             var userPair = {user: userArray[0], activeUser};
             userPairs.push(userPair);
         }
         else {
             console.log('There should be exactly 1 user with the supplied id. Something is wrong.');
-            throw Exception.InternalServerError;
+            throw Exceptions.InternalServerError;
         }
 
     })
@@ -109,7 +126,11 @@ exports.activeUsers = async (req, res) => {
 
 exports.logout = async (req, res) => {
 
-    var userArray = userMapper.getUsers({email: req.body.email});
+    var userArray = userMapper.getUsers(user => {
+        return (
+            user.email === req.body.email
+        )
+    });
     if (userArray.length > 1) {
         console.log('There is more than 1 user with the same email. Fix it!');
         handleException(res, Exceptions.InternalServerError);
