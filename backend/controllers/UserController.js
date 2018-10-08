@@ -2,8 +2,8 @@ const UserMapper = require('../mappers/UserMapper');
 const Exceptions = require('../Exceptions').Exceptions;
 const cron = require('node-cron');
 
-// every minute, logout users that haven't been active for at least x minutes
-const x = 5;
+// every minute, automatically logout users that haven't been active for at least x minutes
+const x = 0; // made it 0 minutes for testing. We can change this LATER
 cron.schedule("* * * * *", () => {
     userMapper.removeActiveUsers(user => {
         var currentMilliseconds = new Date().getTime(); // creating a new date initializes time to current time
@@ -34,38 +34,12 @@ exports.authenticate = async (req, res) => {
         res.json({err: 'Invalid credentials'});
     }
     else if (users.length === 1) {
-        console.log('login success')
         var user = users[0];
-        var activeUsersArray = userMapper.getActiveUsers(activeUser => {
-            return (
-                activeUser.id === user.id
-            )
-        });
-
-        if (activeUsersArray.length > 1) {
-            console.log('There is more than one active user with the same id in the database. Fix it!');
-            handleException(res, Exceptions.InternalServerError);
-            return; // terminate callback
-        }
-
-        var timestamp = new Date(new Date().getTime());
-
-        var jsonActiveUser = {id: user.id, timestamp};
-
-        var promise;
-        if (activeUsersArray.length === 0) {
-            // add new active user
-            promise = userMapper.addActiveUser(jsonActiveUser);
-        }
-        else { // activeUsers.length must be 1
-            // update timestamp
-            promise = userMapper.updateActiveUser(jsonActiveUser);
-        }
-
-        promise.then(() => {
-            // If nothing went wrong when adding/updating activeUser
+        refreshActivityStatus(user.id) // we will use authToken in the future
+        .then(() => {
+            console.log('login success');
             res.status(200);
-            res.json(convertToFrontendUser(user))
+            res.json(convertToFrontendUser(user));
         })
         .catch(exception => {
             handleException(res, exception);
@@ -77,51 +51,63 @@ exports.authenticate = async (req, res) => {
     }
 }
 
-exports.registerUser = async function (req, res) {
-    var result = userMapper.getUsers(user => {
-        return (
-            user.email === req.body.email
-        )
-    });
-    if (result.length === 0) {
-        req.body.salt = 'bon matin'; // change this when encryption is implemented
-        userMapper.addUser(req.body)
-        .then((user) => {
-            res.status(200);
-            res.json(convertToFrontendUser(user));
-        })
-        .catch((exception) => {
-            handleException(res, exception);
+exports.registerUser = async (req, res) => {
+    refreshActivityStatus(req.body.authToken)
+    .then(activeUser => {
+        var result = userMapper.getUsers(user => {
+            return (
+                user.email === req.body.email
+            )
         });
-    } else {
-        console.log('email already exists');
-        handleException(res, Exceptions.EmailAlreadyUsed);
-    }
+        if (result.length === 0) {
+            req.body.salt = 'bon matin'; // change this when encryption is implemented
+            userMapper.addUser(req.body)
+            .then((user) => {
+                res.status(200);
+                res.json(convertToFrontendUser(user));
+            })
+            .catch((exception) => {
+                handleException(res, exception);
+            });
+        } else {
+            console.log('email already exists');
+            handleException(res, Exceptions.EmailAlreadyUsed);
+        }
+    })
+    .catch(exception => {
+        handleException(res, exception);
+    })
 }
 
 exports.activeUsers = async (req, res) => {
-    var activeUsers = userMapper.getActiveUsers(); // activeUsers only have index, id and timestamp. Must retrieve user info before sending to frontend
-    var userPairs = [];
+    refreshActivityStatus(req.body.authToken)
+    .then(activeUser => {
+        var activeUsers = userMapper.getActiveUsers(); // activeUsers only have index, id and timestamp. Must retrieve user info before sending to frontend
+        var userPairs = [];
+        
+        activeUsers.forEach(activeUser => {
+            var userArray = userMapper.getUsers(user => {
+                return (
+                    user.id === activeUser.id
+                )
+            });
+            if (userArray.length === 1) {
+                var userPair = {user: userArray[0], activeUser};
+                userPairs.push(userPair);
+            }
+            else {
+                console.log('There should be exactly 1 user with the supplied id. Something is wrong.');
+                throw Exceptions.InternalServerError;
+            }
     
-    activeUsers.forEach(activeUser => {
-        var userArray = userMapper.getUsers(user => {
-            return (
-                user.id === activeUser.id
-            )
-        });
-        if (userArray.length === 1) {
-            var userPair = {user: userArray[0], activeUser};
-            userPairs.push(userPair);
-        }
-        else {
-            console.log('There should be exactly 1 user with the supplied id. Something is wrong.');
-            throw Exceptions.InternalServerError;
-        }
-
+        })
+        
+        res.status(200);
+        res.json(convertToFrontendActiveUsers(userPairs));
     })
-    
-    res.status(200);
-    res.json(convertToFrontendActiveUsers(userPairs));
+    .catch(exception => {
+        handleException(res, exception);
+    })
 }
 
 exports.logout = async (req, res) => {
@@ -159,6 +145,9 @@ handleException = function (res, exception) {
     console.log('An exception occured');
     var message;
     switch(exception) {
+        case Exceptions.Unauthorized:
+            res.status(401);
+            message = 'Unauthorized';
         case Exceptions.EmailAlreadyUsed:
             res.status(400);
             message = 'Email already used';
@@ -205,8 +194,9 @@ convertToFrontendUser = (user) => {
     let last_name = user.last_name;
     let phone = user.phone;
     let address = user.address;
+    let authToken = user.id; // use the id for now
     return (
-        {is_admin, email, first_name, last_name, phone, address}
+        {is_admin, email, first_name, last_name, phone, address, authToken}
     )
 }
 
@@ -216,8 +206,41 @@ convertToFrontendActiveUser = pair => {
     return jsonUser;
 }
 
-asyncForEach = async (array, callback) => {
-    for (var i = 0; i < array.length; i++) {
-        await callback(array[i]);
-    }
+refreshActivityStatus = async (id) => { // use id for now. In the future, use authToken
+    return new Promise((resolve, reject) => {
+        var activeUsersArray = userMapper.getActiveUsers(activeUser => {
+            return (
+                activeUser.id === id
+            )
+        });
+    
+        if (activeUsersArray.length > 1) {
+            console.log('There is more than one active user with the same id in the database. Fix it!');
+            reject(Exceptions.InternalServerError);
+            return; // terminate callback
+        }
+    
+        var timestamp = new Date(new Date().getTime());
+    
+        var jsonActiveUser = ({id, timestamp});
+    
+        var promise;
+        if (activeUsersArray.length === 0) {
+            // add new active user
+            promise = userMapper.addActiveUser(jsonActiveUser);
+        }
+        else { // activeUsers.length must be 1
+            // update timestamp
+            promise = userMapper.updateActiveUser(jsonActiveUser);
+        }
+    
+        promise.then(activeUser => {
+            // If nothing went wrong when adding/updating activeUser
+            resolve(activeUser);
+        })
+        .catch(exception => {
+            console.log('promise exception');
+            reject(exception);
+        })
+    })
 }

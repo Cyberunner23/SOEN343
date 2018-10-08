@@ -13,7 +13,11 @@ export default class ActiveUsers extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/activeUsers')
+        fetch('/api/users/activeUsers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({authToken: this.state.app.state.currentUser.authToken})
+        })
         .then(res => {
             if (res.status === 200) {
                 res.json().then(
