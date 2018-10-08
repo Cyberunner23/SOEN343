@@ -13,13 +13,49 @@ exports.authenticate = async function (req, res) {
         }
         else if (users.length === 1) {
             console.log('login success')
-            res.status(200);
-            res.json(convertToFrontendUser(users[0]));
+
+            var user = users[0];
+
+            userMapper.getActiveUsers({id: user.id})
+            .then(activeUsersArray => {
+
+                if (activeUsersArray.length > 1) {
+                    console.log('There is more than one active user with the same id in the database. Fix it!');
+                    handleException(res, Exception.InternalServerError);
+                    return; // terminate callback
+                }
+
+                var timestamp = new Date(new Date().getTime());
+
+                var jsonActiveUser = {id: user.id, timestamp};
+
+                var promise;
+                if (activeUsersArray.length === 0) {
+                    // add new active user
+                    promise = userMapper.addActiveUser(jsonActiveUser);
+                }
+                else { // activeUsers.length must be 1
+                    // update timestamp
+                    promise = userMapper.updateActiveUser(jsonActiveUser);
+                }
+
+                promise.then(() => {
+                    // If nothing went wrong when adding/updating activeUser
+                    res.status(200);
+                    res.json(convertToFrontendUser(user))
+                })
+                .catch(exception => {
+                    handleException(res, exception);
+                })
+            })
+            .catch(exception => {
+                handleException(res, exception);
+            })
+
         }
         else {
             console.log('There is more than one user with the same email and password in the database. Fix it!');
-            res.status(500);
-            res.send({err: 'Internal server error'});
+            handleException(res, Exception.InternalServerError);
         }
     })
     .catch((exception) => {
@@ -43,8 +79,7 @@ exports.registerUser = async function (req, res) {
             });
         } else {
             console.log('email already exists');
-            res.status(400);
-            res.send();
+            handleException(res, Exception.InternalServerError);
         }
     })
     .catch((exception) => {
@@ -68,7 +103,7 @@ handleException = function (res, exception) {
         case UserMapper.Exceptions.InternalServerError:
         default:
             res.status(500);
-            res.send();
+            res.json('Internal Server Error');
     }
 }
 

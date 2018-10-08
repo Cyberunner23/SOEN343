@@ -1,11 +1,13 @@
 const mysql = require('mysql');
 const DatabaseConnection = require('../DatabaseConnection');
 const User = require('../business_objects/user').User;
+const ActiveUser = require('../business_objects/activeUser').ActiveUser;
 
 const db = DatabaseConnection.getInstance();
 
 const Exceptions = Object.freeze({
-    'InternalServerError' : 0
+    'InternalServerError' : 0,
+    'UserNotFound' : 1
 });
 exports.Exceptions = Exceptions;
 
@@ -39,9 +41,18 @@ class UserMapper {
     }
 
     // Doesn't apply to InventoryMapper
-    async getActiveUsers () {
+    async getActiveUsers (jsonCriteria) {
         return new Promise((resolve, reject) => {
-            resolve(this.activeUsers);
+            var keys = Object.keys(jsonCriteria);
+            var filteredActiveUsers =  this.activeUsers.filter(activeUser => {
+                for (var key of keys) {
+                    if (activeUser[key] !== jsonCriteria[key]) {
+                        return false; // filter out
+                    }
+                }
+                return true; // keep
+            })
+            resolve(filteredActiveUsers);
         })
     }
     
@@ -68,6 +79,59 @@ class UserMapper {
                     resolve (newUser);
                 }
             });
+        })
+    }
+
+    async addActiveUser (jsonActiveUser) {
+        return new Promise((resolve, reject) => {
+            var query = 'INSERT INTO activeUsers (id, timestamp) VALUES (?, ?)'
+            var inserts = [jsonActiveUser.id, jsonActiveUser.timestamp];
+            query = mysql.format(query, inserts);
+            db.query(query, (err, response) => {
+                if (err) {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+                else {
+                    jsonActiveUser.index = response.insertId;
+                    var newActiveUser = new ActiveUser(jsonActiveUser);
+                    this.activeUsers.push(newActiveUser);
+                    resolve (newActiveUser);
+                }
+            })
+        })
+    }
+
+    async updateActiveUser (jsonActiveUser) {
+        return new Promise((resolve, reject) => {
+            var activeUsersWithMatchingId = this.activeUsers.filter(user => {
+                return user.id === jsonActiveUser.id;
+            })
+            if (activeUsersWithMatchingId.length === 0) {
+                reject(Exceptions.UserNotFound);
+            }
+            else if (activeUsersWithMatchingId.length > 1) {
+                console.log('There is more than one activeUser with the same id. Fix this!')
+                reject(Exceptions.InternalServerError);
+            }
+            else { // activeUsersWithMatchingId.length must be 1
+                var query = "UPDATE activeUsers SET timestamp=? WHERE id=?";
+                var inserts = [jsonActiveUser.timestamp, jsonActiveUser.id];
+                query = mysql.format(query, inserts);
+                db.query(query, (err, response) => {
+                    if (err) {
+                        console.log(err);
+                        reject(Exceptions.InternalServerError);
+                    }
+                    else {
+                        var index = this.activeUsers.findIndex(user => {
+                            return user.id === jsonActiveUser.id;
+                        })
+                        this.activeUsers[index].timestamp = jsonActiveUser.timestamp;
+                        resolve(this.activeUsers[index]);
+                    }
+                })
+            }
         })
     }
 }
