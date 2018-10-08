@@ -1,5 +1,23 @@
 const UserMapper = require('../mappers/UserMapper');
 const Exceptions = require('../Exceptions').Exceptions;
+const cron = require('node-cron');
+
+// every minute, logout users that haven't been active for at least x minutes
+const x = 5;
+cron.schedule("* * * * *", () => {
+    userMapper.removeActiveUsers(user => {
+        var currentMilliseconds = new Date().getTime(); // creating a new date initializes time to current time
+        return (currentMilliseconds - user.timestamp.getTime()) >= x * 60 * 1000; // getTime() returns milliseconds
+    })
+    .then(activeUsers => {
+        activeUsers.forEach(user => {
+            console.log('User with id=' + user.id + ' automatically logged out');
+        })
+    })
+    .catch(exception => {
+        console.log('An exception occured when attempting to run auto-logout feature');
+    })
+});
 
 const userMapper = UserMapper.getInstance();
 
@@ -101,9 +119,11 @@ exports.logout = async (req, res) => {
         handleException(res, Exceptions.UserDoesNotExist);
     }
     else { // userArray.length must be 1
-        var user = userArray[0];
-        userMapper.removeActiveUsers(user.id)
-        .then(removedUsersArray => {
+        var userToLogout = userArray[0];
+        userMapper.removeActiveUsers(user => {
+            return user.id === userToLogout.id;
+        })
+        .then(() => {
             console.log('logout success');
             res.status(200);
             res.send();

@@ -57,7 +57,7 @@ class UserMapper {
             return this.activeUsers;
         }
     }
-    
+
     // The InventoryMapper will need 4 add methods (one for each item type)
     async addUser (jsonUser) {
         return new Promise((resolve, reject) => {
@@ -74,7 +74,7 @@ class UserMapper {
                 } else {
                     // The id is acquired from the DB. This won't be possible for InventoryMapper for iteration 3
                     jsonUser.id = response.insertId;
-            
+
                     // This is basically all InventoryMapper.addItem methods need for iteration 3
                     var newUser = new User(jsonUser);
                     this.users.push(newUser); // add user to cache
@@ -138,22 +138,31 @@ class UserMapper {
         })
     }
 
-    async removeActiveUsers (id) {
+    async removeActiveUsers (callback) {
         return new Promise((resolve, reject) => {
             var query;
             var removedUsers = [];
-    
-            if (id) {
-                var index = this.activeUsers.findIndex(user => {
-                    return user.id === id;
-                });
-                if (index >= 0) {
-                    removedUsers = this.activeUsers.splice(index, 1);
-                    query = 'DELETE FROM activeUsers WHERE id=' + id;
+
+            if (callback) {
+
+                var removedUsers = this.activeUsers.filter(user => {
+                    return callback(user);
+                })
+
+                this.activeUsers = this.activeUsers.filter(user => {
+                    return ! callback(user);
+                })
+
+                if (removedUsers.length > 0) {
+                    var idsToRemove = [];
+                    removedUsers.forEach(user => {
+                        idsToRemove.push(user.id);
+                    })
+                    query = 'DELETE FROM activeUsers WHERE id IN (' + idsToRemove.join() + ')';
                 }
                 else {
-                    console.log('Requested active user does not exist');
-                    reject(Exceptions.UserDoesNotExist);
+                    // no user to remove
+                    resolve([]);
                     return;
                 }
             }
@@ -162,7 +171,7 @@ class UserMapper {
                 removedUsers = this.activeUsers.splice(0, this.activeUsers.length);
                 query = 'DELETE FROM activeUsers'
             }
-    
+
             db.query(query, (err, result) => {
                 if (!err) {
                     resolve(removedUsers);
