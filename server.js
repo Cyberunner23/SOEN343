@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const UserController = require('./backend/controllers/UserController');
+const UserController = require('./backend/controllers/UserController').getInstance();
 
 const port = 5000;
 
