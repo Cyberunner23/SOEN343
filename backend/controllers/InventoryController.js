@@ -1,6 +1,5 @@
 const InventoryMapper = require('../mappers/InventoryMapper');
 const inventoryMapper = InventoryMapper.getInstance();
-const Book = require('../business_objects/Book').Book;
 
 exports.getBooks = async function (req, res) {
     var result = inventoryMapper.getBooks()
@@ -21,6 +20,30 @@ exports.addBook = async function (req, res) {
     }
     else {
         console.log("already added book");
+        res.status(400);
+        res.send();
+    }
+}
+
+exports.getMagazines = async function (req, res) {
+    var result = inventoryMapper.getMagazines()
+            res.status(200);
+            res.json(result);
+}
+
+exports.addMagazine = async function (req, res) {
+    var result = inventoryMapper.getMagazines(magazine => {
+        return magazine.isbn10 === req.body.isbn10;
+    })
+    if (result.length === 0) {
+        inventoryMapper.addMagazine(req.body)
+            .then((magazine) => {
+                res.status(200);
+                res.json(magazine);
+            });
+    }
+    else {
+        console.log("already added magazine");
         res.status(400);
         res.send();
     }
