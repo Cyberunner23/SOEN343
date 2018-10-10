@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { TabsState } from '../TabsFactory/TabsFactory.js'
 import './Register.css'
 
 export default class Register extends Component {

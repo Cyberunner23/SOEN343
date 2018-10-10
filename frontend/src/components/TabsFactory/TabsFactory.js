@@ -8,12 +8,11 @@ import Logout from '../useCaseComponents/Logout.js';
 import Register from '../useCaseComponents/Register.js';
 import ViewBooks from '../useCaseComponents/ViewBooks.js';
 
-var TabsState = Object.freeze({'Welcome' : 0, 'Admin' : 1, 'Client' : 2});
+var TabsState = Object.freeze({ 'Welcome': 0, 'Admin': 1, 'Client': 2 });
 
 class TabsFactory {
     static buildTabs(tabsState, app) { // a reference to app can be used by components to call app.setTabsState()
-        switch(tabsState)
-        {
+        switch (tabsState) {
             case TabsState.Welcome:
                 return (
                     <Tabs>
@@ -21,11 +20,11 @@ class TabsFactory {
                             <Tab>Login</Tab>
                         </TabList>
                         <TabPanel>
-                            <Login app = {app} />
+                            <Login app={app} />
                         </TabPanel>
                     </Tabs>
                 )
-    
+
             case TabsState.Admin:
                 return (
                     <Tabs>
@@ -33,27 +32,37 @@ class TabsFactory {
                             <Tab>Register Admin</Tab>
                             <Tab>Register User</Tab>
                             <Tab>View Active Users</Tab>
-                            <Tab>View Books</Tab>
+                            <Tab>View Library Items</Tab>
                             <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
-                            <Register app = {app} is_admin = {1}/>
+                            <Register app={app} is_admin={1} />
                         </TabPanel>
                         <TabPanel>
-                            <Register app = {app} is_admin = {0}/>
+                            <Register app={app} is_admin={0} />
                         </TabPanel>
                         <TabPanel>
-                            <ActiveUsers app = {this}/>
+                            <ActiveUsers app={this} />
                         </TabPanel>
                         <TabPanel>
-                            <ViewBooks app = {this}/>
+                            <Tabs>
+                                <TabList>
+                                    <Tab>Books</Tab>
+                                    <Tab>Magazines</Tab>
+                                    <Tab>Movies</Tab>
+                                    <Tab>Music</Tab>
+                                </TabList>
+                            <TabPanel>
+                                <ViewBooks app={this} />
+                            </TabPanel>
+                            </Tabs>
                         </TabPanel>
                         <TabPanel>
-                            <Logout app = {app}/>
+                            <Logout app={app} />
                         </TabPanel>
                     </Tabs>
                 )
-    
+
             case TabsState.Client:
                 return (
                     <Tabs>
@@ -65,7 +74,7 @@ class TabsFactory {
                             Oops! Nothing to see here...
                         </TabPanel>
                         <TabPanel>
-                            <Logout app = {app}/>
+                            <Logout app={app} />
                         </TabPanel>
                     </Tabs>
                 )
@@ -76,4 +85,4 @@ class TabsFactory {
     }
 }
 
-export {TabsState, TabsFactory};
+export { TabsState, TabsFactory };
