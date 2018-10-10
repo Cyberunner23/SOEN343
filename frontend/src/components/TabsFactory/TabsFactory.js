@@ -42,7 +42,7 @@ class TabsFactory {
                             <Register app={app} is_admin={0} />
                         </TabPanel>
                         <TabPanel>
-                            <ActiveUsers app={this} />
+                            <ActiveUsers app={app} />
                         </TabPanel>
                         <TabPanel>
                             <Tabs>

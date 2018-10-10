@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-export default class ActiveUsers extends Component {
+export default class ViewBooks extends Component {
 
     constructor(props) {
         super(props);
