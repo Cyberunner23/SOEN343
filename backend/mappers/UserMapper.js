@@ -1,13 +1,11 @@
 const mysql = require('mysql');
 const DatabaseConnection = require('../DatabaseConnection');
 const User = require('../business_objects/user').User;
+const ActiveUser = require('../business_objects/activeUser').ActiveUser;
+
+const Exceptions = require('../Exceptions').Exceptions;
 
 const db = DatabaseConnection.getInstance();
-
-const Exceptions = Object.freeze({
-    'InternalServerError' : 0
-});
-exports.Exceptions = Exceptions;
 
 class UserMapper {
 
@@ -23,28 +21,31 @@ class UserMapper {
     }
 
     // The InventoryMapper will need 4 get methods (one for each item type)
-    async getUsers (jsonCriteria) {
-        return new Promise((resolve, reject) => {
-            var keys = Object.keys(jsonCriteria);
+    getUsers (callback) {
+        if (callback) {
             var filteredUsers =  this.users.filter(user => {
-                for (var key of keys) {
-                    if (user[key] !== jsonCriteria[key]) {
-                        return false; // filter out
-                    }
-                }
-                return true; // keep
+                return callback(user);
             })
-            resolve(filteredUsers);
-        })
+            return filteredUsers;
+        }
+        else {
+            return this.users;
+        }
     }
 
     // Doesn't apply to InventoryMapper
-    async getActiveUsers () {
-        return new Promise((resolve, reject) => {
-            resolve(this.activeUsers);
-        })
+    getActiveUsers (callback) {
+        if (callback) {
+            var filteredActiveUsers =  this.activeUsers.filter(activeUser => {
+                return callback(activeUser);
+            })
+            return filteredActiveUsers;
+        }
+        else {
+            return this.activeUsers;
+        }
     }
-    
+
     // The InventoryMapper will need 4 add methods (one for each item type)
     async addUser (jsonUser) {
         return new Promise((resolve, reject) => {
@@ -61,13 +62,113 @@ class UserMapper {
                 } else {
                     // The id is acquired from the DB. This won't be possible for InventoryMapper for iteration 3
                     jsonUser.id = response.insertId;
-            
+
                     // This is basically all InventoryMapper.addItem methods need for iteration 3
                     var newUser = new User(jsonUser);
                     this.users.push(newUser); // add user to cache
                     resolve (newUser);
                 }
             });
+        })
+    }
+
+    async addActiveUser (jsonActiveUser) {
+        return new Promise((resolve, reject) => {
+            var query = 'INSERT INTO activeUsers (id, timestamp) VALUES (?, ?)'
+            var inserts = [jsonActiveUser.id, jsonActiveUser.timestamp];
+            query = mysql.format(query, inserts);
+            db.query(query, (err, response) => {
+                if (err) {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+                else {
+                    jsonActiveUser.index = response.insertId;
+                    var newActiveUser = new ActiveUser(jsonActiveUser);
+                    this.activeUsers.push(newActiveUser);
+                    resolve (newActiveUser);
+                }
+            })
+        })
+    }
+
+    async updateActiveUser (jsonActiveUser) {
+        return new Promise((resolve, reject) => {
+            var activeUsersWithMatchingId = this.activeUsers.filter(user => {
+                return user.id === jsonActiveUser.id;
+            })
+            if (activeUsersWithMatchingId.length === 0) {
+                console.log('Could not update the requested active user because it does not exist');
+                reject(Exceptions.InternalServerError);
+            }
+            else if (activeUsersWithMatchingId.length > 1) {
+                console.log('There is more than one activeUser with the same id. Fix this!')
+                reject(Exceptions.InternalServerError);
+            }
+            else { // activeUsersWithMatchingId.length must be 1
+                var query = "UPDATE activeUsers SET timestamp=? WHERE id=?";
+                var inserts = [jsonActiveUser.timestamp, jsonActiveUser.id];
+                query = mysql.format(query, inserts);
+                db.query(query, (err, response) => {
+                    if (err) {
+                        console.log(err);
+                        reject(Exceptions.InternalServerError);
+                    }
+                    else {
+                        var index = this.activeUsers.findIndex(user => {
+                            return user.id === jsonActiveUser.id;
+                        })
+                        this.activeUsers[index].timestamp = jsonActiveUser.timestamp;
+                        resolve(this.activeUsers[index]);
+                    }
+                })
+            }
+        })
+    }
+
+    async removeActiveUsers (callback) {
+        return new Promise((resolve, reject) => {
+            var query;
+            var removedUsers = [];
+
+            if (callback) {
+
+                var removedUsers = this.activeUsers.filter(user => {
+                    return callback(user);
+                })
+
+                this.activeUsers = this.activeUsers.filter(user => {
+                    return ! callback(user);
+                })
+
+                if (removedUsers.length > 0) {
+                    var idsToRemove = [];
+                    removedUsers.forEach(user => {
+                        idsToRemove.push(user.id);
+                    })
+                    query = 'DELETE FROM activeUsers WHERE id IN (' + idsToRemove.join() + ')';
+                }
+                else {
+                    // no user to remove
+                    resolve([]);
+                    return;
+                }
+            }
+            else {
+                console.log('Removing all active users. Hopefully this is actually what you wanted to do.');
+                removedUsers = this.activeUsers.splice(0, this.activeUsers.length);
+                query = 'DELETE FROM activeUsers'
+            }
+
+            db.query(query, (err, result) => {
+                if (!err) {
+                    resolve(removedUsers);
+                }
+                else {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+            })
         })
     }
 }
@@ -82,7 +183,7 @@ getUserArray = (jsonUsers) => {
 
 loadUsers = async () => {
     return new Promise((resolve, reject) => {
-        var query = "SELECT id, is_admin, email, password, salt, first_name, last_name, phone, address FROM users";
+        var query = "SELECT * FROM users";
         db.query(query, (err, result) => {
             if (!err) {
                 resolve(getUserArray(result));
@@ -95,12 +196,20 @@ loadUsers = async () => {
     })
 }
 
+getActiveUserArray = (jsonUsers) => {
+    var users = [];
+    jsonUsers.forEach((jsonUser) => {
+        users.push(new ActiveUser(jsonUser));
+    })
+    return users;
+}
+
 loadActiveUsers = async () => {
     return new Promise((resolve, reject) => {
-        let sql = 'SELECT id, is_admin, email, password, salt, first_name, last_name, phone, address FROM users WHERE id IN (SELECT id from activeUsers)';
+        let sql = 'SELECT * FROM activeUsers';
         db.query(sql, (err, result) => {
             if (!err) {
-                resolve(getUserArray(result));
+                resolve(getActiveUserArray(result));
             }
             else {
                 console.log(err);

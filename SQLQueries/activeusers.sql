@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Sep 28, 2018 at 02:48 AM
+-- Generation Time: Oct 10, 2018 at 04:56 PM
 -- Server version: 10.1.35-MariaDB
 -- PHP Version: 7.2.9
 
@@ -29,18 +29,31 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `activeusers` (
+  `index` int(11) NOT NULL,
   `id` int(11) NOT NULL,
-  `time_stamp` datetime NOT NULL
+  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Dumping data for table `activeusers`
+-- Indexes for dumped tables
 --
 
-INSERT INTO `activeusers` (`id`, `time_stamp`) VALUES
-(1, '2018-09-27 00:00:00'),
-(3, '2018-09-27 01:00:00'),
-(4, '2018-09-27 03:00:00');
+--
+-- Indexes for table `activeusers`
+--
+ALTER TABLE `activeusers`
+  ADD PRIMARY KEY (`index`),
+  ADD UNIQUE KEY `id` (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `activeusers`
+--
+ALTER TABLE `activeusers`
+  MODIFY `index` int(11) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
