@@ -215,7 +215,7 @@ convertToFrontendActiveUser = pair => {
     return jsonUser;
 }
 
-exports.identifyUser = async authToken => {
+identifyUser = async authToken => {
     return new Promise((resolve, reject) => {
         var users = userMapper.getUsers(user => {
             return user.id === authToken; // needs change -> get user id from auth token instead of using authToken directly
@@ -239,6 +239,7 @@ exports.identifyUser = async authToken => {
     })
 
 }
+exports.identifyUser = identifyUser;
 
 refreshActivityStatus = async (id) => { // use id for now. In the future, possibly use authToken
     return new Promise((resolve, reject) => {
