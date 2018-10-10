@@ -13,7 +13,7 @@ startAutoLogout = () => {
         })
         .then(activeUsers => {
             activeUsers.forEach(user => {
-                console.log('User with id=' + user.id + ' automatically logged out');
+                console.log('User with id=' + user.id + ' automatically removed from active users');
             })
         })
         .catch(exception => {
