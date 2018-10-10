@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const UserController = require('./backend/controllers/UserController');
+const InventoryController = require('./backend/controllers/InventoryController');
+
 
 const port = 5000;
 
@@ -14,3 +16,4 @@ app.listen(port, () => {
 app.post('/api/users/registerUser', UserController.registerUser);
 app.post('/api/users/login', UserController.authenticate);
 app.get('/api/activeUsers', UserController.activeUsers);
+app.get('/api/getBooks', InventoryController.getBooks)
