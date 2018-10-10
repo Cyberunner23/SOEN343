@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { TabsState } from '../TabsFactory/TabsFactory.js'
 import './Register.css'
 
 export default class Register extends Component {
@@ -43,7 +42,7 @@ export default class Register extends Component {
             .then((user) => {
                 if (user !== null) {
                     console.log('Client created successfully');
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New user ' + data.first_name + ' created'})
+                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New user ' + user.first_name + ' created'})
                 } else {
                     console.log('email already used');
                     this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'email already used'})
@@ -109,12 +108,13 @@ export default class Register extends Component {
         let last_name = props.last_name;
         let phone = props.phone;
         let address = props.address;
+        let authToken = this.state.app.state.currentUser.authToken;
 
         return new Promise((resolve, reject) => {
             fetch('/api/users/registerUser', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({is_admin, email, password, first_name, last_name, phone, address})
+                body: JSON.stringify({is_admin, email, password, first_name, last_name, phone, address, authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((user) => {

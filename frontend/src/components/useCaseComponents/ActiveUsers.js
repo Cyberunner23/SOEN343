@@ -10,10 +10,15 @@ export default class ActiveUsers extends Component {
             activeUsers: [],
             serverReturnedAnError: false
         }
+        this.componentDidMount = this.componentDidMount.bind(this);
     }
 
     componentDidMount() {
-        fetch('/api/activeUsers')
+        fetch('/api/users/activeUsers', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({authToken: this.state.app.state.currentUser.authToken})
+        })
         .then(res => {
             if (res.status === 200) {
                 res.json().then(
@@ -32,7 +37,7 @@ export default class ActiveUsers extends Component {
             content = (
                 <ul>
                     {this.state.activeUsers.map(user =>
-                        <li key={user.email}>{user.first_name} {user.last_name}</li>
+                        <li key={user.email}><b>{user.first_name} {user.last_name}</b> {user.timestamp}</li>
                     )}
                 </ul>
             );
@@ -44,6 +49,7 @@ export default class ActiveUsers extends Component {
         return (
             <div className = 'ActiveUsersComponent UseCaseComponent'>
                 <h2>Active Users</h2>
+                <button onClick = {this.componentDidMount}>Refresh</button>
                 {content}
             </div>
         );

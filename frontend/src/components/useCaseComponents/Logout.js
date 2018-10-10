@@ -18,10 +18,21 @@ class Logout extends Component {
         </div>
     )}
 
-    doLogout() {
-        this.state.app.setCurrentUser({});
-        this.state.app.setTabsState(TabsState.Welcome);
-        console.log('Logout successful');
+    async doLogout() {
+        fetch('/api/users/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({email: this.state.app.state.currentUser.email})
+        }).then(response => {
+            if (response.status === 200) {
+                this.state.app.setCurrentUser({});
+                this.state.app.setTabsState(TabsState.Welcome);
+                console.log('Logout successful');
+            }
+            else {
+                console.log('Logout failed');
+            }
+        });
     }
 }
 
