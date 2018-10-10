@@ -77,6 +77,8 @@ export default class ActiveUsers extends Component {
                     console.log('Book already added');
                     this.setState({ bookAdded: true, bookAddedMessage: 'book already added' })
                 }
+            }).then(() => {
+                this.componentDidMount();
             })
     }
 
