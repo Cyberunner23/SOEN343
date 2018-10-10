@@ -10,6 +10,7 @@ export default class ActiveUsers extends Component {
             activeUsers: [],
             serverReturnedAnError: false
         }
+        this.componentDidMount = this.componentDidMount.bind(this);
     }
 
     componentDidMount() {
@@ -48,6 +49,7 @@ export default class ActiveUsers extends Component {
         return (
             <div className = 'ActiveUsersComponent UseCaseComponent'>
                 <h2>Active Users</h2>
+                <button onClick = {this.componentDidMount}>Refresh</button>
                 {content}
             </div>
         );
