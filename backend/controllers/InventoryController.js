@@ -3,32 +3,25 @@ const inventoryMapper = InventoryMapper.getInstance();
 const Book = require('../business_objects/Book').Book;
 
 exports.getBooks = async function (req, res) {
-    inventoryMapper.getBooks({})
-        .then((books) => {
+    var result = inventoryMapper.getBooks()
             res.status(200);
-            res.json(books);
-        }).catch((exception) => {
-            console.log(exception);
-        });
+            res.json(result);
 }
 
 exports.addBook = async function (req, res) {
-    inventoryMapper.getBooks({ title: req.body.title })
-        .then((result) => {
-            if (result.length === 0) {
-                inventoryMapper.addBook(req.body.title)
-                .then((book) => {
-                    res.status(200);
-                    res.json(book);
-                });
-            }
-            else {
-                console.log("already added book");
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((exception) => {
-            console.log(exception);
-        })
+    var result = inventoryMapper.getBooks(book => {
+        return book.isbn10 === req.body.isbn10;
+    })
+    if (result.length === 0) {
+        inventoryMapper.addBook(req.body)
+            .then((book) => {
+                res.status(200);
+                res.json(book);
+            });
+    }
+    else {
+        console.log("already added book");
+        res.status(400);
+        res.send();
+    }
 }

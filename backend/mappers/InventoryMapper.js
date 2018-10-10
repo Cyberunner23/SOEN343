@@ -5,33 +5,30 @@ class InventoryMapper {
         this.books = [];
     }
 
-    async getBooks(jsonCriteria) {
-        return new Promise((resolve, reject) => {
-            var keys = Object.keys(jsonCriteria);
+    getBooks(callback) {
+        if (callback) {
             var filteredBooks = this.books.filter(book => {
-                for (var key of keys) {
-                    if (book[key] !== jsonCriteria[key]) {
-                        return false; // filter out
-                    }
-                }
-                return true; // keep
+                return callback(book);
             })
-            resolve(filteredBooks);
+            return filteredBooks;
+        }
+        else {
+            return this.books;
+        }
+    }
+
+    async addBook(jsonBook) {
+        return new Promise((resolve, reject) => {
+            var newBook = new Book(jsonBook);
+            this.books.push(newBook);
+            resolve(newBook);
         })
     }
 
-    async addBook(title) {
-                return new Promise((resolve, reject) => {
-                    var newBook = new Book(title);
-                    this.books.push(newBook);
-                    resolve(newBook);
-                })
-            }
-
 }
 
-    const instance = new InventoryMapper();
+const instance = new InventoryMapper();
 
-    exports.getInstance = () => {
-        return instance;
-    }
+exports.getInstance = () => {
+    return instance;
+}

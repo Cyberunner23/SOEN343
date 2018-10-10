@@ -6,6 +6,7 @@ export default class ActiveUsers extends Component {
         super(props);
         this.state = {
             title: '',
+            isbn10: '',
             app: props.app,
             books: [],
             bookAdded: false
@@ -46,6 +47,10 @@ export default class ActiveUsers extends Component {
                             Title:
         <input type="text" name="title" onChange={this.handleChange} />
                         </label>
+                        <label>
+                            ISBN-10:
+        <input type="text" name="isbn10" onChange={this.handleChange} />
+                        </label>
                         <button onClick={this.handleSubmit}>Submit</button>
                     </form>
                     {bookAddedMessage}
@@ -84,12 +89,13 @@ export default class ActiveUsers extends Component {
 
     async addBook(props) {
         let title = props.title;
+        let isbn10 = props.isbn10;
 
         return new Promise((resolve, reject) => {
             fetch('/api/addBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title })
+                body: JSON.stringify({title, isbn10})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((book) => {
