@@ -1,5 +1,6 @@
 const UserMapper = require('../mappers/UserMapper');
 const Exceptions = require('../Exceptions').Exceptions;
+const isString = require('util').isString;
 
 const userMapper = UserMapper.getInstance();
 
@@ -63,6 +64,22 @@ class UserController {
         .then(user => {
             if (!user.is_admin) {
                 handleException(res, Exceptions.Unauthorized);
+                return;
+            }
+            var body = req.body;
+            // validate request
+            if (
+                ! (
+                    isNonEmptyString(body.email) &&
+                    isNonEmptyString(body.password) &&
+                    isNonEmptyString(body.first_name) &&
+                    isNonEmptyString(body.last_name) &&
+                    isNonEmptyString(body.phone) &&
+                    isNonEmptyString(body.address)
+                )
+            ) {
+                console.log('One or more registerUser fields were null or empty');
+                handleException(res, Exceptions.InvalidRequestBody);
                 return;
             }
             var result = userMapper.getUsers(user => {
@@ -154,9 +171,14 @@ handleException = function (res, exception) {
     console.log('An exception occured');
     var message;
     switch(exception) {
+        case Exceptions.InvalidRequestBody:
+            res.status(400);
+            message = 'Invalid request body';
+            break;
         case Exceptions.Unauthorized:
             res.status(401);
             message = 'Unauthorized';
+            break;
         case Exceptions.EmailAlreadyUsed:
             res.status(400);
             message = 'Email already used';
@@ -278,4 +300,8 @@ refreshActivityStatus = async (id) => { // use id for now. In the future, possib
             reject(exception);
         })
     })
+}
+
+isNonEmptyString = input => {
+    return isString(input) && input.length != 0;
 }
