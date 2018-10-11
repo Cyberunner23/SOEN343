@@ -22,7 +22,7 @@ class Logout extends Component {
         fetch('/api/users/logout', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({email: this.state.app.state.currentUser.email})
+            body: JSON.stringify({authToken: this.state.app.state.currentUser.authToken})
         }).then(response => {
             if (response.status === 200) {
                 this.state.app.setCurrentUser({});

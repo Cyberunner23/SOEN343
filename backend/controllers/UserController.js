@@ -1,5 +1,6 @@
 const UserMapper = require('../mappers/UserMapper');
 const Exceptions = require('../Exceptions').Exceptions;
+const isString = require('util').isString;
 
 const userMapper = UserMapper.getInstance();
 
@@ -59,8 +60,28 @@ class UserController {
     }
     
     async registerUser (req, res) {
-        refreshActivityStatus(req.body.authToken)
-        .then(activeUser => {
+        identifyUser(req.body.authToken)
+        .then(user => {
+            if (!user.is_admin) {
+                handleException(res, Exceptions.Unauthorized);
+                return;
+            }
+            var body = req.body;
+            // validate request
+            if (
+                ! (
+                    isNonEmptyString(body.email) &&
+                    isNonEmptyString(body.password) &&
+                    isNonEmptyString(body.first_name) &&
+                    isNonEmptyString(body.last_name) &&
+                    isNonEmptyString(body.phone) &&
+                    isNonEmptyString(body.address)
+                )
+            ) {
+                console.log('One or more registerUser fields were null or empty');
+                handleException(res, Exceptions.InvalidRequestBody);
+                return;
+            }
             var result = userMapper.getUsers(user => {
                 return (
                     user.email === req.body.email
@@ -87,8 +108,12 @@ class UserController {
     }
     
     async activeUsers (req, res) {
-        refreshActivityStatus(req.body.authToken)
-        .then(activeUser => {
+        identifyUser(req.body.authToken)
+        .then(user => {
+            if (!user.is_admin) {
+                handleException(res, Exceptions.Unauthorized);
+                return;
+            }
             var activeUsers = userMapper.getActiveUsers(); // activeUsers only have index, id and timestamp. Must retrieve user info before sending to frontend
             var userPairs = [];
             
@@ -108,7 +133,6 @@ class UserController {
                 }
         
             })
-            
             res.status(200);
             res.json(convertToFrontendActiveUsers(userPairs));
         })
@@ -118,22 +142,8 @@ class UserController {
     }
     
     async logout (req, res) {
-    
-        var userArray = userMapper.getUsers(user => {
-            return (
-                user.email === req.body.email
-            )
-        });
-        if (userArray.length > 1) {
-            console.log('There is more than 1 user with the same email. Fix it!');
-            handleException(res, Exceptions.InternalServerError);
-        }
-        else if (userArray.length === 0) {
-            console.log('The requested user does not exist');
-            handleException(res, Exceptions.UserDoesNotExist);
-        }
-        else { // userArray.length must be 1
-            var userToLogout = userArray[0];
+        identifyUser(req.body.authToken)
+        .then(userToLogout => {
             userMapper.removeActiveUsers(user => {
                 return user.id === userToLogout.id;
             })
@@ -145,7 +155,10 @@ class UserController {
             .catch(exception => {
                 handleException(res, exception);
             })
-        }
+        })
+        .catch(exception => {
+            handleException(res, exception);
+        })
     }
 }
 
@@ -158,9 +171,14 @@ handleException = function (res, exception) {
     console.log('An exception occured');
     var message;
     switch(exception) {
+        case Exceptions.InvalidRequestBody:
+            res.status(400);
+            message = 'Invalid request body';
+            break;
         case Exceptions.Unauthorized:
             res.status(401);
             message = 'Unauthorized';
+            break;
         case Exceptions.EmailAlreadyUsed:
             res.status(400);
             message = 'Email already used';
@@ -219,7 +237,33 @@ convertToFrontendActiveUser = pair => {
     return jsonUser;
 }
 
-refreshActivityStatus = async (id) => { // use id for now. In the future, use authToken
+identifyUser = async authToken => {
+    return new Promise((resolve, reject) => {
+        var users = userMapper.getUsers(user => {
+            return user.id === authToken; // needs change -> get user id from auth token instead of using authToken directly
+        })
+        if (users.length === 0) {
+            reject(Exceptions.Unauthorized);
+        }
+        else if (users.length > 1) {
+            reject(Exceptions.InternalServerError);
+        }
+        else {
+            var user = users[0];
+            refreshActivityStatus(user.id)
+            .then(() => {
+                resolve(user);
+            })
+            .catch(exception => {
+                reject(exception);
+            })
+        }
+    })
+
+}
+exports.identifyUser = identifyUser;
+
+refreshActivityStatus = async (id) => { // use id for now. In the future, possibly use authToken
     return new Promise((resolve, reject) => {
         var activeUsersArray = userMapper.getActiveUsers(activeUser => {
             return (
@@ -256,4 +300,8 @@ refreshActivityStatus = async (id) => { // use id for now. In the future, use au
             reject(exception);
         })
     })
+}
+
+isNonEmptyString = input => {
+    return isString(input) && input.length != 0;
 }
