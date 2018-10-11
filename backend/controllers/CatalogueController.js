@@ -1,6 +1,11 @@
+//<editor-fold desc="Constants">
 const CatalogueMapper = require('../mappers/CatalogueMapper');
 const catalogueMapper = CatalogueMapper.getInstance();
+
 const UserController = require('UserController');
+
+const Exceptions = require('../Exceptions').Exceptions;
+//</editor-fold>
 
 // TODO: update when frontend is written
 
@@ -28,7 +33,11 @@ exports.search = async function (req, res) {
 //<editor-fold desc="Addition methods">
 exports.addBook = async function (req, res) {
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // isbn is unique so use isbn to check for exiting book
         catalogueMapper.getBooks({isbn13: req.body.isbn13})
         .then((result) => {
@@ -39,7 +48,7 @@ exports.addBook = async function (req, res) {
                     res.json(convertToFrontendBook(book));
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else {
                 console.log('book already in catalogue');
@@ -52,13 +61,17 @@ exports.addBook = async function (req, res) {
         });
     })
     .catch((ex) => {
-        handleException(ex);
+        handleExceptioni(res, ex);
     });
 }
 
 exports.addTrack = async function (req, res) {
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // asin is unique so use asin to check for existing track
         catalogueMapper.getTracks({asin: req.body.asin})
         .then((result) => {
@@ -69,7 +82,7 @@ exports.addTrack = async function (req, res) {
                     res.json(convertToFrontendTrack(track));
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else {
                 console.log('track already in catalogue');
@@ -78,17 +91,21 @@ exports.addTrack = async function (req, res) {
             }
         })
         .catch((ex) => {
-            handleException(ex);
+            handleExceptioni(res, ex);
         });
     })
     .catch((ex) => {
-        handleException(ex);
+        handleExceptioni(res, ex);
     });
 }
 
 exports.addMagazine = async function (req, res) {
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // use isbn to check for existing magazine
         catalogueMapper.getMagazines({isbn13: req.body.isbn13})
         .then((result) => {
@@ -99,7 +116,7 @@ exports.addMagazine = async function (req, res) {
                     res.json(convertToFrontendMagazine(magazine));
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else {
                 console.log('magazine already in catalogue');
@@ -108,17 +125,21 @@ exports.addMagazine = async function (req, res) {
             }
         })
         .catch((ex) => {
-            handleException(ex);
+            handleExceptioni(res, ex);
         });
     })
     .catch((ex) => {
-        handleException(ex);
+        handleExceptioni(res, ex);
     });
 }
 
 exports.addMovie = async function (req, res){
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // use title, director, and release date to check for existing movie
         catalogueMapper.getMovies(
             {title: req.body.title, director: req.body.director, releaseDate: req.body.releaseDate})
@@ -130,7 +151,7 @@ exports.addMovie = async function (req, res){
                     res.json(convertToFrontendMovie(movie));
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else {
                 console.log('movie already in catalogue');
@@ -139,11 +160,11 @@ exports.addMovie = async function (req, res){
             }
         })
         .catch((ex) => {
-            handleException(ex);
+            handleExceptioni(res, ex);
         });
     })
     .catch((ex) => {
-        handleException(ex);
+        handleExceptioni(res, ex);
     });
 }
 //</editor-fold>
@@ -151,7 +172,11 @@ exports.addMovie = async function (req, res){
 //<editor-fold desc="Modification methods">
 exports.modifyBook = async function (req, res) {
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // find book
         catalogueMapper.getBooks({isbn13: req.body.isbn13})
         .then((result) => {
@@ -162,7 +187,7 @@ exports.modifyBook = async function (req, res) {
                     res.json(convertToFrontendBook(book));
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else if(result === 0) {
                 console.log('book does not exist');
@@ -179,13 +204,17 @@ exports.modifyBook = async function (req, res) {
         });
     })
     .catch((ex) => {
-        handleException(ex);
+        handleExceptioni(res, ex);
     });
 }
 
 exports.modifyTrack = async function (req, res) {
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // find track
         catalogueMapper.getTracks({asin: req.body.asin})
         .then((result) => {
@@ -196,7 +225,7 @@ exports.modifyTrack = async function (req, res) {
                     res.json(convertToFrontendTrack(track));
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else if(result === 0) {
                 console.log('track does not exist');
@@ -213,13 +242,17 @@ exports.modifyTrack = async function (req, res) {
         });
     })
     .catch((ex) => {
-        handleException(ex);
+        handleExceptioni(res, ex);
     });
 }
 
 exports.modifyMagazine = async function (req, res) {
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // find magazine
         catalogueMapper.getMagazines({isbn13: req.body.isbn13})
         .then((result) => {
@@ -230,7 +263,7 @@ exports.modifyMagazine = async function (req, res) {
                     res.json(convertToFrontendMagazine(magazine));
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else if(result === 0) {
                 console.log('magazine does not exist');
@@ -253,7 +286,11 @@ exports.modifyMagazine = async function (req, res) {
 
 exports.modifyMovie = async function (req, res){
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // find movie
         catalogueMapper.getMovies(
                 {title: req.body.title, director: req.body.director, releaseDate: req.body.releaseDate})
@@ -265,7 +302,7 @@ exports.modifyMovie = async function (req, res){
                     res.json(convertToFrontendMovie(movie));
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else if(result === 0) {
                 console.log('mvoie does not exist');
@@ -282,7 +319,7 @@ exports.modifyMovie = async function (req, res){
         });
     })
     .catch((ex) => {
-        handleException(ex);
+        handleExceptioni(res, ex);
     });
 }
 //</editor-fold>
@@ -290,7 +327,11 @@ exports.modifyMovie = async function (req, res){
 //<editor-fold desc="Deletion methods">
 exports.deleteBook = async function (req, res) {
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // find book
         catalogueMapper.getBooks({isbn13: req.body.isbn13})
         .then((result) => {
@@ -300,7 +341,7 @@ exports.deleteBook = async function (req, res) {
                     res.status(200);
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else if(result === 0) {
                 console.log('book does not exist');
@@ -317,13 +358,17 @@ exports.deleteBook = async function (req, res) {
         });
     })
     .catch((ex) => {
-        handleException(ex);
+        handleExceptioni(res, ex);
     });
 }
 
 exports.deleteTrack = async function (req, res) {
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // find track
         catalogueMapper.getTracks({asin: req.body.asin})
         .then((result) => {
@@ -333,7 +378,7 @@ exports.deleteTrack = async function (req, res) {
                     res.status(200);
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else if(result === 0) {
                 console.log('track does not exist');
@@ -350,13 +395,17 @@ exports.deleteTrack = async function (req, res) {
         });
     })
     .catch((ex) => {
-        handleException(ex);
+        handleExceptioni(res, ex);
     });
 }
 
 exports.deleteMagazine = async function (req, res) {
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // find magazine
         catalogueMapper.getMagazines({isbn13: req.body.isbn13})
         .then((result) => {
@@ -366,7 +415,7 @@ exports.deleteMagazine = async function (req, res) {
                     res.status(200);
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else if(result === 0) {
                 console.log('magazine does not exist');
@@ -383,13 +432,17 @@ exports.deleteMagazine = async function (req, res) {
         });
     })
     .catch((ex) => {
-        handleException(ex);
+        handleExceptioni(res, ex);
     });
 }
 
 exports.deleteMovie = async function (req, res){
     UserController.identifyUser(req.body.authToken)
-    .then(() => {
+    .then((user) => {
+        if(!user.is_admin){
+            handleException(res, Exceptions.Unauthorized);
+            return;
+        }
         // find movie
         catalogueMapper.getMovies(
                 {title: req.body.title, director: req.body.director, releaseDate: req.body.releaseDate})
@@ -400,7 +453,7 @@ exports.deleteMovie = async function (req, res){
                     res.status(200);
                 })
                 .catch((ex) => {
-                    handleException(ex);
+                    handleExceptioni(res, ex);
                 });
             } else if(result === 0) {
                 console.log('mvoie does not exist');
@@ -417,7 +470,7 @@ exports.deleteMovie = async function (req, res){
         });
     })
     .catch((ex) => {
-        handleException(ex);
+        handleExceptioni(res, ex);
     });
 }
 //</editor-fold>
