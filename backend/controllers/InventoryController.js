@@ -9,8 +9,8 @@ exports.getBooks = async function (req, res) {
 
 exports.removeBook = async function (req, res) {
     inventoryMapper.removeBook(book => {
-        console.log(book.isbn10);
-        console.log(req.body);
+        console.log("1: " + book.isbn10);
+        console.log("2: " + req.body);
         return book.isbn10 === req.body.isbn10;
     })
     .then(books => {

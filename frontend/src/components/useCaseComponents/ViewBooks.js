@@ -43,9 +43,10 @@ export default class ViewBooks extends Component {
 
             <div>
                 <ul>
-                    {this.state.books.map(book =>
-                        <li key={book.title}>{book.title} {book.isbn10}<button onClick={() => {
-                            this.removeBook(book.isbn10)}}> Delete</button></li>
+                    {this.state.books.map((book, i) =>
+                        <li key={i}>{book.title} {book.isbn10}
+                        <button onClick={() => {this.removeBook(book.isbn10)}}> Delete</button>
+                        </li>
                     )}
                 </ul>
 
@@ -119,16 +120,21 @@ export default class ViewBooks extends Component {
             })
     }
 
-    async removeBook(props) {
-        let book = props.book;
-        console.log('front end: '+ book)
+    async removeBook(isbn) {
+        console.log('front end: '+ isbn)
 
         return new Promise((resolve, reject) => {
             fetch('/api/removeBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({book})
-            });
+                body: JSON.stringify({isbn10: isbn})
+            }).then((res => {
+             if (res.status === 200) {
+                console.log("deleted book");
+             } else {
+                console.log (res)
+             }
+            })).then(() => {this.componentDidMount();});
         })
     }
 
