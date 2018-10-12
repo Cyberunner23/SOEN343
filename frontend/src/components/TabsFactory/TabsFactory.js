@@ -6,6 +6,7 @@ import './TabsFactory.css'
 import ActiveUsers from '../useCaseComponents/ActiveUsers.js';
 import Logout from '../useCaseComponents/Logout.js';
 import Register from '../useCaseComponents/Register.js';
+import AddItems from '../useCaseComponents/ManageCatalog/AddItems.js';
 
 var TabsState = Object.freeze({'Welcome' : 0, 'Admin' : 1, 'Client' : 2});
 
@@ -32,6 +33,7 @@ class TabsFactory {
                             <Tab>Register Admin</Tab>
                             <Tab>Register User</Tab>
                             <Tab>View Active Users</Tab>
+                            <Tab>Manage Catalog</Tab>
                             <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
@@ -42,6 +44,16 @@ class TabsFactory {
                         </TabPanel>
                         <TabPanel>
                             <ActiveUsers app = {app}/>
+                        </TabPanel>
+                        <TabPanel>
+                            <Tabs>
+                                <TabList>
+                                    <Tab>Add</Tab>
+                                </TabList>
+                                <TabPanel>
+                                    <AddItems/>
+                                </TabPanel>
+                            </Tabs>
                         </TabPanel>
                         <TabPanel>
                             <Logout app = {app}/>

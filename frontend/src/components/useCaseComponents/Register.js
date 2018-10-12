@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import Input from '@material-ui/core/Input';
+import TextField from '@material-ui/core/TextField';
 import './Register.css'
 
 export default class Register extends Component {
@@ -60,32 +62,53 @@ export default class Register extends Component {
         return (
             <div className='UseCaseComponent'>
                 {header}
-                <form onSubmit={this.handleSubmit} method="POST">
-                    <label>
-                        EMail:
-                        <input type="text" name="email" onChange={this.handleChange} />
-                    </label>
-                    <label>
-                        Password:
-                        <input type="password" name="password" onChange={this.handleChange} />
-                    </label>
-                    <label>
-                        First Name:
-                        <input type="text" name="first_name" onChange={this.handleChange} />
-                    </label>
-                    <label>
-                        Last Name:
-                        <input type="text" name="last_name" onChange={this.handleChange} />
-                    </label>
-                    <label>
-                        Phone Number:
-                        <input type="text" name="phone" onChange={this.handleChange} />
-                    </label>
-                    <label>
-                        Address:
-                        <input type="text" name="address" onChange={this.handleChange} />
-                    </label>
-                    <button onClick={this.handleSubmit}>Submit</button>
+                <form style={style.label} onSubmit={this.handleSubmit} method="POST">
+                    <TextField
+                        label="email"
+                        name="email"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="password"
+                        type="password"
+                        name="password"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="First Name"
+                        name="first_name"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="Last Name"
+                        name="last_name"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="Phone Number"
+                        name="phone"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="Address"
+                        name="address"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <Input type="submit" style={style.label}>
+                        Register
+                    </Input>
                 </form>
                 {registrationSubmittedMessage}
             </div>
@@ -121,4 +144,13 @@ export default class Register extends Component {
             });
         })
     }
-} 
+}
+
+const style = {
+    label: {
+        margin: 15,
+    },
+    textField: {
+        width: 300,
+    },
+};
