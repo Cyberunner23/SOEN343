@@ -20,6 +20,18 @@ class InventoryMapper {
         }
     }
 
+    removeBook(callback) {
+        return new Promise((resolve, reject) => {
+            if (callback) {
+                this.books = this.books.filter(book => {
+                    return !callback(book);
+                })
+            }
+            resolve(this.books);
+        })
+    }
+
+
     async addBook(jsonBook) {
         return new Promise((resolve, reject) => {
             var newBook = new Book(jsonBook);

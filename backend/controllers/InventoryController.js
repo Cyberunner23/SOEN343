@@ -7,6 +7,18 @@ exports.getBooks = async function (req, res) {
             res.json(result);
 }
 
+exports.removeBook = async function (req, res) {
+    inventoryMapper.removeBook(book => {
+        console.log(book.isbn10);
+        console.log(req.body);
+        return book.isbn10 === req.body.isbn10;
+    })
+    .then(books => {
+        res.status(200);
+        res.send();
+    });
+}
+
 exports.addBook = async function (req, res) {
     var result = inventoryMapper.getBooks(book => {
         return book.isbn10 === req.body.isbn10;

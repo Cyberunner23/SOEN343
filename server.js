@@ -14,9 +14,10 @@ app.listen(port, () => {
 
 app.post('/api/users/registerUser', UserController.registerUser);
 app.post('/api/users/login', UserController.authenticate);
-app.get('/api/getBooks', InventoryController.getBooks);
 app.post('/api/addBook', InventoryController.addBook);
-app.get('/api/getMagazines', InventoryController.getMagazines);
 app.post('/api/addMagazine', InventoryController.addMagazine);
+app.post('/api/removeBook', InventoryController.removeBook);
+app.get('/api/getBooks', InventoryController.getBooks);
+app.get('/api/getMagazines', InventoryController.getMagazines);
 app.post('/api/users/activeUsers', UserController.activeUsers);
 app.post('/api/users/logout', UserController.logout);
