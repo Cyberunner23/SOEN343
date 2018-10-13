@@ -25,30 +25,22 @@ export default class Register extends Component {
 
     async handleSubmit(event) {
         event.preventDefault();
-
-        if (this.state.is_admin) {
-            this.registerUser(this.state)
-            .then((user) => {
-                if (user !== null) {
-                    console.log('Admin created successfully');
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New admin ' + user.first_name + ' created'})
-                } else {
-                    console.log('email already used');
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'email already used'})
-                }
-            })
-        } else {
-            this.registerUser(this.state)
-            .then((user) => {
-                if (user !== null) {
-                    console.log('Client created successfully');
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'New user ' + user.first_name + ' created'})
-                } else {
-                    console.log('email already used');
-                    this.setState({registrationSubmitted: true, registrationSubmittedMessage: 'email already used'})
-                }
-            })
-        }
+        this.registerUser(this.state)
+        .then(user => {
+            var message;
+            if (this.state.is_admin) {
+                console.log('Admin created successfully');
+                message = 'New admin ' + user.first_name + ' created';
+            }
+            else {
+                console.log('Client created successfully');
+                message = 'New client ' + user.first_name + ' created';
+            }
+            this.setState({registrationSubmitted: true, registrationSubmittedMessage: message});
+        })
+        .catch(message => {
+            this.setState({registrationSubmitted: true, registrationSubmittedMessage: message});
+        })
     }
 
     render() {
@@ -116,14 +108,16 @@ export default class Register extends Component {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({is_admin, email, password, first_name, last_name, phone, address, authToken})
             }).then((response) => {
-                if (response.status === 200) {
-                    response.json().then((user) => {
-                        resolve(user);
-                    })
-                }
-                else {
-                    resolve(null);
-                }
+                var status = response.status;
+                response.json()
+                .then(json => {
+                    if (status === 200) {
+                        resolve(json); // user json
+                    }
+                    else {
+                        reject(json.err);
+                    }
+                })
             });
         })
     }
