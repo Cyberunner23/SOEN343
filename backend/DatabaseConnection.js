@@ -5,8 +5,8 @@ const SQLPassword = process.env.SQLPassword;
 
 const connection = mysql.createConnection({
     host: 'localhost',
-    user: "root",
-    password: "",
+    user: SQLUser,
+    password: SQLPassword,
     database: 'soen343'
 });
 
