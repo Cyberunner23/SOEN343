@@ -8,6 +8,8 @@ import Logout from '../useCaseComponents/Logout.js';
 import Register from '../useCaseComponents/Register.js';
 import ViewBooks from '../useCaseComponents/ViewBooks.js';
 import ViewMagazines from '../useCaseComponents/ViewMagazines.js';
+import ViewMovies from '../useCaseComponents/ViewMovies.js';
+
 
 var TabsState = Object.freeze({ 'Welcome': 0, 'Admin': 1, 'Client': 2 });
 
@@ -58,6 +60,9 @@ class TabsFactory {
                             </TabPanel>
                             <TabPanel>
                                 <ViewMagazines app={this} />
+                            </TabPanel>
+                            <TabPanel>
+                                <ViewMovies app={this} />
                             </TabPanel>
                             </Tabs>
                         </TabPanel>

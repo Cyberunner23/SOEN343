@@ -41,7 +41,9 @@ export default class ViewMagazines extends Component {
             <div>
                 <ul>
                     {this.state.magazines.map(magazine =>
-                        <li key={magazine.title}>{magazine.title}</li>
+                        <li key={magazine.title}>{magazine.title}
+                        <button onClick={() => { this.removeMagazine(magazine.isbn10) }}> Delete</button>
+                        </li>
                     )}
                 </ul>
 
@@ -87,7 +89,7 @@ export default class ViewMagazines extends Component {
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, bookAdded: false});
+        this.setState({ [e.target.name]: e.target.value, magazineAdded: false});
     }
 
     async handleSubmit(event) {
@@ -100,11 +102,29 @@ export default class ViewMagazines extends Component {
                     this.setState({ magazineAdded: true, magazineAddedMessage: 'New magazine ' + magazine.title + ' added' })
                 } else {
                     console.log('Magazine already added');
-                    this.setState({ magazineAdded: true, magazineAddedMessage: 'book already added' })
+                    this.setState({ magazineAdded: true, magazineAddedMessage: 'magazine already added' })
                 }
             }).then(() => {
                 this.componentDidMount();
             })
+    }
+
+    async removeMagazine(isbn) {
+        console.log('front end: ' + isbn)
+
+        return new Promise((resolve, reject) => {
+            fetch('/api/removeMagazine', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isbn10: isbn })
+            }).then((res => {
+                if (res.status === 200) {
+                    console.log("deleted magazine");
+                } else {
+                    console.log(res)
+                }
+            })).then(() => { this.componentDidMount(); });
+        })
     }
 
     async addMagazine(props) {

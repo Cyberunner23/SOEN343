@@ -45,7 +45,7 @@ export default class ViewBooks extends Component {
                 <ul>
                     {this.state.books.map((book, i) =>
                         <li key={i}>{book.title} {book.isbn10}
-                        <button onClick={() => {this.removeBook(book.isbn10)}}> Delete</button>
+                            <button onClick={() => { this.removeBook(book.isbn10) }}> Delete</button>
                         </li>
                     )}
                 </ul>
@@ -100,7 +100,7 @@ export default class ViewBooks extends Component {
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, bookAdded: false});
+        this.setState({ [e.target.name]: e.target.value, bookAdded: false });
     }
 
     async handleSubmit(event) {
@@ -121,20 +121,20 @@ export default class ViewBooks extends Component {
     }
 
     async removeBook(isbn) {
-        console.log('front end: '+ isbn)
+        console.log('front end: ' + isbn)
 
         return new Promise((resolve, reject) => {
             fetch('/api/removeBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({isbn10: isbn})
+                body: JSON.stringify({ isbn10: isbn })
             }).then((res => {
-             if (res.status === 200) {
-                console.log("deleted book");
-             } else {
-                console.log (res)
-             }
-            })).then(() => {this.componentDidMount();});
+                if (res.status === 200) {
+                    console.log("deleted book");
+                } else {
+                    console.log(res)
+                }
+            })).then(() => { this.componentDidMount(); });
         })
     }
 
@@ -152,7 +152,7 @@ export default class ViewBooks extends Component {
             fetch('/api/addBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({title, author, format, pages, publisher, language, isbn10, isbn13})
+                body: JSON.stringify({ title, author, format, pages, publisher, language, isbn10, isbn13 })
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((book) => {
