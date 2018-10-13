@@ -9,7 +9,7 @@ class InventoryMapper {
         this.books = [];
         this.magazines = [];
         this.movies = [];
-        this.music = [];
+        this.musics = [];
     }
 
     getBooks(callback) {
