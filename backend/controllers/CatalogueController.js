@@ -1,8 +1,7 @@
 //<editor-fold desc="Constants">
-const CatalogueMapper = require('../mappers/CatalogueMapper');
-const catalogueMapper = CatalogueMapper.getInstance();
+const catalogueMapper = require('../mappers/CatalogueMapper').getInstance();
 
-const UserController = require('UserController');
+const userController = require('UserController').getInstance();
 
 const Exceptions = require('../Exceptions').Exceptions;
 //</editor-fold>
@@ -14,7 +13,7 @@ exports.viewItems = async function (req, res) {
     catalogueMapper.getCatalogue()
             .then((view) => {
                 res.status(200);
-                res.json(convertToFrontendView(viewItems));
+                res.json(conv ertToFrontendView(viewItems));
             })
             .catch((exception) => {
                 handleException(res, exception);
@@ -32,7 +31,7 @@ exports.search = async function (req, res) {
 
 //<editor-fold desc="Addition methods">
 exports.addBook = async function (req, res) {
-    UserController.identifyUser(req.body.authToken)
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -65,27 +64,27 @@ exports.addBook = async function (req, res) {
     });
 }
 
-exports.addTrack = async function (req, res) {
-    UserController.identifyUser(req.body.authToken)
+exports.addMusic = async function (req, res) {
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
             return;
         }
-        // asin is unique so use asin to check for existing track
-        catalogueMapper.getTracks({asin: req.body.asin})
+        // asin is unique so use asin to check for existing music
+        catalogueMapper.getMusics({asin: req.body.asin})
         .then((result) => {
             if(result === 0){
-                catalogueMapper.addTrack(req.body)
-                .then((track) => {
+                catalogueMapper.addMusic(req.body)
+                .then((music) => {
                     res.status(200);
-                    res.json(convertToFrontendTrack(track));
+                    res.json(convertToFrontendMusic(music));
                 })
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
             } else {
-                console.log('track already in catalogue');
+                console.log('music already in catalogue');
                 res.status(400);
                 res.send();
             }
@@ -100,7 +99,7 @@ exports.addTrack = async function (req, res) {
 }
 
 exports.addMagazine = async function (req, res) {
-    UserController.identifyUser(req.body.authToken)
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -134,7 +133,7 @@ exports.addMagazine = async function (req, res) {
 }
 
 exports.addMovie = async function (req, res){
-    UserController.identifyUser(req.body.authToken)
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -171,7 +170,7 @@ exports.addMovie = async function (req, res){
 
 //<editor-fold desc="Modification methods">
 exports.modifyBook = async function (req, res) {
-    UserController.identifyUser(req.body.authToken)
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -208,31 +207,31 @@ exports.modifyBook = async function (req, res) {
     });
 }
 
-exports.modifyTrack = async function (req, res) {
-    UserController.identifyUser(req.body.authToken)
+exports.modifyMusic = async function (req, res) {
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
             return;
         }
-        // find track
-        catalogueMapper.getTracks({asin: req.body.asin})
+        // find music
+        catalogueMapper.getMusics({asin: req.body.asin})
         .then((result) => {
             if(result === 1){
-                catalogueMapper.modifyTrack(req.body)
-                .then((track) => {
+                catalogueMapper.modifyMusic(req.body)
+                .then((music) => {
                     res.status(200);
-                    res.json(convertToFrontendTrack(track));
+                    res.json(convertToFrontendMusic(music));
                 })
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
             } else if(result === 0) {
-                console.log('track does not exist');
+                console.log('music does not exist');
                 res.status(400);
                 res.send();
             } else {
-                console.log('found more than one track to modify');
+                console.log('found more than one music to modify');
                 res.status(400);
                 res.send();
             }
@@ -247,7 +246,7 @@ exports.modifyTrack = async function (req, res) {
 }
 
 exports.modifyMagazine = async function (req, res) {
-    UserController.identifyUser(req.body.authToken)
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -285,7 +284,7 @@ exports.modifyMagazine = async function (req, res) {
 }
 
 exports.modifyMovie = async function (req, res){
-    UserController.identifyUser(req.body.authToken)
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -326,7 +325,7 @@ exports.modifyMovie = async function (req, res){
 
 //<editor-fold desc="Deletion methods">
 exports.deleteBook = async function (req, res) {
-    UserController.identifyUser(req.body.authToken)
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -362,18 +361,18 @@ exports.deleteBook = async function (req, res) {
     });
 }
 
-exports.deleteTrack = async function (req, res) {
-    UserController.identifyUser(req.body.authToken)
+exports.deleteMusic = async function (req, res) {
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
             return;
         }
-        // find track
-        catalogueMapper.getTracks({asin: req.body.asin})
+        // find music
+        catalogueMapper.getMusicss({asin: req.body.asin})
         .then((result) => {
             if(result === 1){
-                catalogueMapper.deleteTrack()
+                catalogueMapper.deleteMusic()
                 .then(() => {
                     res.status(200);
                 })
@@ -381,11 +380,11 @@ exports.deleteTrack = async function (req, res) {
                     handleExceptioni(res, ex);
                 });
             } else if(result === 0) {
-                console.log('track does not exist');
+                console.log('music does not exist');
                 res.status(400);
                 res.send();
             } else {
-                console.log('found more than one track to delete');
+                console.log('found more than one music to delete');
                 res.status(400);
                 res.send();
             }
@@ -400,7 +399,7 @@ exports.deleteTrack = async function (req, res) {
 }
 
 exports.deleteMagazine = async function (req, res) {
-    UserController.identifyUser(req.body.authToken)
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -437,7 +436,7 @@ exports.deleteMagazine = async function (req, res) {
 }
 
 exports.deleteMovie = async function (req, res){
-    UserController.identifyUser(req.body.authToken)
+    userController.identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -501,13 +500,13 @@ convertToFrontendBook = (book) => {
     );
 }
 
-convertToFrontendTrack = (track) => {
-    let title = track.title;
-    let artist = track.artist;
-    let label = track.label;
-    let type = track.type;
-    let releaseDate = track.releaseDate;
-    let asin = track.asin;
+convertToFrontendMusic = (music) => {
+    let title = music.title;
+    let artist = music.artist;
+    let label = music.label;
+    let type = music.type;
+    let releaseDate = music.releaseDate;
+    let asin = music.asin;
     return (
         {title, artist, label, type, releaseDate, asin}
     );
