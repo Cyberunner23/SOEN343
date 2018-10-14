@@ -42,7 +42,7 @@ export default class ViewMagazines extends Component {
                 <ul>
                     {this.state.magazines.map(magazine =>
                         <li key={magazine.title}>{magazine.title}
-                        <button onClick={() => { this.removeMagazine(magazine.isbn10) }}> Delete</button>
+                        <button onClick={() => { this.removeMagazines(magazine.isbn10) }}> Delete</button>
                         </li>
                     )}
                 </ul>
@@ -109,7 +109,7 @@ export default class ViewMagazines extends Component {
             })
     }
 
-    async removeMagazine(isbn) {
+    async removeMagazines(isbn) {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/removeMagazines', {
                 method: 'POST',

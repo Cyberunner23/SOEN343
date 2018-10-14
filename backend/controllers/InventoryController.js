@@ -25,8 +25,8 @@ exports.addBook = async function (req, res) {
     }
 }
 
-exports.removeBook = async function (req, res) {
-    catalogueMapper.removeBook(book => {
+exports.removeBooks = async function (req, res) {
+    catalogueMapper.removeBooks(book => {
         console.log("1: " + book.isbn10);
         console.log("2: " + req.body);
         return book.isbn10 === req.body.isbn10;
@@ -61,8 +61,8 @@ exports.addMagazine = async function (req, res) {
     }
 }
 
-exports.removeMagazine = async function (req, res) {
-    catalogueMapper.removeMagazine(magazine => {
+exports.removeMagazines = async function (req, res) {
+    catalogueMapper.removeMagazines(magazine => {
         return magazine.isbn10 === req.body.isbn10;
     })
     .then(magazines => {
@@ -95,8 +95,8 @@ exports.addMovie = async function (req, res) {
     }
 }
 
-exports.removeMovie = async function (req, res) {
-    catalogueMapper.removeMovie(movie => {
+exports.removeMovies = async function (req, res) {
+    catalogueMapper.removeMovies(movie => {
         return movie.title === req.body.title;
     })
     .then(movies => {
@@ -129,8 +129,8 @@ exports.addMusic = async function (req, res) {
     }
 }
 
-exports.removeMusic = async function (req, res) {
-    catalogueMapper.removeMusic(music => {
+exports.removeMusics = async function (req, res) {
+    catalogueMapper.removeMusics(music => {
         return music.asin === req.body.asin;
     })
     .then(music => {

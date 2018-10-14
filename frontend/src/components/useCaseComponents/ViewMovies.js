@@ -46,7 +46,7 @@ export default class ViewMovies extends Component {
                 <ul>
                     {this.state.movies.map((movie, i) =>
                         <li key={i}>{movie.title} {movie.director}
-                            <button onClick={() => { this.removeMovie(movie.title) }}> Delete</button>
+                            <button onClick={() => { this.removeMovies(movie.title) }}> Delete</button>
                         </li>
                     )}
                 </ul>
@@ -125,7 +125,7 @@ export default class ViewMovies extends Component {
             })
     }
 
-    async removeMovie(title) {
+    async removeMovies(title) {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/removeMovies', {
                 method: 'POST',
