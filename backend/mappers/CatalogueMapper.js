@@ -183,13 +183,12 @@ class CatalogueMapper {
     /**
      * Modify items in the supplied cache that meet the selector criterea, with
      * the keys to be modified and their value in the supplied modifyProperties.
-     * Return the modified objects. (Note: Any properties defined in 
-     * modifyProperties that do not exist in cache items will be added to cache 
-     * items, so be careful with spelling!)
+     * Return the modified objects.
      * 
      * @param {any[]} cache - The array of objects to select from
      * @param {JSON} modifyProperties - Collection of named properties and their values
-     * @param {Function} [selector] - Function that takes a cache item and returns true if it is to be modified
+     * @param {Function} [selector] - Function that takes a cache item and returns true 
+     *                                if it is to be modified
      */
     async modify(cache, modifyProperties, selector) {
         return new Promise((resolve, reject) => {
