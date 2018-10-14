@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 -- Table structure for table `activeusers`
 --
 
-CREATE TABLE `activeusers` (
+CREATE TABLE `activeUsers` (
   `index` int(11) NOT NULL,
   `id` int(11) NOT NULL,
   `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
