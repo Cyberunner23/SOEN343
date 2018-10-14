@@ -43,7 +43,7 @@ export default class ViewMusics extends Component {
                 <ul>
                     {this.state.musics.map((music, i) =>
                         <li key={i}>{music.title} {music.artist}
-                            <button onClick={() => { this.removeMusic(music.title) }}> Delete</button>
+                            <button onClick={() => { this.removeMusics(music.title) }}> Delete</button>
                         </li>
                     )}
                 </ul>
@@ -110,7 +110,7 @@ export default class ViewMusics extends Component {
             })
     }
 
-    async removeMusic(title) {
+    async removeMusics(title) {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/removeMusics', {
                 method: 'POST',

@@ -45,7 +45,7 @@ export default class ViewBooks extends Component {
                 <ul>
                     {this.state.books.map((book, i) =>
                         <li key={i}>{book.title} {book.isbn10}
-                            <button onClick={() => { this.removeBook(book.isbn10) }}> Delete</button>
+                            <button onClick={() => { this.removeBooks(book.isbn10) }}> Delete</button>
                         </li>
                     )}
                 </ul>
@@ -122,7 +122,7 @@ export default class ViewBooks extends Component {
 
     async removeBooks(isbn) {
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/removeBook', {
+            fetch('/api/catalogue/removeBooks', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ isbn10: isbn })
