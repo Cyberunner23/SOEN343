@@ -32,7 +32,7 @@ class CatalogueMapper {
         })
     }
 
-    async removeBook(callback) {
+    async removeBooks(callback) {
         return new Promise((resolve, reject) => {
             var removedBooks = [];
             if (callback) {
@@ -42,6 +42,9 @@ class CatalogueMapper {
                     }
                     return !callback(book);
                 })
+            } else {
+                removedBooks = this.books;
+                this.books = [];
             }
             resolve(removedBooks);
         })
@@ -67,7 +70,7 @@ class CatalogueMapper {
         })
     }
 
-    async removeMagazine(callback) {
+    async removeMagazines(callback) {
         return new Promise((resolve, reject) => {
             var removedMagazines = []
             if (callback) {
@@ -77,6 +80,9 @@ class CatalogueMapper {
                     }
                     return !callback(magazine);
                 })
+            } else {
+                removedMagazines = this.magazines;
+                this.magazines = [];
             }
             resolve(removedMagazines);
         })
@@ -102,7 +108,7 @@ class CatalogueMapper {
         })
     }
 
-    async removeMovie(callback) {
+    async removeMovies(callback) {
         return new Promise((resolve, reject) => {
             var removedMovies = [];
             if (callback) {
@@ -112,8 +118,11 @@ class CatalogueMapper {
                     }
                     return !callback(movie);
                 })
+            } else {
+                removedMovies = this.movies;
+                this.movies = [];
             }
-            resolve(emovedMovies);
+            resolve(removedMovies);
         })
     }
 
@@ -137,7 +146,7 @@ class CatalogueMapper {
         })
     }
 
-    async removeMusic(callback) {
+    async removeMusics(callback) {
         return new Promise((resolve, reject) => {
             var removedMusic = [];
             if (callback) {
@@ -147,6 +156,9 @@ class CatalogueMapper {
                     }
                     return !callback(music);
                 })
+            } else {
+                removedMusic = this.musics;
+                this.musics = [];
             }
             resolve(removedMusic);
         })

@@ -111,10 +111,8 @@ export default class ViewMusics extends Component {
     }
 
     async removeMusic(title) {
-        console.log('front end: ' + title)
-
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/removeMusic', {
+            fetch('/api/catalogue/removeMusics', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title: title })

@@ -120,9 +120,7 @@ export default class ViewBooks extends Component {
             })
     }
 
-    async removeBook(isbn) {
-        console.log('front end: ' + isbn)
-
+    async removeBooks(isbn) {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/removeBook', {
                 method: 'POST',

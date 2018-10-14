@@ -126,10 +126,8 @@ export default class ViewMovies extends Component {
     }
 
     async removeMovie(title) {
-        console.log('front end: ' + title)
-
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/removeMovie', {
+            fetch('/api/catalogue/removeMovies', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title: title })

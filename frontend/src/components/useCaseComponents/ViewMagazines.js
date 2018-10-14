@@ -110,10 +110,8 @@ export default class ViewMagazines extends Component {
     }
 
     async removeMagazine(isbn) {
-        console.log('front end: ' + isbn)
-
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/removeMagazine', {
+            fetch('/api/catalogue/removeMagazines', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ isbn10: isbn })
