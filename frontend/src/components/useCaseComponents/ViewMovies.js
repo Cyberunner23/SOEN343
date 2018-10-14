@@ -24,7 +24,7 @@ export default class ViewMovies extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/getMovies')
+        fetch('/api/catalogue/getMovies')
             .then(res => {
                 res.json().then(
                     movies => this.setState({ movies: movies })
@@ -129,7 +129,7 @@ export default class ViewMovies extends Component {
         console.log('front end: ' + title)
 
         return new Promise((resolve, reject) => {
-            fetch('/api/removeMovie', {
+            fetch('/api/catalogue/removeMovie', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title: title })
@@ -155,7 +155,7 @@ export default class ViewMovies extends Component {
         let runTime = props.runTime
 
         return new Promise((resolve, reject) => {
-            fetch('/api/addMovie', {
+            fetch('/api/catalogue/addMovie', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime })

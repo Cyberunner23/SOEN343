@@ -20,7 +20,7 @@ export default class ViewMagazines extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/getMagazines')
+        fetch('/api/catalogue/getMagazines')
             .then(res => {
                 res.json().then(
                     magazines => this.setState({ magazines: magazines })
@@ -113,7 +113,7 @@ export default class ViewMagazines extends Component {
         console.log('front end: ' + isbn)
 
         return new Promise((resolve, reject) => {
-            fetch('/api/removeMagazine', {
+            fetch('/api/catalogue/removeMagazine', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ isbn10: isbn })
@@ -136,7 +136,7 @@ export default class ViewMagazines extends Component {
         let isbn13=props.isbn13
 
         return new Promise((resolve, reject) => {
-            fetch('/api/addMagazine', {
+            fetch('/api/catalogue/addMagazine', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({title, publisher, date, language, isbn10, isbn13})

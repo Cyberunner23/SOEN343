@@ -4,7 +4,7 @@ const Movie = require('../business_objects/Movie.js').Movie;
 const Music = require('../business_objects/Music.js').Music
 
 
-class InventoryMapper {
+class CatalogueMapper {
     constructor() {
         this.books = [];
         this.magazines = [];
@@ -32,14 +32,18 @@ class InventoryMapper {
         })
     }
 
-    removeBook(callback) {
+    async removeBook(callback) {
         return new Promise((resolve, reject) => {
+            var removedBooks = [];
             if (callback) {
                 this.books = this.books.filter(book => {
+                    if(callback(book)) {
+                        removedBooks.push(book);
+                    }
                     return !callback(book);
                 })
             }
-            resolve(this.books);
+            resolve(removedBooks);
         })
     }
 
@@ -63,14 +67,18 @@ class InventoryMapper {
         })
     }
 
-    removeMagazine(callback) {
+    async removeMagazine(callback) {
         return new Promise((resolve, reject) => {
+            var removedMagazines = []
             if (callback) {
                 this.magazines = this.magazines.filter(magazine => {
+                    if(callback(magazine)) {
+                        removedMagazines.push(magazine);
+                    }
                     return !callback(magazine);
                 })
             }
-            resolve(this.magazines);
+            resolve(removedMagazines);
         })
     }
 
@@ -94,14 +102,18 @@ class InventoryMapper {
         })
     }
 
-    removeMovie(callback) {
+    async removeMovie(callback) {
         return new Promise((resolve, reject) => {
+            var removedMovies = [];
             if (callback) {
                 this.movies = this.movies.filter(movie => {
+                    if(callback(movie)) {
+                        removedMovies.push(movie);
+                    }
                     return !callback(movie);
                 })
             }
-            resolve(this.movies);
+            resolve(emovedMovies);
         })
     }
 
@@ -125,20 +137,24 @@ class InventoryMapper {
         })
     }
 
-    removeMusic(callback) {
+    async removeMusic(callback) {
         return new Promise((resolve, reject) => {
+            var removedMusic = [];
             if (callback) {
                 this.musics = this.musics.filter(music => {
+                    if(callback(music)) {
+                        removedMusic.push(music);
+                    }
                     return !callback(music);
                 })
             }
-            resolve(this.musics);
+            resolve(removedMusic);
         })
     }
 
 }
 
-const instance = new InventoryMapper();
+const instance = new CatalogueMapper();
 
 exports.getInstance = () => {
     return instance;

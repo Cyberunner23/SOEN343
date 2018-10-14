@@ -23,7 +23,7 @@ export default class ViewBooks extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/getBooks')
+        fetch('/api/catalogue/getBooks')
             .then(res => {
                 res.json().then(
                     books => this.setState({ books: books })
@@ -124,7 +124,7 @@ export default class ViewBooks extends Component {
         console.log('front end: ' + isbn)
 
         return new Promise((resolve, reject) => {
-            fetch('/api/removeBook', {
+            fetch('/api/catalogue/removeBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ isbn10: isbn })
@@ -149,7 +149,7 @@ export default class ViewBooks extends Component {
         let isbn13 = props.isbn13
 
         return new Promise((resolve, reject) => {
-            fetch('/api/addBook', {
+            fetch('/api/catalogue/addBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title, author, format, pages, publisher, language, isbn10, isbn13 })

@@ -21,7 +21,7 @@ export default class ViewMusics extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/getMusics')
+        fetch('/api/catalogue/getMusics')
             .then(res => {
                 res.json().then(
                     musics => this.setState({ musics: musics })
@@ -114,7 +114,7 @@ export default class ViewMusics extends Component {
         console.log('front end: ' + title)
 
         return new Promise((resolve, reject) => {
-            fetch('/api/removeMusic', {
+            fetch('/api/catalogue/removeMusic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title: title })
@@ -137,7 +137,7 @@ export default class ViewMusics extends Component {
         let asin = props.asin;
 
         return new Promise((resolve, reject) => {
-            fetch('/api/addMusic', {
+            fetch('/api/catalogue/addMusic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title, type, artist, label, releaseDate, asin })
