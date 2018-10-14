@@ -50,6 +50,10 @@ class CatalogueMapper {
         })
     }
 
+    async modifyBooks(modifyProperties, callback) {
+        return this.modify(this.books, modifyProperties, callback);
+    }
+
     getMagazines(callback) {
         if (callback) {
             var filteredMagazines = this.magazines.filter(magazine => {
@@ -86,6 +90,10 @@ class CatalogueMapper {
             }
             resolve(removedMagazines);
         })
+    }
+
+    async modifyMagazines(modifyProperties, callback) {
+        return this.modify(this.magazines, modifyProperties, callback);
     }
 
     getMovies(callback) {
@@ -126,6 +134,10 @@ class CatalogueMapper {
         })
     }
 
+    async modifyMovies(modifyProperties, callback) {
+        return this.modify(this.movies, modifyProperties, callback);
+    }
+
     getMusics(callback) {
         if (callback) {
             var filteredMusics = this.musics.filter(music => {
@@ -164,6 +176,53 @@ class CatalogueMapper {
         })
     }
 
+    async modifyMusics(modifyProperties, callback) {
+        return this.modify(this.musics, modifyProperties, callback);
+    }
+
+    /**
+     * Modify items in the supplied cache that meet the selector criterea, with
+     * the keys to be modified and their value in the supplied modifyProperties.
+     * Return the modified objects.
+     * 
+     * @param {any[]} cache - The array of objects to select from
+     * @param {JSON} modifyProperties - Collection of named properties and their values
+     * @param {Function} [selector] - Function that takes a cache item and returns true 
+     *                                if it is to be modified
+     */
+    async modify(cache, modifyProperties, selector) {
+        return new Promise((resolve, reject) => {
+            let toModify = [];
+
+            if(cache.length === 0) {
+                return []; // Early exit if there are no items to modify
+            }
+
+            // Validate incoming properties
+            let validObject = cache[0]; // Guaranteed to exist by early exit test
+            for (let property in modifyProperties) {
+                if (!validObject.hasOwnProperty(property)) {
+                    console.error(`Error: Attempting to add property ${property} to object ${validObject.constructor.name}`);
+                    return [];
+                }
+            }
+
+            // Select objects to modify
+            if (selector) {
+                toModify = cache.filter(selector);
+            } else { // Without selector predicate, modify all items
+                toModify = cache;
+            }
+
+            // Copy the properties defined in modifyProperties to selected items
+            toModify.forEach((item) => {
+                for (let property in modifyProperties) {
+                    item[property] = modifyProperties[property];
+                }
+            });
+            resolve(toModify);
+        });
+    }
 }
 
 const instance = new CatalogueMapper();
