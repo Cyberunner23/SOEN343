@@ -202,7 +202,7 @@ class CatalogueMapper {
             let validObject = cache[0]; // Guaranteed to exist by early exit test
             for (let property in modifyProperties) {
                 if (!validObject.hasOwnProperty(property)) {
-                    console.error(`Error: Attempting to add property ${property} to object ${validObject}`);
+                    console.error(`Error: Attempting to add property ${property} to object ${validObject.constructor.name}`);
                     return [];
                 }
             }
