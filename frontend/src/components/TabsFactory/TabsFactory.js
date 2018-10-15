@@ -6,10 +6,10 @@ import './TabsFactory.css'
 import ActiveUsers from '../useCaseComponents/ActiveUsers.js';
 import Logout from '../useCaseComponents/Logout.js';
 import Register from '../useCaseComponents/Register.js';
-import ViewBooks from '../useCaseComponents/ViewBooks.js';
-import ViewMagazines from '../useCaseComponents/ViewMagazines.js';
-import ViewMovies from '../useCaseComponents/ViewMovies.js';
-import ViewMusics from '../useCaseComponents/ViewMusics.js';
+import ViewBooks from '../useCaseComponents/ViewCatalogue/ViewBooks.js';
+import ViewMagazines from '../useCaseComponents/ViewCatalogue/ViewMagazines.js';
+import ViewMovies from '../useCaseComponents/ViewCatalogue/ViewMovies.js';
+import ViewMusics from '../useCaseComponents/ViewCatalogue/ViewMusics.js';
 
 var TabsState = Object.freeze({ 'Welcome': 0, 'Admin': 1, 'Client': 2 });
 
