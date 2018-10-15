@@ -49,7 +49,6 @@ export default class ViewMusics extends Component {
         content = (
             <div className="container">
                 <div style={style.body}>
-                    <h1>Music</h1>
                     <form style={style.label} onSubmit={this.handleSubmit} method="POST">
                         <TextField
                             label="Title"
