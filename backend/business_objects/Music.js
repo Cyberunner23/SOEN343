@@ -5,7 +5,7 @@ class Music {
         this.artist = props.artist;
         this.label= props.label;
         this.releaseDate= props.releaseDate;
-        this.aSin= props.aSin;
+        this.asin= props.asin;
     }
 }
 exports.Music = Music; 
