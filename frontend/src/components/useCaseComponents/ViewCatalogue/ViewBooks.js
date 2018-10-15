@@ -130,6 +130,7 @@ export default class ViewBooks extends Component {
                                 <TableCell>Format</TableCell>
                                 <TableCell>Pages</TableCell>
                                 <TableCell>Publisher</TableCell>
+                                <TableCell>Language</TableCell>
                                 <TableCell>ISBN-10</TableCell>
                                 <TableCell>ISBN-13</TableCell>
                                 <TableCell/>
@@ -152,6 +153,9 @@ export default class ViewBooks extends Component {
                                     </TableCell>
                                     <TableCell>
                                         {book.publisher}
+                                    </TableCell>
+                                    <TableCell>
+                                        {book.language}
                                     </TableCell>
                                     <TableCell>
                                         {book.isbn10}
