@@ -1,4 +1,11 @@
 import React, { Component } from 'react';
+import Button from '@material-ui/core/Button';
+import Paper from '@material-ui/core/Card';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableBody from '@material-ui/core/TableBody';
+import TableRow from '@material-ui/core/TableRow';
+import TableCell from '@material-ui/core/TableCell';
 import './ActiveUsers.css';
 
 export default class ActiveUsers extends Component {
@@ -9,7 +16,7 @@ export default class ActiveUsers extends Component {
             app: props.app,
             activeUsers: [],
             serverReturnedAnError: false
-        }
+        };
         this.componentDidMount = this.componentDidMount.bind(this);
     }
 
@@ -35,11 +42,22 @@ export default class ActiveUsers extends Component {
         var content;
         if (!this.state.serverReturnedAnError) {
             content = (
-                <ul>
-                    {this.state.activeUsers.map(user =>
-                        <li key={user.email}><b>{user.first_name} {user.last_name}</b> {user.timestamp}</li>
-                    )}
-                </ul>
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Name</TableCell>
+                            <TableCell>Timestamp</TableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {this.state.activeUsers.map(user =>
+                        <TableRow key={user.email}>
+                            <TableCell>{user.first_name} {user.last_name}</TableCell>
+                            <TableCell>{user.timestamp}</TableCell>
+                        </TableRow>
+                        )}
+                    </TableBody>
+                </Table>
             );
         }
         else {
@@ -47,11 +65,14 @@ export default class ActiveUsers extends Component {
         }
 
         return (
-            <div className = 'ActiveUsersComponent UseCaseComponent'>
+            <div>
                 <h2>Active Users</h2>
-                <button onClick = {this.componentDidMount}>Refresh</button>
-                {content}
+                <Button variant="outlined" color="primary" onClick = {this.componentDidMount}>Refresh</Button>
+                <Paper className = 'ActiveUsersComponent UseCaseComponent'>
+                    {content}
+                </Paper>
             </div>
+
         );
     }
 }
