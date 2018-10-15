@@ -102,7 +102,7 @@ export default class ViewMagazines extends Component {
                     </form>
                     {magazineAddedMessage}
                 </div>
-                <div>
+                <div className="flex">
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -137,8 +137,8 @@ export default class ViewMagazines extends Component {
                                         {magazine.isbn13}
                                     </TableCell>
                                     <TableCell>
-                                        <Button onClick={() => { this.modifyMagazine(magazine) }}>Edit</Button>
-                                        <Button onClick={() => { this.removeMagazines(magazine.isbn10) }}> Delete</Button>
+                                        <Button color="primary" onClick={() => { this.modifyMagazine(magazine) }}>Edit</Button>
+                                        <Button color="secondary" onClick={() => { this.removeMagazines(magazine.isbn10) }}> Delete</Button>
                                     </TableCell>
                                 </TableRow>
                             )}

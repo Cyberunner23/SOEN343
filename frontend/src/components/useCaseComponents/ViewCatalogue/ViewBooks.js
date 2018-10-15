@@ -121,7 +121,7 @@ export default class ViewBooks extends Component {
                     </form>
                     {bookAddedMessage}
                 </div>
-                <div>
+                <div className="flex">
                     <Table>
                         <TableHead>
                             <TableRow>

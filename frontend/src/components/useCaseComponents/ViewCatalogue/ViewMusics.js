@@ -105,7 +105,7 @@ export default class ViewMusics extends Component {
                     </form>
                     {musicAddedMessage}
                 </div>
-                <div>
+                <div className="flex">
                     <Table>
                         <TableHead>
                             <TableRow>

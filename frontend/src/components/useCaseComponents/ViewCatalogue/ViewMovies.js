@@ -130,7 +130,7 @@ export default class ViewMovies extends Component {
                     </form>
                     {movieAddedMessage}
                 </div>
-                <div>
+                <div className="flex">
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -177,8 +177,8 @@ export default class ViewMovies extends Component {
                                         {movie.runTime}
                                     </TableCell>
                                     <TableCell>
-                                        <Button onClick={() => { this.modifyMovie(movie) }}>Edit</Button>
-                                        <Button onClick={() => { this.removeMovies(movie.title) }}> Delete</Button>
+                                        <Button color="primary" onClick={() => { this.modifyMovie(movie) }}>Edit</Button>
+                                        <Button color="secondary" onClick={() => { this.removeMovies(movie.title) }}> Delete</Button>
                                     </TableCell>
                                 </TableRow>
                             )}
