@@ -35,7 +35,7 @@ class UserGateway {
         })
     }
 
-    async persistAddUser(jsonUser) {
+    async addUser(jsonUser) {
         return new Promise((resolve, reject) => {
             var query = 'INSERT INTO users (is_admin, email, password, salt, first_name, last_name, phone, address) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             var inserts = [jsonUser.is_admin, jsonUser.email, jsonUser.password, jsonUser.salt,
@@ -55,7 +55,7 @@ class UserGateway {
         })
     }
     
-    async persistAddActiveUser(jsonActiveUser) {
+    async addActiveUser(jsonActiveUser) {
         return new Promise((resolve, reject) => {
             var query = 'INSERT INTO activeUsers (id, timestamp) VALUES (?, ?)'
             var inserts = [jsonActiveUser.id, jsonActiveUser.timestamp];
@@ -74,7 +74,7 @@ class UserGateway {
         })
     }
     
-    async persistUpdateActiveUser(jsonActiveUser) {
+    async updateActiveUser(jsonActiveUser) {
         return new Promise((resolve, reject) => {
             var query = "UPDATE activeUsers SET timestamp=? WHERE id=?";
             var inserts = [jsonActiveUser.timestamp, jsonActiveUser.id];
@@ -91,7 +91,7 @@ class UserGateway {
         })
     }
     
-    async persistDeleteActiveUser(idsToRemove) {
+    async deleteActiveUser(idsToRemove) {
         return new Promise((resolve, reject) => {
             var query;
             if (idsToRemove) {

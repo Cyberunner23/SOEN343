@@ -43,7 +43,7 @@ class UserMapper {
     // The InventoryMapper will need 4 add methods (one for each item type)
     async addUser (jsonUser) {
         return new Promise((resolve, reject) => {
-            userGateway.persistAddUser(jsonUser)
+            userGateway.addUser(jsonUser)
             .then(newUser => {
                 this.users.push(newUser);
                 resolve(newUser);
@@ -56,7 +56,7 @@ class UserMapper {
 
     async addActiveUser (jsonActiveUser) {
         return new Promise((resolve, reject) => {
-            userGateway.persistAddActiveUser(jsonActiveUser)
+            userGateway.addActiveUser(jsonActiveUser)
             .then(newActiveUser => {
                 this.activeUsers.push(newActiveUser);
                 resolve(newActiveUser);
@@ -81,7 +81,7 @@ class UserMapper {
                 reject(Exceptions.InternalServerError);
             }
             else { // activeUsersWithMatchingId.length must be 1
-                userGateway.persistUpdateActiveUser(jsonActiveUser)
+                userGateway.updateActiveUser(jsonActiveUser)
                 .then(() => {
                     var index = this.activeUsers.findIndex(user => {
                         return user.id === jsonActiveUser.id;
@@ -130,7 +130,7 @@ class UserMapper {
                 })
             }
 
-            userGateway.persistDeleteActiveUser(idsToRemove)
+            userGateway.deleteActiveUser(idsToRemove)
             .then(() => {
                 resolve(removedUsers);
             })
