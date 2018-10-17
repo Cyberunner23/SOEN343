@@ -8,7 +8,18 @@ const Music = require('../business_objects/Music').Music;
 class CatalogGateway{
     //books methods
     async loadBooks(){
-        
+        return new Promise((resolve, reject) => {
+            var query = "SELECT * FROM books";
+            db.query(query, (err, result) => {
+                if (!err) {
+                    resolve(getBookArray(result));
+                }
+                else {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+            })
+        })
     }
     async addBooks(jsonBook){
         return new Promise((resolve, reject) => {
