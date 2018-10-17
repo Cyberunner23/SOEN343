@@ -8,20 +8,36 @@ const Music = require('../business_objects/Music').Music;
 class CatalogGateway{
     //books methods
     async loadBooks(){
-
+        
     }
-    async insertBooks(){
-
+    async addBooks(jsonBook){
+        return new Promise((resolve, reject) => {
+            var query = 'INSERT INTO books (title, author, format, pages, publisher, language, isbn10, isbn13) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+            var inserts = [jsonBook.title, jsonBook.author, jsonBook.format, jsonBook.pages,
+                           jsonBook.publisher, jsonBook.language, jsonBook.isbn10, jsonBook.isbn13];
+            query = mysql.format(query, inserts);
+            
+            db.query(query, (err, response) => {
+                if (err) {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                } else {
+                    jsonBook.id = response.insertId;
+                    var newBook = new Book(jsonBook);
+                    resolve (newBook);
+                }
+            });
+        })
     }
     async updateBooks(){
-
+        
     }
     async deleteBooks(){
-
+        
     }
 
     //magazines methods
-    async insertMagazines(){
+    async addMagazines(){
 
     }
     async addMagazines(){
@@ -38,7 +54,7 @@ class CatalogGateway{
     async loadMovies(){
 
     }
-    async insertMovies(){
+    async addMovies(){
 
     }
     async updateMovies(){
@@ -52,7 +68,7 @@ class CatalogGateway{
     async loadMusic(){
 
     }
-    async insertMusic(){
+    async addMusic(){
 
     }
     async updateMusic(){
@@ -61,4 +77,17 @@ class CatalogGateway{
     async deleteMusic(){
 
     }
+
+    const instance = new CatalogGateway();
+    exports.getInstance = () => {
+        return instance;
+    } //Creating new instance for CatalogGateway
+
+    getBookArray = (jsonBooks) => {
+        var books = [];
+        jsonBooks.forEach((jsonBook) => {
+            books.push(new Book(jsonBook));
+        })
+        return books;
+    } //Generates an array of all Books for modification
 }
