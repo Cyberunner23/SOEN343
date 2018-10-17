@@ -56,8 +56,21 @@ class CatalogGateway{
             })
         })
     }
-    async deleteBooks(){
-        
+    async deleteBooks(jsonBook){
+        return new Promise((resolve, reject) => {
+            var query = "DELETE FROM Books WHERE isbn10=?";
+            var inserts = [jsonBook.isbn10];
+            query = mysql.format(query, inserts);
+            db.query(query, (err, response) => {
+                if (err) {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+                else {
+                    resolve();
+                }
+            })
+        })
     }
 
     //magazines methods
