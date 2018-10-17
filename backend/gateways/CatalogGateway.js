@@ -40,8 +40,21 @@ class CatalogGateway{
             });
         })
     }
-    async updateBooks(){
-        
+    async updateBooks(jsonBook){
+        return new Promise((resolve, reject) => {
+            var query = "UPDATE Books SET title=? WHERE isbn10=?";
+            var inserts = [jsonBook.title, jsonBook.isbn10];
+            query = mysql.format(query, inserts);
+            db.query(query, (err, response) => {
+                if (err) {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+                else {
+                    resolve();
+                }
+            })
+        })
     }
     async deleteBooks(){
         
