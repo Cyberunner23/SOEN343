@@ -166,7 +166,7 @@ class CatalogGateway{
         return new Promise((resolve, reject) => {
             var query = 'INSERT INTO movies (title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             var inserts = [jsonMovie.title, jsonMovie.director, jsonMovie.producers, jsonMovie.actors,
-                           jsonMovie.language, jsonMovie.subtitles, jsonMovie.dubbed, jsonMovie.releaseDate jsonMovie.runTime, jsonMovie.eidr];
+                           jsonMovie.language, jsonMovie.subtitles, jsonMovie.dubbed, jsonMovie.releaseDate, jsonMovie.runTime, jsonMovie.eidr];
             query = mysql.format(query, inserts);
             
             db.query(query, (err, response) => {
@@ -184,7 +184,7 @@ class CatalogGateway{
         return new Promise((resolve, reject) => {
             var query = "UPDATE movies SET title=? AND director=? AND producers=? AND actors=? AND language=? AND subtitles=? AND dubbed=? AND releaseDate=? AND runTime=? WHERE eidr=?";
             var inserts = [jsonMovie.title, jsonMovie.director, jsonMovie.producers, jsonMovie.actors,
-                           jsonMovie.language, jsonMovie.subtitles, jsonMovie.dubbed, jsonMovie.releaseDate jsonMovie.runTime, jsonMovie.eidr];
+                           jsonMovie.language, jsonMovie.subtitles, jsonMovie.dubbed, jsonMovie.releaseDate, jsonMovie.runTime, jsonMovie.eidr];
             query = mysql.format(query, inserts);
             db.query(query, (err, response) => {
                 if (err) {
