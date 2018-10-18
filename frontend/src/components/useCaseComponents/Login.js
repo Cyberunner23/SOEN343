@@ -68,6 +68,7 @@ class Login extends Component {
                         />
                         <br/>
                     <TextField
+                        label="password"
                         type="password"
                         name="password"
                         placeholder="password"

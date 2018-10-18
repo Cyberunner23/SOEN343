@@ -1,0 +1,11 @@
+.container{
+    display:flex;
+    position:relative;
+    margin: auto;
+    width: 85%;
+}
+
+.flex{
+    margin: 30px;
+    width: 100%;
+}
