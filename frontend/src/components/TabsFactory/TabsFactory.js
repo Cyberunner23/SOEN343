@@ -56,16 +56,16 @@ class TabsFactory {
                                     <Tab>Music</Tab>
                                 </TabList>
                             <TabPanel>
-                                <ViewBooks app={this} />
+                                <ViewBooks app={app} />
                             </TabPanel>
                             <TabPanel>
-                                <ViewMagazines app={this} />
+                                <ViewMagazines app={app} />
                             </TabPanel>
                             <TabPanel>
-                                <ViewMovies app={this} />
+                                <ViewMovies app={app} />
                             </TabPanel>
                             <TabPanel>
-                                <ViewMusics app={this} />
+                                <ViewMusics app={app} />
                             </TabPanel>
                             </Tabs>
                         </TabPanel>
