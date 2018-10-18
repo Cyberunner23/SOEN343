@@ -1,7 +1,7 @@
 //<editor-fold desc="Constants">
 const catalogueMapper = require('../mappers/CatalogueMapper').getInstance();
 
-const userController = require('./UserController').getInstance();
+const identifyUser = require('./UserController').identifyUser();
 
 const Exceptions = require('../Exceptions').Exceptions;
 //</editor-fold>
@@ -31,7 +31,7 @@ exports.search = async function (req, res) {
 
 //<editor-fold desc="Addition methods">
 exports.addBook = async function (req, res) {
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -62,7 +62,7 @@ exports.addBook = async function (req, res) {
 }
 
 exports.addMusic = async function (req, res) {
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -93,7 +93,7 @@ exports.addMusic = async function (req, res) {
 }
 
 exports.addMagazine = async function (req, res) {
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -124,7 +124,7 @@ exports.addMagazine = async function (req, res) {
 }
 
 exports.addMovie = async function (req, res){
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -157,7 +157,7 @@ exports.addMovie = async function (req, res){
 
 //<editor-fold desc="Modification methods">
 exports.modifyBook = async function (req, res) {
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -192,7 +192,7 @@ exports.modifyBook = async function (req, res) {
 }
 
 exports.modifyMusic = async function (req, res) {
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -227,7 +227,7 @@ exports.modifyMusic = async function (req, res) {
 }
 
 exports.modifyMagazine = async function (req, res) {
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -262,7 +262,7 @@ exports.modifyMagazine = async function (req, res) {
 }
 
 exports.modifyMovie = async function (req, res){
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -299,7 +299,7 @@ exports.modifyMovie = async function (req, res){
 
 //<editor-fold desc="Deletion methods">
 exports.deleteBook = async function (req, res) {
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -334,7 +334,7 @@ exports.deleteBook = async function (req, res) {
 }
 
 exports.deleteMusic = async function (req, res) {
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -369,7 +369,7 @@ exports.deleteMusic = async function (req, res) {
 }
 
 exports.deleteMagazine = async function (req, res) {
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
@@ -403,7 +403,7 @@ exports.deleteMagazine = async function (req, res) {
 }
 
 exports.deleteMovie = async function (req, res){
-    userController.identifyUser(req.body.authToken)
+    identifyUser(req.body.authToken)
     .then((user) => {
         if(!user.is_admin){
             handleException(res, Exceptions.Unauthorized);
