@@ -26,6 +26,7 @@ export default class ViewMovies extends Component {
             app: props.app,
             movies: [],
             movieAdded: false,
+            eidr: '',
             authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
