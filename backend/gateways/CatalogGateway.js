@@ -235,6 +235,25 @@ class CatalogGateway{
         })
 
     }
+    async addMusic(jsonMusic){
+        return new Promise ((resolve, reject) => {
+            var query='INSERT INTO musics (type, title, artist, label, releaseDate, asin ) VALUES (?,?,?,?,?,?)';
+            var inserts=[jsonMusic.type, jsonMusic.title, jsonMusic.artist, 
+                jsonMusic.label, jsonMusic.releaseDate, jsonMusic.asin];
+        query = mysql.format(query, inserts);  
+        
+        db.query(query, (err, response)=>{
+            if (err) {
+                console.log(err);
+                reject(Exceptions.InternalServerError);
+            } else {
+                var newMusic = new Music(jsonMusic);
+                resolve (newMusic);
+            }
+        });
+        })
+    }
+    
     
 }
     const instance = new CatalogGateway();
