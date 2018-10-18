@@ -1,7 +1,7 @@
 //<editor-fold desc="Constants">
 const catalogueMapper = require('../mappers/CatalogueMapper').getInstance();
 
-const identifyUser = require('./UserController').identifyUser();
+const identifyUser = require('./UserController').identifyUser;
 
 const Exceptions = require('../Exceptions').Exceptions;
 //</editor-fold>
