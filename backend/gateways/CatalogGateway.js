@@ -98,8 +98,21 @@ class CatalogGateway{
     async updateMovies(){
 
     }
-    async deleteMovies(){
-
+    async deleteMovies(jsonMovie){
+        return new Promise((resolve, reject) => {
+            var query = "DELETE FROM Movies WHERE eidr=?";
+            var inserts = [jsonMovie.eidr];
+            query = mysql.format(query, inserts);
+            db.query(query, (err, response) => {
+                if (err) {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+                else {
+                    resolve();
+                }
+            })
+        })
     }
 
     //music methods
@@ -128,4 +141,12 @@ class CatalogGateway{
         })
         return books;
     } //Generates an array of all Books for modification
+
+    getMovieArray = (jsonMovies) => {
+        var movies = [];
+        jsonMovies.forEach((jsonMovie) => {
+            movies.push(new Movie(jsonMovie));
+        })
+        return movies;
+    } //Generates an array of all Movies for modification
 }
