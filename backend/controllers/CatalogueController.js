@@ -538,6 +538,29 @@ convertToFrontendMovie = (movie) => {
 }
 //</editor-fold>
 
+//<editor-fold desc="Get methods" defaultstate="collapsed">
+getBooks = async function(req, res) {
+    var result= catalogueMapper.getBooks()
+    res.status(200);
+    res.json(result);
+}
+getMusics = async function(req, res) {
+    var result= catalogueMapper.getMusics()
+    res.status(200);
+    res.json(result);
+}
+getMagazines = async function(req, res) {
+    var result= catalogueMapper.getMagazines()
+    res.status(200);
+    res.json(result);
+}
+getMovies = async function(req, res) {
+    var result= catalogueMapper.Movies()
+    res.status(200);
+    res.json(result);
+}
+//</editor-fold>
+
 handleException = function(res, exception) {
     switch(exception){
         case catalogueMapper.Exceptions.InternalServerError:
