@@ -1,12 +1,10 @@
 const mysql = require('mysql');
-
-const SQLUser = process.env.SQLUser;
-const SQLPassword = process.env.SQLPassword;
+const utils = require('../database_scripts/auxiliary-scripts/utilities.js');
 
 const connection = mysql.createConnection({
     host: 'localhost',
-    user: SQLUser,
-    password: SQLPassword,
+    user: utils.getPropertyIfExists(process.env, 'SQLUser', 'root'),
+    password: utils.getPropertyIfExists(process.env, 'SQLPassword', ''),
     database: 'soen343'
 });
 

@@ -22,7 +22,8 @@ export default class ViewMusics extends Component {
             asin: '',
             app: props.app,
             musics: [],
-            musicAdded: false
+            musicAdded: false,
+            authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -140,7 +141,7 @@ export default class ViewMusics extends Component {
                                     </TableCell>
                                     <TableCell>
                                         <Button color="primary" onClick={() => { this.modifyMusic(music) }}>Edit</Button>
-                                        <Button color="secondary" onClick={() => { this.removeMusics(music.title) }}>Delete</Button>
+                                        <Button color="secondary" onClick={() => { this.removeMusics(music.asin) }}>Delete</Button>
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -190,12 +191,12 @@ export default class ViewMusics extends Component {
             })
     }
 
-    async removeMusics(title) {
+    async removeMusics(asin) {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/removeMusics', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title: title })
+                body: JSON.stringify({ asin: asin, authToken: this.state.authToken})
             }).then((res => {
                 if (res.status === 200) {
                     console.log("deleted music");
@@ -218,7 +219,7 @@ export default class ViewMusics extends Component {
             fetch('/api/catalogue/addMusic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, type, artist, label, releaseDate, asin })
+                body: JSON.stringify({ title, type, artist, label, releaseDate, asin, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((music) => {
