@@ -291,40 +291,40 @@ class CatalogGateway{
         })
     }
 }
-    const instance = new CatalogGateway();
-    exports.getInstance = () => {
-        return instance;
-    } //Creating new instance for CatalogGateway
+const instance = new CatalogGateway();
+exports.getInstance = () => {
+    return instance;
+} //Creating new instance for CatalogGateway
 
-    getBookArray = (jsonBooks) => {
-        var books = [];
-        jsonBooks.forEach((jsonBook) => {
-            books.push(new Book(jsonBook));
-        })
-        return books;
-    } //Generates an array of all Books for modification
+getBookArray = (jsonBooks) => {
+    var books = [];
+    jsonBooks.forEach((jsonBook) => {
+        books.push(new Book(jsonBook));
+    })
+    return books;
+} //Generates an array of all Books for modification
 
-    getMovieArray = (jsonMovies) => {
-        var movies = [];
-        jsonMovies.forEach((jsonMovie) => {
-            movies.push(new Movie(jsonMovie));
-        })
-        return movies;
-    } //Generates an array of all Movies for modification
+getMovieArray = (jsonMovies) => {
+    var movies = [];
+    jsonMovies.forEach((jsonMovie) => {
+        movies.push(new Movie(jsonMovie));
+    })
+    return movies;
+} //Generates an array of all Movies for modification
 
-    getMagazineArray = (jsonMagazines) => {
-        var magazines = [];
-        jsonMagazines.forEach((jsonMagazine) => {
-            magazines.push(new Book(jsonMagazine));
-        })
-        return magazines;
-    } //Generates an array of all Magazines for modification
+getMagazineArray = (jsonMagazines) => {
+    var magazines = [];
+    jsonMagazines.forEach((jsonMagazine) => {
+        magazines.push(new Book(jsonMagazine));
+    })
+    return magazines;
+} //Generates an array of all Magazines for modification
 
-    getMusicArray = (jsonMusics) => {
-        var musics = [];
-        jsonMusics.forEach((jsonMusic) => {
-            music.push(new Music(jsonMusic));
-        })
-        return musics;
-    } //Generates an array of all musics for modification
+getMusicArray = (jsonMusics) => {
+    var musics = [];
+    jsonMusics.forEach((jsonMusic) => {
+        music.push(new Music(jsonMusic));
+    })
+    return musics;
+} //Generates an array of all musics for modification
 
