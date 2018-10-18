@@ -42,8 +42,9 @@ class CatalogGateway{
     }
     async updateBooks(jsonBook){
         return new Promise((resolve, reject) => {
-            var query = "UPDATE Books SET title=? WHERE isbn10=?";
-            var inserts = [jsonBook.title, jsonBook.isbn10];
+            var query = "UPDATE Books SET title=? AND author=? AND format=? AND pages=? AND publisher=? AND language=? WHERE isbn10=?";
+            var inserts = [jsonBook.title, jsonBook.author, jsonBook.format, jsonBook.pages,
+                jsonBook.publisher, jsonBook.language, jsonBook.isbn10];
             query = mysql.format(query, inserts);
             db.query(query, (err, response) => {
                 if (err) {
