@@ -268,14 +268,15 @@ export default class ViewMovies extends Component {
         let language = props.language;
         let subtitles = props.subtitles;
         let dubbed = props.dubbed;
-        let releaseDate = props.releaseDate
-        let runTime = props.runTime
+        let releaseDate = props.releaseDate;
+        let runTime = props.runTime;
+        let eidr = props.eidr;
 
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/addMovie', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, authToken: this.state.authToken})
+                body: JSON.stringify({ title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((movie) => {
