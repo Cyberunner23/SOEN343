@@ -59,7 +59,7 @@ class CatalogGateway{
     async deleteBooks(isbnsToDelete){
         return new Promise((resolve, reject) => {
             var query;
-            if (isbnsToRemove) {
+            if (isbnsToDelete) {
                 query = 'DELETE FROM Books WHERE isbn10 IN (' + isbnsToDelete.join() + ')';
             }
             else {
@@ -127,10 +127,10 @@ class CatalogGateway{
             })
         })
     }
-    async deleteMagazines(){
+    async deleteMagazines(isbnsToDelete){
         return new Promise((resolve, reject) => {
             var query;
-            if(isbnsToRemove)  {
+            if(isbnsToDelete)  {
                 query='DELETE FROM magazines WHERE isbn10 IN (' + isbnsToDelete.join() + ')';//what about isbn13?
             }else{
                 query='Delete FROM magazines';
