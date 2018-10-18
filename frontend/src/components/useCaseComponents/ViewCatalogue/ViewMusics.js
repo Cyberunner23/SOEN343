@@ -141,7 +141,7 @@ export default class ViewMusics extends Component {
                                     </TableCell>
                                     <TableCell>
                                         <Button color="primary" onClick={() => { this.modifyMusic(music) }}>Edit</Button>
-                                        <Button color="secondary" onClick={() => { this.removeMusics(music.title) }}>Delete</Button>
+                                        <Button color="secondary" onClick={() => { this.removeMusics(music.asin) }}>Delete</Button>
                                     </TableCell>
                                 </TableRow>
                             )}
