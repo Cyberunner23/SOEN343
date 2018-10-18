@@ -48,7 +48,7 @@ exports.addBook = async function (req, res) {
                     res.json(convertToFrontendBook(book));
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else {
             console.log('book already in catalogue');
@@ -57,7 +57,7 @@ exports.addBook = async function (req, res) {
         }
     })
     .catch((ex) => {
-        handleExceptioni(res, ex);
+        handleException(res, ex);
     });
 }
 
@@ -79,7 +79,7 @@ exports.addMusic = async function (req, res) {
                     res.json(convertToFrontendMusic(music));
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else {
             console.log('music already in catalogue');
@@ -88,7 +88,7 @@ exports.addMusic = async function (req, res) {
         }
     })
     .catch((ex) => {
-        handleExceptioni(res, ex);
+        handleException(res, ex);
     });
 }
 
@@ -110,7 +110,7 @@ exports.addMagazine = async function (req, res) {
                     res.json(convertToFrontendMagazine(magazine));
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else {
             console.log('magazine already in catalogue');
@@ -119,7 +119,7 @@ exports.addMagazine = async function (req, res) {
         }
     })
     .catch((ex) => {
-        handleExceptioni(res, ex);
+        handleException(res, ex);
     });
 }
 
@@ -141,7 +141,7 @@ exports.addMovie = async function (req, res){
                     res.json(convertToFrontendMovie(movie));
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else {
             console.log('movie already in catalogue');
@@ -150,7 +150,7 @@ exports.addMovie = async function (req, res){
         }
     })
     .catch((ex) => {
-        handleExceptioni(res, ex);
+        handleException(res, ex);
     });
 }
 //</editor-fold>
@@ -174,7 +174,7 @@ exports.modifyBook = async function (req, res) {
                     res.json(convertToFrontendBook(book));
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else if(result === 0) {
             console.log('book does not exist');
@@ -187,7 +187,7 @@ exports.modifyBook = async function (req, res) {
         }
     })
     .catch((ex) => {
-        handleExceptioni(res, ex);
+        handleException(res, ex);
     });
 }
 
@@ -209,7 +209,7 @@ exports.modifyMusic = async function (req, res) {
                     res.json(convertToFrontendMusic(music));
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else if(result === 0) {
             console.log('music does not exist');
@@ -222,7 +222,7 @@ exports.modifyMusic = async function (req, res) {
         }
     })
     .catch((ex) => {
-        handleExceptioni(res, ex);
+        handleException(res, ex);
     });
 }
 
@@ -244,7 +244,7 @@ exports.modifyMagazine = async function (req, res) {
                     res.json(convertToFrontendMagazine(magazine));
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else if(result === 0) {
             console.log('magazine does not exist');
@@ -279,7 +279,7 @@ exports.modifyMovie = async function (req, res){
                     res.json(convertToFrontendMovie(movie));
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else if(result === 0) {
             console.log('mvoie does not exist');
@@ -292,7 +292,7 @@ exports.modifyMovie = async function (req, res){
         }
     })
     .catch((ex) => {
-        handleExceptioni(res, ex);
+        handleException(res, ex);
     });
 }
 //</editor-fold>
@@ -316,7 +316,7 @@ exports.deleteBook = async function (req, res) {
                     res.send();
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else if(result === 0) {
             console.log('book does not exist');
@@ -329,7 +329,7 @@ exports.deleteBook = async function (req, res) {
         }
     })
     .catch((ex) => {
-        handleExceptioni(res, ex);
+        handleException(res, ex);
     });
 }
 
@@ -351,7 +351,7 @@ exports.deleteMusic = async function (req, res) {
                     res.send();
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else if(result === 0) {
             console.log('music does not exist');
@@ -364,7 +364,7 @@ exports.deleteMusic = async function (req, res) {
         }
     })
     .catch((ex) => {
-        handleExceptioni(res, ex);
+        handleException(res, ex);
     });
 }
 
@@ -385,7 +385,7 @@ exports.deleteMagazine = async function (req, res) {
                     res.status(200);
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else if(result === 0) {
             console.log('magazine does not exist');
@@ -398,7 +398,7 @@ exports.deleteMagazine = async function (req, res) {
         }
     })
     .catch((ex) => {
-        handleExceptioni(res, ex);
+        handleException(res, ex);
     });
 }
 
@@ -419,7 +419,7 @@ exports.deleteMovie = async function (req, res){
                     res.status(200);
                 })
                 .catch((ex) => {
-                    handleExceptioni(res, ex);
+                    handleException(res, ex);
                 });
         } else if(result === 0) {
             console.log('mvoie does not exist');
@@ -432,7 +432,7 @@ exports.deleteMovie = async function (req, res){
         }
     })
     .catch((ex) => {
-        handleExceptioni(res, ex);
+        handleException(res, ex);
     });
 }
 //</editor-fold>
