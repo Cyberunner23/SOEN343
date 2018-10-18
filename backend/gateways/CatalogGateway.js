@@ -90,10 +90,21 @@ class CatalogGateway{
 
     //movies methods
     async loadMovies(){
-
+        return new Promise((resolve, reject) => {
+            var query = "SELECT * FROM movies";
+            db.query(query, (err, result) => {
+                if (!err) {
+                    resolve(getMovieArray(result));
+                }
+                else {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+            })
+        })
     }
     async addMovies(){
-
+        
     }
     async updateMovies(){
 
