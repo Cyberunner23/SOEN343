@@ -41,7 +41,7 @@ exports.addBook = async function (req, res) {
         var result = catalogueMapper.getBooks(book => {
             return book.isbn13 === req.body.isbn13;
         })
-        if(result === 0){
+        if(result.length === 0){
             catalogueMapper.addBook(req.body)
                 .then((book) => {
                     res.status(200);
@@ -72,7 +72,7 @@ exports.addMusic = async function (req, res) {
         var result = catalogueMapper.getMusics(music => {
             return music.asin === req.body.asin;
         })
-        if(result === 0){
+        if(result.length === 0){
             catalogueMapper.addMusic(req.body)
                 .then((music) => {
                     res.status(200);
@@ -103,7 +103,7 @@ exports.addMagazine = async function (req, res) {
         var result = catalogueMapper.getMagazines(magazine => {
             return magazine.isbn13 === req.body.isbn13;
         })
-        if(result === 0){
+        if(result.length === 0){
             catalogueMapper.addMagazine(req.body)
                 .then((magazine) => {
                     res.status(200);
@@ -134,7 +134,7 @@ exports.addMovie = async function (req, res){
         var result = catalogueMapper.getMovies(music => {
             return music.eidr === req.body.eidr;
         })
-        if(result === 0){
+        if(result.length === 0){
             catalogueMapper.addMovie(req.body)
                 .then((movie) => {
                     res.status(200);
@@ -167,7 +167,7 @@ exports.modifyBook = async function (req, res) {
         var result = catalogueMapper.getBooks(book => {
             return book.isbn13 === req.body.isbn13;
         })
-        if(result === 1){
+        if(result.length === 1){
             catalogueMapper.modifyBook(req.body)
                 .then((book) => {
                     res.status(200);
@@ -176,7 +176,7 @@ exports.modifyBook = async function (req, res) {
                 .catch((ex) => {
                     handleException(res, ex);
                 });
-        } else if(result === 0) {
+        } else if(result.length === 0) {
             console.log('book does not exist');
             res.status(400);
             res.send();
@@ -202,7 +202,7 @@ exports.modifyMusic = async function (req, res) {
         var result = catalogueMapper.getMusics(music => {
             return music.asin === req.body.asin;
         })
-        if(result === 1){
+        if(result.length === 1){
             catalogueMapper.modifyMusic(req.body)
                 .then((music) => {
                     res.status(200);
@@ -211,7 +211,7 @@ exports.modifyMusic = async function (req, res) {
                 .catch((ex) => {
                     handleException(res, ex);
                 });
-        } else if(result === 0) {
+        } else if(result.length === 0) {
             console.log('music does not exist');
             res.status(400);
             res.send();
@@ -237,7 +237,7 @@ exports.modifyMagazine = async function (req, res) {
         var result = catalogueMapper.getMagazines(magazine => {
             return magazine.isbn13 === req.body.isbn13;
         })
-        if(result === 1){
+        if(result.length === 1){
             catalogueMapper.modifyMagazine(req.body)
                 .then((magazine) => {
                     res.status(200);
@@ -246,7 +246,7 @@ exports.modifyMagazine = async function (req, res) {
                 .catch((ex) => {
                     handleException(res, ex);
                 });
-        } else if(result === 0) {
+        } else if(result.length === 0) {
             console.log('magazine does not exist');
             res.status(400);
             res.send();
@@ -272,7 +272,7 @@ exports.modifyMovie = async function (req, res){
         var result = catalogueMapper.getMovies(movie => {
             return movie.eidr === req.body.eidr;
         })
-        if(result === 1){
+        if(result.length === 1){
             catalogueMapper.modifyMovie(req.body)
                 .then((movie) => {
                     res.status(200);
@@ -281,7 +281,7 @@ exports.modifyMovie = async function (req, res){
                 .catch((ex) => {
                     handleException(res, ex);
                 });
-        } else if(result === 0) {
+        } else if(result.length === 0) {
             console.log('mvoie does not exist');
             res.status(400);
             res.send();
@@ -309,8 +309,10 @@ exports.deleteBook = async function (req, res) {
         var result = catalogueMapper.getBooks(book => {
             return book.isbn13 === req.body.isbn13;
         })
-        if(result === 1){
-            catalogueMapper.deleteBook()
+        if(result.length === 1){
+            catalogueMapper.removeBooks(book => {
+                return book.isbn13 === req.body.isbn13;
+            })
                 .then(() => {
                     res.status(200);
                     res.send();
@@ -318,7 +320,7 @@ exports.deleteBook = async function (req, res) {
                 .catch((ex) => {
                     handleException(res, ex);
                 });
-        } else if(result === 0) {
+        } else if(result.length === 0) {
             console.log('book does not exist');
             res.status(400);
             res.send();
@@ -344,8 +346,10 @@ exports.deleteMusic = async function (req, res) {
         var result = catalogueMapper.getMusics(music => {
             return music.asin === req.body.asin;
         })
-        if(result === 1){
-            catalogueMapper.deleteMusic()
+        if(result.length === 1){
+            catalogueMapper.removeMusics(music => {
+                return music.asin === req.body.asin;
+            })
                 .then(() => {
                     res.status(200);
                     res.send();
@@ -353,7 +357,7 @@ exports.deleteMusic = async function (req, res) {
                 .catch((ex) => {
                     handleException(res, ex);
                 });
-        } else if(result === 0) {
+        } else if(result.length === 0) {
             console.log('music does not exist');
             res.status(400);
             res.send();
@@ -379,15 +383,17 @@ exports.deleteMagazine = async function (req, res) {
         var result = catalogueMapper.getMagazines(magazine => {
             return magazine.isbn13 === req.body.isbn13;
         })
-        if(result === 1){
-            catalogueMapper.deleteMagazine()
+        if(result.length === 1){
+            catalogueMapper.removeMagazines(magazine => {
+                return magazine.isbn13 === req.body.isbn13;
+            })
                 .then(() => {
                     res.status(200);
                 })
                 .catch((ex) => {
                     handleException(res, ex);
                 });
-        } else if(result === 0) {
+        } else if(result.length === 0) {
             console.log('magazine does not exist');
             res.status(400);
             res.send();
@@ -413,16 +419,18 @@ exports.deleteMovie = async function (req, res){
         var result = catalogueMapper.getMovies(movie => {
             return movie.eidr === req.body.eidr;
         })
-        if(result === 1){
-            catalogueMapper.deleteMovie()
+        if(result.length === 1){
+            catalogueMapper.removeMovies(movie => {
+                return movie.eidr === req.body.eidr;
+            })
                 .then(() => {
                     res.status(200);
                 })
                 .catch((ex) => {
                     handleException(res, ex);
                 });
-        } else if(result === 0) {
-            console.log('mvoie does not exist');
+        } else if(result.length === 0) {
+            console.log('movie does not exist');
             res.status(400);
             res.send();
         } else {
@@ -521,7 +529,7 @@ exports.getMagazines = async function(req, res) {
     res.json(result);
 }
 exports.getMovies = async function(req, res) {
-    var result= catalogueMapper.Movies()
+    var result= catalogueMapper.getMovies()
     res.status(200);
     res.json(result);
 }

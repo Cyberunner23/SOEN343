@@ -166,7 +166,7 @@ export default class ViewBooks extends Component {
                                     </TableCell>
                                     <TableCell>
                                         <Button color="primary" onClick={() => { this.modifyBook(book) }}>Edit</Button>
-                                        <Button color="secondary" onClick={() => { this.removeBooks(book.isbn10) }}>Delete</Button>
+                                        <Button color="secondary" onClick={() => { this.removeBooks(book.isbn13) }}>Delete</Button>
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -225,7 +225,7 @@ export default class ViewBooks extends Component {
             fetch('/api/catalogue/removeBooks', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ isbn10: isbn })
+                body: JSON.stringify({isbn13: isbn, authToken: this.state.authToken })
             }).then((res => {
                 if (res.status === 200) {
                     console.log("deleted book");
@@ -250,7 +250,7 @@ export default class ViewBooks extends Component {
             fetch('/api/catalogue/addBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, author, format, pages, publisher, language, isbn10, isbn13 })
+                body: JSON.stringify({ title, author, format, pages, publisher, language, isbn10, isbn13 , authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((book) => {

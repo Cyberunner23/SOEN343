@@ -139,7 +139,7 @@ export default class ViewMagazines extends Component {
                                     </TableCell>
                                     <TableCell>
                                         <Button color="primary" onClick={() => { this.modifyMagazine(magazine) }}>Edit</Button>
-                                        <Button color="secondary" onClick={() => { this.removeMagazines(magazine.isbn10) }}> Delete</Button>
+                                        <Button color="secondary" onClick={() => { this.removeMagazines(magazine.isbn13) }}> Delete</Button>
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -194,7 +194,7 @@ export default class ViewMagazines extends Component {
             fetch('/api/catalogue/removeMagazines', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ isbn10: isbn })
+                body: JSON.stringify({ isbn13: isbn, authToken: this.state.authToken})
             }).then((res => {
                 if (res.status === 200) {
                     console.log("deleted magazine");
@@ -217,7 +217,7 @@ export default class ViewMagazines extends Component {
             fetch('/api/catalogue/addMagazine', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({title, publisher, date, language, isbn10, isbn13})
+                body: JSON.stringify({title, publisher, date, language, isbn10, isbn13, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((magazine) => {

@@ -191,12 +191,12 @@ export default class ViewMusics extends Component {
             })
     }
 
-    async removeMusics(title) {
+    async removeMusics(asin) {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/removeMusics', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title: title })
+                body: JSON.stringify({ asin: asin, authToken: this.state.authToken})
             }).then((res => {
                 if (res.status === 200) {
                     console.log("deleted music");
@@ -219,7 +219,7 @@ export default class ViewMusics extends Component {
             fetch('/api/catalogue/addMusic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, type, artist, label, releaseDate, asin })
+                body: JSON.stringify({ title, type, artist, label, releaseDate, asin, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((music) => {
