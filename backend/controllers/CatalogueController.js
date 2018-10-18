@@ -15,7 +15,7 @@ exports.viewItems = async function (req, res) {
                 res.status(200);
                 res.json(convertToFrontendView(viewItems));
             })
-            .catch((res, exception) => {
+            .catch((exception) => {
                 handleException(res, exception);
     });
     
@@ -47,7 +47,7 @@ exports.addBook = async function (req, res) {
                     res.status(200);
                     res.json(convertToFrontendBook(book));
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else {
@@ -56,7 +56,7 @@ exports.addBook = async function (req, res) {
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleException(res, ex);
     });
 }
@@ -78,7 +78,7 @@ exports.addMusic = async function (req, res) {
                     res.status(200);
                     res.json(convertToFrontendMusic(music));
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else {
@@ -87,7 +87,7 @@ exports.addMusic = async function (req, res) {
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleException(res, ex);
     });
 }
@@ -109,7 +109,7 @@ exports.addMagazine = async function (req, res) {
                     res.status(200);
                     res.json(convertToFrontendMagazine(magazine));
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else {
@@ -118,7 +118,7 @@ exports.addMagazine = async function (req, res) {
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleException(res, ex);
     });
 }
@@ -140,7 +140,7 @@ exports.addMovie = async function (req, res){
                     res.status(200);
                     res.json(convertToFrontendMovie(movie));
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else {
@@ -149,7 +149,7 @@ exports.addMovie = async function (req, res){
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleException(res, ex);
     });
 }
@@ -173,7 +173,7 @@ exports.modifyBook = async function (req, res) {
                     res.status(200);
                     res.json(convertToFrontendBook(book));
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else if(result === 0) {
@@ -186,7 +186,7 @@ exports.modifyBook = async function (req, res) {
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleException(res, ex);
     });
 }
@@ -208,7 +208,7 @@ exports.modifyMusic = async function (req, res) {
                     res.status(200);
                     res.json(convertToFrontendMusic(music));
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else if(result === 0) {
@@ -221,7 +221,7 @@ exports.modifyMusic = async function (req, res) {
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleException(res, ex);
     });
 }
@@ -243,7 +243,7 @@ exports.modifyMagazine = async function (req, res) {
                     res.status(200);
                     res.json(convertToFrontendMagazine(magazine));
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else if(result === 0) {
@@ -256,7 +256,7 @@ exports.modifyMagazine = async function (req, res) {
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleExcpetion(ex);
     });
 }
@@ -278,7 +278,7 @@ exports.modifyMovie = async function (req, res){
                     res.status(200);
                     res.json(convertToFrontendMovie(movie));
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else if(result === 0) {
@@ -291,7 +291,7 @@ exports.modifyMovie = async function (req, res){
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleException(res, ex);
     });
 }
@@ -315,7 +315,7 @@ exports.deleteBook = async function (req, res) {
                     res.status(200);
                     res.send();
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else if(result === 0) {
@@ -328,7 +328,7 @@ exports.deleteBook = async function (req, res) {
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleException(res, ex);
     });
 }
@@ -350,7 +350,7 @@ exports.deleteMusic = async function (req, res) {
                     res.status(200);
                     res.send();
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else if(result === 0) {
@@ -363,7 +363,7 @@ exports.deleteMusic = async function (req, res) {
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleException(res, ex);
     });
 }
@@ -384,7 +384,7 @@ exports.deleteMagazine = async function (req, res) {
                 .then(() => {
                     res.status(200);
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else if(result === 0) {
@@ -397,7 +397,7 @@ exports.deleteMagazine = async function (req, res) {
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleException(res, ex);
     });
 }
@@ -418,7 +418,7 @@ exports.deleteMovie = async function (req, res){
                 .then(() => {
                     res.status(200);
                 })
-                .catch((res, ex) => {
+                .catch((ex) => {
                     handleException(res, ex);
                 });
         } else if(result === 0) {
@@ -431,7 +431,7 @@ exports.deleteMovie = async function (req, res){
             res.send();
         }
     })
-    .catch((res, ex) => {
+    .catch((ex) => {
         handleException(res, ex);
     });
 }
