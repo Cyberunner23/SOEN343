@@ -59,7 +59,7 @@ class CatalogGateway{
     async deleteBooks(isbnsToDelete){
         return new Promise((resolve, reject) => {
             var query;
-            if (idsToRemove) {
+            if (isbnsToRemove) {
                 query = 'DELETE FROM Books WHERE isbn10 IN (' + isbnsToDelete.join() + ')';
             }
             else {
@@ -80,16 +80,71 @@ class CatalogGateway{
 
     //magazines methods
     async loadMagazines(){
-
+        return new Promise((resolve,reject) => {
+            var query= "SELECT * FROM magazines";
+            db.query(query, (err,result) => {
+                if(!err){
+                    resolve(getMagazineArray(result));
+                }else{
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+            })
+        })
     }
-    async addMagazine(){
+    async addMagazine(jsonMagazines){
+        return new Promise((resolve,reject) => {
+            var query= 'INSERT INTO magazines (title, publisher, date, language, isbn10, isbn13) VALUES(?,?,?,?,?,?)';
+            var inserts= [jsonMagazines.title, jsonMagazines.publisher, jsonMagazines.date, jsonMagazines.language, 
+                         jsonMagazines.isbn10, jsonMagazines.isbn13];
+                
+            query=mysql.format(query,inserts);
 
+            db.query(query, (err,response) => {
+                if(err){
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }else{
+                   var newMagazine= new Magazine(jsonMagazines);
+                   resolve(newMagazine);
+                }
+            }); 
+        })  
     }
-    async updateMagazine(){
-
+    async updateMagazine(jsonMagazines){
+        return new Promise((resolve,reject) => {
+            var query= "UPDATE magazines SET title=? AND publisher=? AND date=? AND language=? WHERE isbn10=?";
+            var inserts=[jsonMagazines.title, jsonMagazines.publisher, jsonMagazines.date, jsonMagazines.language, 
+                jsonMagazines.isbn10];//should we add isbn13 as well??
+            query=mysql.format(query,inserts);
+            db.query(query, (err,response) => {
+                if(err){
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }else{
+                   resolve();
+                }
+            })
+        })
     }
     async deleteMagazines(){
-        
+        return new Promise((resolve, reject) => {
+            var query;
+            if(isbnsToRemove)  {
+                query='DELETE FROM magazines WHERE isbn10 IN (' + isbnsToDelete.join() + ')';//what about isbn13?
+            }else{
+                query='Delete FROM magazines';
+            }
+            db.query(query, (err, result) => {
+                if (!err) {
+                    resolve();
+                }
+                else {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+            })
+        })
     }
 
     //movies methods
@@ -198,4 +253,12 @@ class CatalogGateway{
         })
         return movies;
     } //Generates an array of all Movies for modification
+
+    getMagazineArray = (jsonMagazines) => {
+        var magazines = [];
+        jsonMagazines.forEach((jsonMagazines) => {
+            magazines.push(new Book(jsonMagazines));
+        })
+        return magazines;
+    } //Generates an array of all Magazines for modification
 }
