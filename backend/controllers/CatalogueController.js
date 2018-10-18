@@ -540,7 +540,7 @@ convertToFrontendMovie = (movie) => {
 
 handleException = function(res, exception) {
     switch(exception){
-        case CatalogueMapper.Exceptions.InternalServerError:
+        case catalogueMapper.Exceptions.InternalServerError:
         default:
             res.status(500);
             res.send();
