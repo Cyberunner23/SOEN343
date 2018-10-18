@@ -21,7 +21,7 @@ class CatalogGateway{
             })
         })
     }
-    async addBooks(jsonBook){
+    async addBook(jsonBook){
         return new Promise((resolve, reject) => {
             var query = 'INSERT INTO books (title, author, format, pages, publisher, language, isbn10, isbn13) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             var inserts = [jsonBook.title, jsonBook.author, jsonBook.format, jsonBook.pages,
@@ -33,14 +33,13 @@ class CatalogGateway{
                     console.log(err);
                     reject(Exceptions.InternalServerError);
                 } else {
-                    jsonBook.id = response.insertId;
                     var newBook = new Book(jsonBook);
                     resolve (newBook);
                 }
             });
         })
     }
-    async updateBooks(jsonBook){
+    async updateBook(jsonBook){
         return new Promise((resolve, reject) => {
             var query = "UPDATE Books SET title=? AND author=? AND format=? AND pages=? AND publisher=? AND language=? WHERE isbn10=?";
             var inserts = [jsonBook.title, jsonBook.author, jsonBook.format, jsonBook.pages,
@@ -75,13 +74,13 @@ class CatalogGateway{
     }
 
     //magazines methods
-    async addMagazines(){
+    async loadMagazines(){
 
     }
-    async addMagazines(){
+    async addMagazine(){
 
     }
-    async updateMagazines(){
+    async updateMagazine(){
 
     }
     async deleteMagazines(){
@@ -103,7 +102,7 @@ class CatalogGateway{
             })
         })
     }
-    async addMovies(jsonMovie){
+    async addMovie(jsonMovie){
         return new Promise((resolve, reject) => {
             var query = 'INSERT INTO movies (title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
             var inserts = [jsonMovie.title, jsonMovie.director, jsonMovie.producers, jsonMovie.actors,
@@ -115,14 +114,13 @@ class CatalogGateway{
                     console.log(err);
                     reject(Exceptions.InternalServerError);
                 } else {
-                    jsonMovie.id = response.insertId;
                     var newMovie = new Movie(jsonMovie);
                     resolve (newMovie);
                 }
             });
         })
     }
-    async updateMovies(jsonMovie){
+    async updateMovie(jsonMovie){
         return new Promise((resolve, reject) => {
             var query = "UPDATE Movies SET title=? AND director=? AND producers=? AND actors=? AND language=? AND subtitles=? AND dubbed=? AND releaseDate=? AND runTime=? WHERE eidr=?";
             var inserts = [jsonMovie.title, jsonMovie.director, jsonMovie.producers, jsonMovie.actors,
@@ -157,7 +155,7 @@ class CatalogGateway{
     }
 
     //music methods
-    async loadMusic(){
+    async loadMusics(){
 
     }
     async addMusic(){
@@ -166,7 +164,7 @@ class CatalogGateway{
     async updateMusic(){
 
     }
-    async deleteMusic(){
+    async deleteMusics(){
 
     }
 
