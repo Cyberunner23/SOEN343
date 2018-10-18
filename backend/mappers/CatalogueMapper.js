@@ -27,9 +27,14 @@ class CatalogueMapper {
 
     async addBook(jsonBook) {
         return new Promise((resolve, reject) => {
-            var newBook = new Book(jsonBook);
-            this.books.push(newBook);
-            resolve(newBook);
+            catalogGateway.addUser(jsonBook)
+            .then(newBook => {
+                this.users.push(newBook);
+                resolve(newBook);
+            })
+            .catch(exception => {
+                reject(exception);
+            })
         })
     }
 
@@ -78,8 +83,33 @@ class CatalogueMapper {
         })
     }
 
-    async modifyBooks(modifyProperties, callback) {
-        return this.modify(this.books, modifyProperties, callback);
+    async modifyBooks(jsonBook) {
+        return new Promise((resolve, reject) => {
+            var booksWithIsbn = this.books.filter(book => {
+                return book.isbn13 === jsonBook.isbn13;
+            })
+            if (booksWithIsbn.length === 0) {
+                console.log('Could not update the requested book because it does not exist');
+                reject(Exceptions.InternalServerError);
+            }
+            else if (booksWithIsbn.length > 1) {
+                console.log('There is more than one book with the same ISBN13. Fix this!')
+                reject(Exceptions.InternalServerError);
+            }
+            else {  // booksWithIsbn.length must be 1
+                catalogGateway.updateBook(jsonBook)
+                .then(() => {
+                    var index = this.books.findIndex(book => {
+                        return book.isbn13 === jsonBook.isbn13;
+                    })
+                    this.books[index].timestamp = jsonBook.timestamp;
+                    resolve(this.books[index]);
+                })
+                .catch(exception => {
+                    reject(exception);
+                })
+            }
+        })
     }
 
     getMagazines(callback) {
