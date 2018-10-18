@@ -41,7 +41,7 @@ class CatalogGateway{
     }
     async updateBook(jsonBook){
         return new Promise((resolve, reject) => {
-            var query = "UPDATE Books SET title=? AND author=? AND format=? AND pages=? AND publisher=? AND language=? WHERE isbn10=?";
+            var query = "UPDATE books SET title=? AND author=? AND format=? AND pages=? AND publisher=? AND language=? WHERE isbn10=?";
             var inserts = [jsonBook.title, jsonBook.author, jsonBook.format, jsonBook.pages,
                 jsonBook.publisher, jsonBook.language, jsonBook.isbn10];
             query = mysql.format(query, inserts);
@@ -60,10 +60,10 @@ class CatalogGateway{
         return new Promise((resolve, reject) => {
             var query;
             if (isbnsToDelete) {
-                query = 'DELETE FROM Books WHERE isbn10 IN (' + isbnsToDelete.join() + ')';
+                query = 'DELETE FROM books WHERE isbn10 IN (' + isbnsToDelete.join() + ')';
             }
             else {
-                query = 'DELETE FROM Books'
+                query = 'DELETE FROM books'
             }
         
             db.query(query, (err, result) => {
@@ -182,7 +182,7 @@ class CatalogGateway{
     }
     async updateMovie(jsonMovie){
         return new Promise((resolve, reject) => {
-            var query = "UPDATE Movies SET title=? AND director=? AND producers=? AND actors=? AND language=? AND subtitles=? AND dubbed=? AND releaseDate=? AND runTime=? WHERE eidr=?";
+            var query = "UPDATE movies SET title=? AND director=? AND producers=? AND actors=? AND language=? AND subtitles=? AND dubbed=? AND releaseDate=? AND runTime=? WHERE eidr=?";
             var inserts = [jsonMovie.title, jsonMovie.director, jsonMovie.producers, jsonMovie.actors,
                            jsonMovie.language, jsonMovie.subtitles, jsonMovie.dubbed, jsonMovie.releaseDate jsonMovie.runTime, jsonMovie.eidr];
             query = mysql.format(query, inserts);
@@ -201,10 +201,10 @@ class CatalogGateway{
         return new Promise((resolve, reject) => {
             var query;
             if (eidrsToDelete) {
-                query = 'DELETE FROM Movies WHERE eidr IN (' + eidrsToDelete.join() + ')';
+                query = 'DELETE FROM movies WHERE eidr IN (' + eidrsToDelete.join() + ')';
             }
             else {
-                query = 'DELETE FROM Movies'
+                query = 'DELETE FROM movies'
             }
         
             db.query(query, (err, result) => {
@@ -221,18 +221,22 @@ class CatalogGateway{
 
     //music methods
     async loadMusics(){
+        return new Promise((resolve, reject) => {
+            var query = "SELECT * FROM musics";
+            db.query(query, (err, result) => {
+                if (!err) {
+                    resolve(getMusicArray(result));
+                }
+                else {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+            })
+        })
 
     }
-    async addMusic(){
-
-    }
-    async updateMusic(){
-
-    }
-    async deleteMusics(){
-
-    }
-
+    
+}
     const instance = new CatalogGateway();
     exports.getInstance = () => {
         return instance;
@@ -256,9 +260,17 @@ class CatalogGateway{
 
     getMagazineArray = (jsonMagazines) => {
         var magazines = [];
-        jsonMagazines.forEach((jsonMagazines) => {
-            magazines.push(new Book(jsonMagazines));
+        jsonMagazines.forEach((jsonMagazine) => {
+            magazines.push(new Book(jsonMagazine));
         })
         return magazines;
     } //Generates an array of all Magazines for modification
-}
+
+    getMusicArray = (jsonMusics) => {
+        var musics = [];
+        jsonMusics.forEach((jsonMusic) => {
+            music.push(new Music(jsonMusic));
+        })
+        return musics;
+    } //Generates an array of all musics for modification
+
