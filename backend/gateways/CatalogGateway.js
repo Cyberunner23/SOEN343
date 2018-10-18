@@ -254,6 +254,23 @@ class CatalogGateway{
         })
     }
     
+    async updateMusic(jsonMusic){
+        return new Promise((resolve,reject) => {
+            var query="UPDATE musics SET type=? AND title=? AND artist=? AND label=? AND releaseDate=? WHERE asin=?";
+            var inserts=[jsonMusic.type, jsonMusic.title, jsonMusic.artist, 
+                jsonMusic.label, jsonMusic.releaseDate, jsonMusic.asin];
+            query=mysql.format(query, inserts);
+            db.query(query, (err, response) => {
+                if (err) {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+                else {
+                    resolve();
+                }
+            })
+        })
+    }
     
 }
     const instance = new CatalogGateway();
