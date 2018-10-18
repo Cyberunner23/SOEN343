@@ -9,6 +9,7 @@ class Movie {
         this.dubbed =props.dubbed;
         this.releaseDate= props.releaseDate;
         this.runTime= props.runTime;
+        this.eidr = props.eidr;
     }
 }
 exports.Movie = Movie; 

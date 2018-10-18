@@ -25,7 +25,9 @@ export default class ViewMovies extends Component {
             runTime: '',
             app: props.app,
             movies: [],
-            movieAdded: false
+            movieAdded: false,
+            eidr: '',
+            authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -124,6 +126,14 @@ export default class ViewMovies extends Component {
                             style={style.textField}
                             onChange={this.handleChange} />
                         <br/>
+                        <TextField
+                            label="EIDR"
+                            name="eidr"
+                            margin="dense"
+                            value={this.state.eidr}
+                            style={style.textField}
+                            onChange={this.handleChange} />
+                        <br/>
                         <Input type="submit" style={style.label}>
                             Register
                         </Input>
@@ -143,7 +153,7 @@ export default class ViewMovies extends Component {
                                 <TableCell>Dubbed</TableCell>
                                 <TableCell>Release Date</TableCell>
                                 <TableCell>Run Time</TableCell>
-                                <TableCell/>
+                                <TableCell>EIDR</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -177,8 +187,11 @@ export default class ViewMovies extends Component {
                                         {movie.runTime}
                                     </TableCell>
                                     <TableCell>
+                                        {movie.eidr}
+                                    </TableCell>
+                                    <TableCell>
                                         <Button color="primary" onClick={() => { this.modifyMovie(movie) }}>Edit</Button>
-                                        <Button color="secondary" onClick={() => { this.removeMovies(movie.title) }}> Delete</Button>
+                                        <Button color="secondary" onClick={() => { this.removeMovies(movie.eidr) }}> Delete</Button>
                                     </TableCell>
                                 </TableRow>
                             )}
@@ -231,12 +244,12 @@ export default class ViewMovies extends Component {
             })
     }
 
-    async removeMovies(title) {
+    async removeMovies(eidr) {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/removeMovies', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title: title })
+                body: JSON.stringify({ eidr: eidr, authToken: this.state.authToken})
             }).then((res => {
                 if (res.status === 200) {
                     console.log("deleted movie");
@@ -255,14 +268,15 @@ export default class ViewMovies extends Component {
         let language = props.language;
         let subtitles = props.subtitles;
         let dubbed = props.dubbed;
-        let releaseDate = props.releaseDate
-        let runTime = props.runTime
+        let releaseDate = props.releaseDate;
+        let runTime = props.runTime;
+        let eidr = props.eidr;
 
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/addMovie', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime })
+                body: JSON.stringify({ title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((movie) => {
