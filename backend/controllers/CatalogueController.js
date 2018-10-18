@@ -38,10 +38,11 @@ exports.addBook = async function (req, res) {
             return;
         }
         // isbn is unique so use isbn to check for exiting book
-        catalogueMapper.getBooks({isbn13: req.body.isbn13})
-        .then((result) => {
-            if(result === 0){
-                catalogueMapper.addBook(req.body)
+        var result = catalogueMapper.getBooks(book => {
+            return book.isbn13 === req.body.isbn13;
+        })
+        if(result === 0){
+            catalogueMapper.addBook(req.body)
                 .then((book) => {
                     res.status(200);
                     res.json(convertToFrontendBook(book));
@@ -49,15 +50,11 @@ exports.addBook = async function (req, res) {
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else {
-                console.log('book already in catalogue');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else {
+            console.log('book already in catalogue');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExceptioni(res, ex);
@@ -72,10 +69,11 @@ exports.addMusic = async function (req, res) {
             return;
         }
         // asin is unique so use asin to check for existing music
-        catalogueMapper.getMusics({asin: req.body.asin})
-        .then((result) => {
-            if(result === 0){
-                catalogueMapper.addMusic(req.body)
+        var result = catalogueMapper.getMusics(music => {
+            return music.asin === req.body.asin;
+        })
+        if(result === 0){
+            catalogueMapper.addMusic(req.body)
                 .then((music) => {
                     res.status(200);
                     res.json(convertToFrontendMusic(music));
@@ -83,15 +81,11 @@ exports.addMusic = async function (req, res) {
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else {
-                console.log('music already in catalogue');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else {
+            console.log('music already in catalogue');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExceptioni(res, ex);
@@ -106,10 +100,11 @@ exports.addMagazine = async function (req, res) {
             return;
         }
         // use isbn to check for existing magazine
-        catalogueMapper.getMagazines({isbn13: req.body.isbn13})
-        .then((result) => {
-            if(result === 0){
-                catalogueMapper.addMagazine(req.body)
+        var result = catalogueMapper.getMagazines(magazine => {
+            return magazine.isbn13 === req.body.isbn13;
+        })
+        if(result === 0){
+            catalogueMapper.addMagazine(req.body)
                 .then((magazine) => {
                     res.status(200);
                     res.json(convertToFrontendMagazine(magazine));
@@ -117,15 +112,11 @@ exports.addMagazine = async function (req, res) {
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else {
-                console.log('magazine already in catalogue');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else {
+            console.log('magazine already in catalogue');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExceptioni(res, ex);
@@ -140,10 +131,11 @@ exports.addMovie = async function (req, res){
             return;
         }
         // use title, director, and release date to check for existing movie
-        catalogueMapper.getMovies({eidr: req.body.eidr})
-        .then((result) => {
-            if(result === 0){
-                catalogueMapper.addMovie(req.body)
+        var result = catalogueMapper.getMovies(music => {
+            return music.eidr === req.body.eidr;
+        })
+        if(result === 0){
+            catalogueMapper.addMovie(req.body)
                 .then((movie) => {
                     res.status(200);
                     res.json(convertToFrontendMovie(movie));
@@ -151,15 +143,11 @@ exports.addMovie = async function (req, res){
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else {
-                console.log('movie already in catalogue');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else {
+            console.log('movie already in catalogue');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExceptioni(res, ex);
@@ -176,10 +164,11 @@ exports.modifyBook = async function (req, res) {
             return;
         }
         // find book
-        catalogueMapper.getBooks({isbn13: req.body.isbn13})
-        .then((result) => {
-            if(result === 1){
-                catalogueMapper.modifyBook(req.body)
+        var result = catalogueMapper.getBooks(book => {
+            return book.isbn13 === req.body.isbn13;
+        })
+        if(result === 1){
+            catalogueMapper.modifyBook(req.body)
                 .then((book) => {
                     res.status(200);
                     res.json(convertToFrontendBook(book));
@@ -187,19 +176,15 @@ exports.modifyBook = async function (req, res) {
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else if(result === 0) {
-                console.log('book does not exist');
-                res.status(400);
-                res.send();
-            } else {
-                console.log('found more than one book to modify');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else if(result === 0) {
+            console.log('book does not exist');
+            res.status(400);
+            res.send();
+        } else {
+            console.log('found more than one book to modify');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExceptioni(res, ex);
@@ -214,10 +199,11 @@ exports.modifyMusic = async function (req, res) {
             return;
         }
         // find music
-        catalogueMapper.getMusics({asin: req.body.asin})
-        .then((result) => {
-            if(result === 1){
-                catalogueMapper.modifyMusic(req.body)
+        var result = catalogueMapper.getMusics(music => {
+            return music.asin === req.body.asin;
+        })
+        if(result === 1){
+            catalogueMapper.modifyMusic(req.body)
                 .then((music) => {
                     res.status(200);
                     res.json(convertToFrontendMusic(music));
@@ -225,19 +211,15 @@ exports.modifyMusic = async function (req, res) {
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else if(result === 0) {
-                console.log('music does not exist');
-                res.status(400);
-                res.send();
-            } else {
-                console.log('found more than one music to modify');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else if(result === 0) {
+            console.log('music does not exist');
+            res.status(400);
+            res.send();
+        } else {
+            console.log('found more than one music to modify');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExceptioni(res, ex);
@@ -252,10 +234,11 @@ exports.modifyMagazine = async function (req, res) {
             return;
         }
         // find magazine
-        catalogueMapper.getMagazines({isbn13: req.body.isbn13})
-        .then((result) => {
-            if(result === 1){
-                catalogueMapper.modifyMagazine(req.body)
+        var result = catalogueMapper.getMagazines(magazine => {
+            return magazine.isbn13 === req.body.isbn13;
+        })
+        if(result === 1){
+            catalogueMapper.modifyMagazine(req.body)
                 .then((magazine) => {
                     res.status(200);
                     res.json(convertToFrontendMagazine(magazine));
@@ -263,19 +246,15 @@ exports.modifyMagazine = async function (req, res) {
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else if(result === 0) {
-                console.log('magazine does not exist');
-                res.status(400);
-                res.send();
-            } else {
-                console.log('found more than one magazine to modify');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else if(result === 0) {
+            console.log('magazine does not exist');
+            res.status(400);
+            res.send();
+        } else {
+            console.log('found more than one magazine to modify');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExcpetion(ex);
@@ -290,10 +269,11 @@ exports.modifyMovie = async function (req, res){
             return;
         }
         // find movie
-        catalogueMapper.getMovies({eidr: req.body.eidr})
-        .then((result) => {
-            if(result === 1){
-                catalogueMapper.modifyMovie(req.body)
+        var result = catalogueMapper.getMovies(movie => {
+            return movie.eidr === req.body.eidr;
+        })
+        if(result === 1){
+            catalogueMapper.modifyMovie(req.body)
                 .then((movie) => {
                     res.status(200);
                     res.json(convertToFrontendMovie(movie));
@@ -301,19 +281,15 @@ exports.modifyMovie = async function (req, res){
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else if(result === 0) {
-                console.log('mvoie does not exist');
-                res.status(400);
-                res.send();
-            } else {
-                console.log('found more than one movie to modify');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else if(result === 0) {
+            console.log('mvoie does not exist');
+            res.status(400);
+            res.send();
+        } else {
+            console.log('found more than one movie to modify');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExceptioni(res, ex);
@@ -330,29 +306,27 @@ exports.deleteBook = async function (req, res) {
             return;
         }
         // find book
-        catalogueMapper.getBooks({isbn13: req.body.isbn13})
-        .then((result) => {
-            if(result === 1){
-                catalogueMapper.deleteBook()
+        var result = catalogueMapper.getBooks(book => {
+            return book.isbn13 === req.body.isbn13;
+        })
+        if(result === 1){
+            catalogueMapper.deleteBook()
                 .then(() => {
                     res.status(200);
+                    res.send();
                 })
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else if(result === 0) {
-                console.log('book does not exist');
-                res.status(400);
-                res.send();
-            } else {
-                console.log('found more than one book to delete');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else if(result === 0) {
+            console.log('book does not exist');
+            res.status(400);
+            res.send();
+        } else {
+            console.log('found more than one book to delete');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExceptioni(res, ex);
@@ -367,29 +341,27 @@ exports.deleteMusic = async function (req, res) {
             return;
         }
         // find music
-        catalogueMapper.getMusicss({asin: req.body.asin})
-        .then((result) => {
-            if(result === 1){
-                catalogueMapper.deleteMusic()
+        var result = catalogueMapper.getMusics(music => {
+            return music.asin === req.body.asin;
+        })
+        if(result === 1){
+            catalogueMapper.deleteMusic()
                 .then(() => {
                     res.status(200);
+                    res.send();
                 })
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else if(result === 0) {
-                console.log('music does not exist');
-                res.status(400);
-                res.send();
-            } else {
-                console.log('found more than one music to delete');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else if(result === 0) {
+            console.log('music does not exist');
+            res.status(400);
+            res.send();
+        } else {
+            console.log('found more than one music to delete');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExceptioni(res, ex);
@@ -404,29 +376,26 @@ exports.deleteMagazine = async function (req, res) {
             return;
         }
         // find magazine
-        catalogueMapper.getMagazines({isbn13: req.body.isbn13})
-        .then((result) => {
-            if(result === 1){
-                catalogueMapper.deleteMagazine()
+        var result = catalogueMapper.getMagazines(magazine => {
+            return magazine.isbn13 === req.body.isbn13;
+        })
+        if(result === 1){
+            catalogueMapper.deleteMagazine()
                 .then(() => {
                     res.status(200);
                 })
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else if(result === 0) {
-                console.log('magazine does not exist');
-                res.status(400);
-                res.send();
-            } else {
-                console.log('found more than one magazine to delete');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else if(result === 0) {
+            console.log('magazine does not exist');
+            res.status(400);
+            res.send();
+        } else {
+            console.log('found more than one magazine to delete');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExceptioni(res, ex);
@@ -441,29 +410,26 @@ exports.deleteMovie = async function (req, res){
             return;
         }
         // find movie
-        catalogueMapper.getMovies({eidr: req.body.eidr})
-        .then((result) => {
-            if(result === 1){
-                catalogueMapper.deleteMovie()
+        var result = catalogueMapper.getMovies(movie => {
+            return movie.eidr === req.body.eidr;
+        })
+        if(result === 1){
+            catalogueMapper.deleteMovie()
                 .then(() => {
                     res.status(200);
                 })
                 .catch((ex) => {
                     handleExceptioni(res, ex);
                 });
-            } else if(result === 0) {
-                console.log('mvoie does not exist');
-                res.status(400);
-                res.send();
-            } else {
-                console.log('found more than one movie to modify');
-                res.status(400);
-                res.send();
-            }
-        })
-        .catch((ex) => {
-            handleExceptioni(res, ex);
-        });
+        } else if(result === 0) {
+            console.log('mvoie does not exist');
+            res.status(400);
+            res.send();
+        } else {
+            console.log('found more than one movie to modify');
+            res.status(400);
+            res.send();
+        }
     })
     .catch((ex) => {
         handleExceptioni(res, ex);
@@ -473,9 +439,9 @@ exports.deleteMovie = async function (req, res){
 
 //</editor-fold>
 
-convertToFrontendView = (viewItems) => {
+convertToFrontendView = (catalogueItems) => {
     viewItems = [];
-    viewItems.forEach((item) => {
+    catalogueItems.forEach((item) => {
         viewItems.push(item);
     });
     return viewItems;
