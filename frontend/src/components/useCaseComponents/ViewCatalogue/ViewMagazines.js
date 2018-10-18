@@ -21,7 +21,8 @@ export default class ViewMagazines extends Component {
             isbn13: '',
             app: props.app,
             magazines: [],
-            magazineAdded: false
+            magazineAdded: false,
+            authToken: this.state.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
