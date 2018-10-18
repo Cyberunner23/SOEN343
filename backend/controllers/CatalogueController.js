@@ -528,10 +528,12 @@ exports.getMovies = async function(req, res) {
 //</editor-fold>
 
 handleException = function(res, exception) {
+    var message;
     switch(exception){
-        case catalogueMapper.Exceptions.InternalServerError:
+        case Exceptions.InternalServerError:
         default:
+            message = "InternalServerError";
             res.status(500);
-            res.send();
     }
+    res.json({err: message});
 }
