@@ -44,7 +44,7 @@ class CatalogueMapper {
                     return callback(book);
                 })
 
-                this.activeBooks = this.books.filter(book => {
+                this.books = this.books.filter(book => {
                     return ! callback(book);
                 })
 
