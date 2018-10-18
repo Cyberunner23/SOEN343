@@ -2,6 +2,7 @@ const Book = require('../business_objects/Book').Book;
 const Magazine = require('../business_objects/Magazine').Magazine;
 const Movie = require('../business_objects/Movie.js').Movie;
 const Music = require('../business_objects/Music.js').Music
+const catalogGateway = require('../gateways/CatalogGateway').getInstance();
 
 
 class CatalogueMapper {
@@ -35,18 +36,45 @@ class CatalogueMapper {
     async removeBooks(callback) {
         return new Promise((resolve, reject) => {
             var removedBooks = [];
+            var isbnsToDelete = [];
+
             if (callback) {
-                this.books = this.books.filter(book => {
-                    if(callback(book)) {
-                        removedBooks.push(book);
-                    }
-                    return !callback(book);
+
+                removedBooks = this.activeBooks.filter(book => {
+                    return callback(book);
                 })
-            } else {
-                removedBooks = this.books;
-                this.books = [];
+
+                this.activeBooks = this.activeBooks.filter(book => {
+                    return ! callback(book);
+                })
+
+                if (removedBooks.length > 0) {
+                    removedBooks.forEach(book => {
+                        idsToRemove.push(book.isbn10);
+                    })
+                }
+                else {
+                    // no book to remove
+                    resolve([]);
+                    return;
+                }
             }
-            resolve(removedBooks);
+            else {
+                console.log('Removing all books. Hopefully this is actually what you wanted to do.');
+                removedBooks = this.activeBooks.splice(0, this.activeBooks.length);
+                removedBooks.forEach(book => {
+                    idsToRemove.push(book.isbn10);
+                })
+            }
+
+
+            catalogGateway.deleteActiveUser(isbnsToDelete)
+            .then(() => {
+                resolve(removedBooks);
+            })
+            .catch(exception => {
+                reject(exception);
+            })
         })
     }
 
@@ -119,18 +147,45 @@ class CatalogueMapper {
     async removeMovies(callback) {
         return new Promise((resolve, reject) => {
             var removedMovies = [];
+            var eidrsToDelete = [];
+
             if (callback) {
-                this.movies = this.movies.filter(movie => {
-                    if(callback(movie)) {
-                        removedMovies.push(movie);
-                    }
-                    return !callback(movie);
+
+                removedMovies = this.activeMovies.filter(movie => {
+                    return callback(movie);
                 })
-            } else {
-                removedMovies = this.movies;
-                this.movies = [];
+
+                this.activeMovies = this.activeMovies.filter(movie => {
+                    return ! callback(movie);
+                })
+
+                if (removedMovies.length > 0) {
+                    removedMovies.forEach(movie => {
+                        eidrsToDelete.push(movie.eidr);
+                    })
+                }
+                else {
+                    // no movie to remove
+                    resolve([]);
+                    return;
+                }
             }
-            resolve(removedMovies);
+            else {
+                console.log('Removing all movies. Hopefully this is actually what you wanted to do.');
+                removedMovies = this.activeMovies.splice(0, this.activeMovies.length);
+                removedMovies.forEach(movie => {
+                    eidrsToDelete.push(movie.eidr);
+                })
+            }
+
+
+            catalogGateway.deleteActiveUser(eidrsToDelete)
+            .then(() => {
+                resolve(removedMovies);
+            })
+            .catch(exception => {
+                reject(exception);
+            })
         })
     }
 

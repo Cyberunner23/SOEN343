@@ -56,18 +56,23 @@ class CatalogGateway{
             })
         })
     }
-    async deleteBooks(jsonBook){
+    async deleteBooks(isbnsToDelete){
         return new Promise((resolve, reject) => {
-            var query = "DELETE FROM Books WHERE isbn10=?";
-            var inserts = [jsonBook.isbn10];
-            query = mysql.format(query, inserts);
-            db.query(query, (err, response) => {
-                if (err) {
-                    console.log(err);
-                    reject(Exceptions.InternalServerError);
+            var query;
+            if (idsToRemove) {
+                query = 'DELETE FROM Books WHERE isbn10 IN (' + isbnsToDelete.join() + ')';
+            }
+            else {
+                query = 'DELETE FROM Books'
+            }
+        
+            db.query(query, (err, result) => {
+                if (!err) {
+                    resolve();
                 }
                 else {
-                    resolve();
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
                 }
             })
         })
@@ -137,18 +142,23 @@ class CatalogGateway{
             })
         })
     }
-    async deleteMovies(jsonMovie){
+    async deleteMovies(eidrsToDelete){
         return new Promise((resolve, reject) => {
-            var query = "DELETE FROM Movies WHERE eidr=?";
-            var inserts = [jsonMovie.eidr];
-            query = mysql.format(query, inserts);
-            db.query(query, (err, response) => {
-                if (err) {
-                    console.log(err);
-                    reject(Exceptions.InternalServerError);
+            var query;
+            if (eidrsToDelete) {
+                query = 'DELETE FROM Movies WHERE eidr IN (' + eidrsToDelete.join() + ')';
+            }
+            else {
+                query = 'DELETE FROM Movies'
+            }
+        
+            db.query(query, (err, result) => {
+                if (!err) {
+                    resolve();
                 }
                 else {
-                    resolve();
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
                 }
             })
         })
