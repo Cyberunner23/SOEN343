@@ -389,6 +389,7 @@ exports.deleteMagazine = async function (req, res) {
             })
                 .then(() => {
                     res.status(200);
+                    res.send();
                 })
                 .catch((ex) => {
                     handleException(res, ex);
@@ -425,6 +426,7 @@ exports.deleteMovie = async function (req, res){
             })
                 .then(() => {
                     res.status(200);
+                    res.send();
                 })
                 .catch((ex) => {
                     handleException(res, ex);

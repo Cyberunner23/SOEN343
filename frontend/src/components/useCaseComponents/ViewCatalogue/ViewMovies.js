@@ -131,7 +131,7 @@ export default class ViewMovies extends Component {
                             margin="dense"
                             value={this.state.eidr}
                             style={style.textField}
-                            onCHange={this.handleChange} />
+                            onChange={this.handleChange} />
                         <br/>
                         <Input type="submit" style={style.label}>
                             Register
@@ -153,7 +153,6 @@ export default class ViewMovies extends Component {
                                 <TableCell>Release Date</TableCell>
                                 <TableCell>Run Time</TableCell>
                                 <TableCell>EIDR</TableCell>
-                                <TableCell/>
                             </TableRow>
                         </TableHead>
                         <TableBody>
