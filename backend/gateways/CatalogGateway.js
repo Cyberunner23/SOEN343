@@ -41,9 +41,9 @@ class CatalogGateway{
     }
     async updateBook(jsonBook){
         return new Promise((resolve, reject) => {
-            var query = "UPDATE books SET title=? AND author=? AND format=? AND pages=? AND publisher=? AND language=? WHERE isbn10=?";
+            var query = "UPDATE books SET title=? AND author=? AND format=? AND pages=? AND publisher=? AND language=? AND isbn10=? WHERE isbn13=?";
             var inserts = [jsonBook.title, jsonBook.author, jsonBook.format, jsonBook.pages,
-                jsonBook.publisher, jsonBook.language, jsonBook.isbn10];
+                jsonBook.publisher, jsonBook.language, jsonBook.isbn10, jsonBook.isbn13];
             query = mysql.format(query, inserts);
             db.query(query, (err, response) => {
                 if (err) {
@@ -60,7 +60,7 @@ class CatalogGateway{
         return new Promise((resolve, reject) => {
             var query;
             if (isbnsToDelete) {
-                query = 'DELETE FROM books WHERE isbn10 IN (' + isbnsToDelete.join() + ')';
+                query = 'DELETE FROM books WHERE isbn13 IN (' + isbnsToDelete.join() + ')';
             }
             else {
                 query = 'DELETE FROM books'
@@ -113,9 +113,9 @@ class CatalogGateway{
     }
     async updateMagazine(jsonMagazines){
         return new Promise((resolve,reject) => {
-            var query= "UPDATE magazines SET title=? AND publisher=? AND date=? AND language=? WHERE isbn10=?";
+            var query= "UPDATE magazines SET title=? AND publisher=? AND date=? AND language=? AND isbn10=? WHERE isbn13=?";
             var inserts=[jsonMagazines.title, jsonMagazines.publisher, jsonMagazines.date, jsonMagazines.language, 
-                jsonMagazines.isbn10];//should we add isbn13 as well??
+                jsonMagazines.isbn10, jsonMagazines.isbn13];
             query=mysql.format(query,inserts);
             db.query(query, (err,response) => {
                 if(err){
@@ -131,7 +131,7 @@ class CatalogGateway{
         return new Promise((resolve, reject) => {
             var query;
             if(isbnsToDelete)  {
-                query='DELETE FROM magazines WHERE isbn10 IN (' + isbnsToDelete.join() + ')';//what about isbn13?
+                query='DELETE FROM magazines WHERE isbn13 IN (' + isbnsToDelete.join() + ')';
             }else{
                 query='Delete FROM magazines';
             }
