@@ -271,7 +271,25 @@ class CatalogGateway{
             })
         })
     }
-    
+    async deleteMusics(asinToDelete){
+        return new Promise((resolve, reject) => {
+            var query;
+            if(asinToDelete){
+                query= 'DELETE FROM musics WHERE asin IN (' + asinToDelete.join() + ')';
+            }else{
+                query='DELETE FROM musics';
+            }
+            db.query(query, (err, result) => {
+                if (!err) {
+                    resolve();
+                }
+                else {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                }
+            })
+        })
+    }
 }
     const instance = new CatalogGateway();
     exports.getInstance = () => {
