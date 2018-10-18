@@ -25,7 +25,7 @@ export default class ViewBooks extends Component {
             app: props.app,
             books: [],
             bookAdded: false,
-            authToken: this.state.app.state.currentUser.authToken
+            authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);

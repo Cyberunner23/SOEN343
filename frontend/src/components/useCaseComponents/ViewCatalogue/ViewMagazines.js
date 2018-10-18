@@ -22,7 +22,7 @@ export default class ViewMagazines extends Component {
             app: props.app,
             magazines: [],
             magazineAdded: false,
-            authToken: this.state.app.state.currentUser.authToken
+            authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);

@@ -23,7 +23,7 @@ export default class ViewMusics extends Component {
             app: props.app,
             musics: [],
             musicAdded: false,
-            authToken: this.state.app.state.currentUser.authToken
+            authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
