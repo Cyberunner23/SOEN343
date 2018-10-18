@@ -13,7 +13,7 @@ exports.viewItems = async function (req, res) {
     catalogueMapper.getCatalogue()
             .then((view) => {
                 res.status(200);
-                res.json(conv ertToFrontendView(viewItems));
+                res.json(convertToFrontendView(viewItems));
             })
             .catch((exception) => {
                 handleException(res, exception);
@@ -140,8 +140,7 @@ exports.addMovie = async function (req, res){
             return;
         }
         // use title, director, and release date to check for existing movie
-        catalogueMapper.getMovies(
-            {title: req.body.title, director: req.body.director, releaseDate: req.body.releaseDate})
+        catalogueMapper.getMovies({eidr: req.body.eidr})
         .then((result) => {
             if(result === 0){
                 catalogueMapper.addMovie(req.body)
@@ -291,8 +290,7 @@ exports.modifyMovie = async function (req, res){
             return;
         }
         // find movie
-        catalogueMapper.getMovies(
-                {title: req.body.title, director: req.body.director, releaseDate: req.body.releaseDate})
+        catalogueMapper.getMovies({eidr: req.body.eidr})
         .then((result) => {
             if(result === 1){
                 catalogueMapper.modifyMovie(req.body)
@@ -443,8 +441,7 @@ exports.deleteMovie = async function (req, res){
             return;
         }
         // find movie
-        catalogueMapper.getMovies(
-                {title: req.body.title, director: req.body.director, releaseDate: req.body.releaseDate})
+        catalogueMapper.getMovies({eidr: req.body.eidr})
         .then((result) => {
             if(result === 1){
                 catalogueMapper.deleteMovie()
@@ -534,8 +531,9 @@ convertToFrontendMovie = (movie) => {
     let dubbed = movie.dubbed;
     let releaseDate = movie.releaseDate;
     let runTime = movie.runTime;
+    let eidr = movie.eidr;
     return (
-        {title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime}
+        {title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr}
     );
 }
 //</editor-fold>
