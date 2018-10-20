@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
-import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import './ViewBooks.css';
 
 export default class ViewBooks extends Component {
 
@@ -24,7 +22,8 @@ export default class ViewBooks extends Component {
             isbn13: '',
             app: props.app,
             books: [],
-            bookAdded: false,
+            modifyBook: false,
+            bookModified: false,
             authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
@@ -42,137 +41,95 @@ export default class ViewBooks extends Component {
     }
 
     render() {
-        var bookAddedMessage;
-        if (this.state.bookAdded) {
-            bookAddedMessage = (
-                <div>{this.state.bookAddedMessage}</div>
+        var bookModifiedMessage;
+        if (this.state.bookModifiedMessage) {
+            bookModifiedMessage = (
+                <div>{this.state.bookModifiedMessage}</div>
             )
         }
         var content;
         content = (
-            <div className="container">
-                <div className="fixed" style={style.body}>
-                    <form style={style.label} onSubmit={this.handleSubmit} method="POST">
-                        <TextField
-                            label="Title"
-                            name="title"
-                            margin="dense"
-                            value={this.state.title}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <TextField
-                            label="Author"
-                            name="author"
-                            margin="dense"
-                            value={this.state.author}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <TextField
-                            label="Format"
-                            name="format"
-                            margin="dense"
-                            value={this.state.format}
-                            style={style.format}
-                            onChange={this.handleChange} />
-                        <TextField
-                            label="Pages"
-                            name="pages"
-                            margin="dense"
-                            value={this.state.pages}
-                            style={style.page}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <TextField
-                            label="Publisher"
-                            name="publisher"
-                            margin="dense"
-                            value={this.state.publisher}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <TextField
-                            label="Language"
-                            name="language"
-                            margin="dense"
-                            value={this.state.language}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <TextField
-                            label="ISBN-10"
-                            name="isbn10"
-                            margin="dense"
-                            value={this.state.isbn10}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <TextField
-                            label="ISBN-13"
-                            name="isbn13"
-                            margin="dense"
-                            value={this.state.isbn13}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <Input type="submit" style={style.label}>
-                            Add
-                        </Input>
-                    </form>
-                    {bookAddedMessage}
-                </div>
-                <div className="flex">
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Title</TableCell>
-                                <TableCell>Author</TableCell>
-                                <TableCell>Format</TableCell>
-                                <TableCell>Pages</TableCell>
-                                <TableCell>Publisher</TableCell>
-                                <TableCell>Language</TableCell>
-                                <TableCell>ISBN-10</TableCell>
-                                <TableCell>ISBN-13</TableCell>
-                                <TableCell/>
+            <div>
+                {bookModifiedMessage}
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Title</TableCell>
+                            <TableCell>Author</TableCell>
+                            <TableCell>Format</TableCell>
+                            <TableCell>Pages</TableCell>
+                            <TableCell>Publisher</TableCell>
+                            <TableCell>Language</TableCell>
+                            <TableCell>ISBN-10</TableCell>
+                            <TableCell>ISBN-13</TableCell>
+                            <TableCell/>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {this.state.books.map((book, i) =>
+                            <TableRow key={i}>
+                                <TableCell>
+                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
+                                        name="title"
+                                        margin="dense"
+                                        defaultValue={book.title}
+                                        onChange={this.handleChange} />) : (book.title)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
+                                        name="author"
+                                        margin="dense"
+                                        defaultValue={book.author}
+                                        onChange={this.handleChange} />) : (book.author)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
+                                        name="format"
+                                        margin="dense"
+                                        defaultValue={book.format}
+                                        onChange={this.handleChange} />) : (book.format)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
+                                        name="pages"
+                                        margin="dense"
+                                        defaultValue={book.pages}
+                                        onChange={this.handleChange} />) : (book.pages)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
+                                        name="publisher"
+                                        margin="dense"
+                                        defaultValue={book.publisher}
+                                        onChange={this.handleChange} />) : (book.publisher)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
+                                        name="language"
+                                        margin="dense"
+                                        defaultValue={book.language}
+                                        onChange={this.handleChange} />) : (book.language)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
+                                        name="isbn10"
+                                        margin="dense"
+                                        defaultValue={book.isbn10}
+                                        onChange={this.handleChange} />) : (book.isbn10)}
+                                </TableCell>
+                                <TableCell>
+                                    {book.isbn13}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ?
+                                        (<Button color="primary" onClick={() => { this.modifyBook(book) }}>Confirm</Button>) :
+                                        (<Button color="primary" onClick={() => { this.modifyBookState(book) }}>Edit</Button>)}
+                                    <Button color="secondary" onClick={() => { this.removeBooks(book.isbn13) }}>Delete</Button>
+                                </TableCell>
                             </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {this.state.books.map((book, i) =>
-                                <TableRow key={i}>
-                                    <TableCell>
-                                        {book.title}
-                                    </TableCell>
-                                    <TableCell>
-                                        {book.author}
-                                    </TableCell>
-                                    <TableCell>
-                                        {book.format}
-                                    </TableCell>
-                                    <TableCell>
-                                        {book.pages}
-                                    </TableCell>
-                                    <TableCell>
-                                        {book.publisher}
-                                    </TableCell>
-                                    <TableCell>
-                                        {book.language}
-                                    </TableCell>
-                                    <TableCell>
-                                        {book.isbn10}
-                                    </TableCell>
-                                    <TableCell>
-                                        {book.isbn13}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button color="primary" onClick={() => { this.modifyBook(book) }}>Edit</Button>
-                                        <Button color="secondary" onClick={() => { this.removeBooks(book.isbn13) }}>Delete</Button>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
+                        )}
+                    </TableBody>
+                </Table>
             </div>
         );
 
@@ -185,12 +142,10 @@ export default class ViewBooks extends Component {
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, bookAdded: false });
+        this.setState({ [e.target.name]: e.target.value, bookModified: false });
     }
 
-    modifyBook(book) {
-        console.log(book);
-
+    modifyBookState(book) {
         this.setState({
             title: book.title,
             author: book.author,
@@ -199,21 +154,22 @@ export default class ViewBooks extends Component {
             publisher: book.publisher,
             language: book.language,
             isbn10: book.isbn10,
-            isbn13: book.isbn13
+            isbn13: book.isbn13,
+            modifyBook: true
         })
     }
 
     async handleSubmit(event) {
         event.preventDefault();
 
-        this.addBook(this.state)
+        this.modifyBook(this.state)
             .then((book) => {
                 if (book !== null) {
-                    console.log('Book added successfully');
-                    this.setState({ bookAdded: true, bookAddedMessage: 'New book ' + book.title + ' added' })
+                    console.log('Book modified successfully');
+                    this.setState({ modifyBook: false, bookModified: true, bookModifiedMessage: 'Book ' + book.title + ' modified' })
                 } else {
-                    console.log('Book already added');
-                    this.setState({ bookAdded: true, bookAddedMessage: 'book already added' })
+                    console.log('Book already modified');
+                    this.setState({ bookModified: true, bookModifiedMessage: 'book already modified' })
                 }
             }).then(() => {
                 this.componentDidMount();
@@ -236,7 +192,7 @@ export default class ViewBooks extends Component {
         })
     }
 
-    async addBook(props) {
+    async modifyBook(props) {
         let title = props.title;
         let author = props.author;
         let format = props.format;
@@ -247,7 +203,7 @@ export default class ViewBooks extends Component {
         let isbn13 = props.isbn13;
 
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addBook', {
+            fetch('/api/catalogue/modifyBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title, author, format, pages, publisher, language, isbn10, isbn13 , authToken: this.state.authToken})
@@ -264,19 +220,3 @@ export default class ViewBooks extends Component {
         })
     }
 }
-
-const style = {
-    body: {
-        margin: 30
-    },
-    page: {
-        marginLeft: 10,
-        width: 90
-    },
-    format: {
-        width: 200
-    },
-    textField: {
-        width: 300
-    },
-};

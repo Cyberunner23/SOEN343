@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-import './ViewBooks.css';
 import TextField from '@material-ui/core/TextField';
-import Input from '@material-ui/core/Input';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
@@ -22,7 +20,8 @@ export default class ViewMusics extends Component {
             asin: '',
             app: props.app,
             musics: [],
-            musicAdded: false,
+            modifyMusic: false,
+            musicModified: false,
             authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
@@ -40,114 +39,79 @@ export default class ViewMusics extends Component {
     }
 
     render() {
-        var musicAddedMessage;
-        if (this.state.musicAdded) {
-            musicAddedMessage = (
-                <div>{this.state.musicAddedMessage}</div>
+        var musicModifiedMessage;
+        if (this.state.musicModified) {
+            musicModifiedMessage = (
+                <div>{this.state.musicModifiedMessage}</div>
             )
         }
         var content;
         content = (
-            <div className="container">
-                <div style={style.body}>
-                    <form style={style.label} onSubmit={this.handleSubmit} method="POST">
-                        <TextField
-                            label="Title"
-                            name="title"
-                            margin="dense"
-                            value={this.state.title}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <TextField
-                            label="Type"
-                            name="type"
-                            margin="dense"
-                            value={this.state.type}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <TextField
-                            label="Artist"
-                            name="artist"
-                            margin="dense"
-                            value={this.state.artist}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <TextField
-                            label="Label"
-                            name="label"
-                            margin="dense"
-                            value={this.state.label}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <TextField
-                            label="Released Date"
-                            name="releaseDate"
-                            margin="dense"
-                            value={this.state.releaseDate}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <TextField
-                            label="ASIN"
-                            name="asin"
-                            margin="dense"
-                            value={this.state.asin}
-                            style={style.textField}
-                            onChange={this.handleChange} />
-                        <br/>
-                        <Input type="submit" style={style.label}>
-                            Add
-                        </Input>
-                    </form>
-                    {musicAddedMessage}
-                </div>
-                <div className="flex">
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>Title</TableCell>
-                                <TableCell>Type</TableCell>
-                                <TableCell>Artist</TableCell>
-                                <TableCell>Label</TableCell>
-                                <TableCell>Released Date</TableCell>
-                                <TableCell>ASIN</TableCell>
-                                <TableCell/>
+            <div>
+                {musicModifiedMessage}
+                <Table>
+                    <TableHead>
+                        <TableRow>
+                            <TableCell>Title</TableCell>
+                            <TableCell>Type</TableCell>
+                            <TableCell>Artist</TableCell>
+                            <TableCell>Label</TableCell>
+                            <TableCell>Released Date</TableCell>
+                            <TableCell>ASIN</TableCell>
+                            <TableCell/>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {this.state.musics.map((music, i) =>
+                            <TableRow key={i}>
+                                <TableCell>
+                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
+                                        name="title"
+                                        margin="dense"
+                                        defaultValue={music.title}
+                                        onChange={this.handleChange} />) : (music.title)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
+                                        name="type"
+                                        margin="dense"
+                                        defaultValue={music.type}
+                                        onChange={this.handleChange} />) : (music.type)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
+                                        name="artist"
+                                        margin="dense"
+                                        defaultValue={music.artist}
+                                        onChange={this.handleChange} />) : (music.artist)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
+                                        name="label"
+                                        margin="dense"
+                                        defaultValue={music.label}
+                                        onChange={this.handleChange} />) : (music.label)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
+                                        name="releaseDate"
+                                        margin="dense"
+                                        defaultValue={music.releaseDate}
+                                        onChange={this.handleChange} />) : (music.releaseDate)}
+                                </TableCell>
+                                <TableCell>
+                                    {music.asin}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyMusic && this.state.asin === music.asin) ?
+                                        (<Button color="primary" onClick={() => { this.modifyMusic(music) }}>Confirm</Button>) :
+                                        (<Button color="primary" onClick={() => { this.modifyMusicState(music) }}>Edit</Button>)}
+                                    <Button color="secondary" onClick={() => { this.removeMusics(music.asin) }}>Delete</Button>
+                                </TableCell>
                             </TableRow>
-                        </TableHead>
-                        <TableBody>
-                            {this.state.musics.map((music, i) =>
-                                <TableRow key={i}>
-                                    <TableCell>
-                                        {music.title}
-                                    </TableCell>
-                                    <TableCell>
-                                        {music.type}
-                                    </TableCell>
-                                    <TableCell>
-                                        {music.artist}
-                                    </TableCell>
-                                    <TableCell>
-                                        {music.label}
-                                    </TableCell>
-                                    <TableCell>
-                                        {music.releaseDate}
-                                    </TableCell>
-                                    <TableCell>
-                                        {music.asin}
-                                    </TableCell>
-                                    <TableCell>
-                                        <Button color="primary" onClick={() => { this.modifyMusic(music) }}>Edit</Button>
-                                        <Button color="secondary" onClick={() => { this.removeMusics(music.asin) }}>Delete</Button>
-                                    </TableCell>
-                                </TableRow>
-                            )}
-                        </TableBody>
-                    </Table>
-                </div>
+                        )}
+                    </TableBody>
+                </Table>
             </div>
         );
 
@@ -160,31 +124,32 @@ export default class ViewMusics extends Component {
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, musicAdded: false });
+        this.setState({ [e.target.name]: e.target.value, musicModified: false });
     }
 
-    modifyMusic(music) {
+    modifyMusicState(music) {
         this.setState({
             type: music.type,
             title: music.title,
             artist: music.artist,
             label: music.label,
             releaseDate: music.releaseDate,
-            asin: music.asin
+            asin: music.asin,
+            modifyMusic: true
         });
     }
 
     async handleSubmit(event) {
         event.preventDefault();
 
-        this.addMusic(this.state)
+        this.modifyMusic(this.state)
             .then((music) => {
                 if (music !== null) {
-                    console.log('Music added successfully');
-                    this.setState({ musicAdded: true, musicAddedMessage: 'New music ' + music.title + ' added' })
+                    console.log('Music modified successfully');
+                    this.setState({ modifyMusic: false, musicModified: true, musicModifiedMessage: 'Music ' + music.title + ' modified' })
                 } else {
-                    console.log('Music already added');
-                    this.setState({ musicAdded: true, musicAddedMessage: 'Music already added' })
+                    console.log('Music already modified');
+                    this.setState({ musicModified: true, musicModifiedMessage: 'Music already modified' })
                 }
             }).then(() => {
                 this.componentDidMount();
@@ -207,7 +172,7 @@ export default class ViewMusics extends Component {
         })
     }
 
-    async addMusic(props) {
+    async modifyMusic(props) {
         let title = props.title;
         let type = props.type;
         let artist = props.artist;
@@ -216,7 +181,7 @@ export default class ViewMusics extends Component {
         let asin = props.asin;
 
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addMusic', {
+            fetch('/api/catalogue/modifyMusic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ title, type, artist, label, releaseDate, asin, authToken: this.state.authToken})
@@ -233,12 +198,3 @@ export default class ViewMusics extends Component {
         })
     }
 }
-
-const style = {
-    body: {
-        margin: 30
-    },
-    textField: {
-        width: 300
-    },
-};
