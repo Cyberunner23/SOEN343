@@ -168,10 +168,12 @@ exports.modifyBook = async function (req, res) {
             return book.isbn13 === req.body.isbn13;
         })
         if(result.length === 1){
-            catalogueMapper.modifyBook(req.body)
-                .then((book) => {
+            catalogueMapper.modifyBooks(req.body, book => {
+                return book.isbn13 === req.body.isbn13
+            })
+                .then((books) => {
                     res.status(200);
-                    res.json(convertToFrontendBook(book));
+                    res.json(convertToFrontendBook(books[0]));
                 })
                 .catch((ex) => {
                     handleException(res, ex);

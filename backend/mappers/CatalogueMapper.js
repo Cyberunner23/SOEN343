@@ -51,7 +51,7 @@ class CatalogueMapper {
     }
 
     async modifyBooks(modifyProperties, callback) {
-        return this.modify(this.books, modifyProperties, callback);
+        return this.modify(this.books, new Book(modifyProperties), callback);
     }
 
     getMagazines(callback) {
@@ -93,7 +93,7 @@ class CatalogueMapper {
     }
 
     async modifyMagazines(modifyProperties, callback) {
-        return this.modify(this.magazines, modifyProperties, callback);
+        return this.modify(this.magazines, new Magazine(modifyProperties), callback);
     }
 
     getMovies(callback) {
@@ -135,7 +135,7 @@ class CatalogueMapper {
     }
 
     async modifyMovies(modifyProperties, callback) {
-        return this.modify(this.movies, modifyProperties, callback);
+        return this.modify(this.movies, new Movie(modifyProperties), callback);
     }
 
     getMusics(callback) {
@@ -177,7 +177,7 @@ class CatalogueMapper {
     }
 
     async modifyMusics(modifyProperties, callback) {
-        return this.modify(this.musics, modifyProperties, callback);
+        return this.modify(this.musics, new Music(modifyProperties), callback);
     }
 
     /**
@@ -193,19 +193,6 @@ class CatalogueMapper {
     async modify(cache, modifyProperties, selector) {
         return new Promise((resolve, reject) => {
             let toModify = [];
-
-            if(cache.length === 0) {
-                return []; // Early exit if there are no items to modify
-            }
-
-            // Validate incoming properties
-            let validObject = cache[0]; // Guaranteed to exist by early exit test
-            for (let property in modifyProperties) {
-                if (!validObject.hasOwnProperty(property)) {
-                    console.error(`Error: Attempting to add property ${property} to object ${validObject.constructor.name}`);
-                    return [];
-                }
-            }
 
             // Select objects to modify
             if (selector) {

@@ -122,7 +122,7 @@ export default class ViewBooks extends Component {
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ?
-                                        (<Button color="primary" onClick={() => { this.modifyBook(book) }}>Confirm</Button>) :
+                                        (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
                                         (<Button color="primary" onClick={() => { this.modifyBookState(book) }}>Edit</Button>)}
                                     <Button color="secondary" onClick={() => { this.removeBooks(book.isbn13) }}>Delete</Button>
                                 </TableCell>
