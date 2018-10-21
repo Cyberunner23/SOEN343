@@ -85,7 +85,7 @@ class CatalogueMapper {
 	   
     async modifyBooks(modifyProperties, callback) {
         return new Promise((resolve, reject) => {	
-			this.modify(this.books, modifyProperties, callback);
+			this.modify(this.books, modifyProperties, callback)
 			.then(arrayOfModifiedBooks => {
 				var exception;
 				for (var i = 0 ; i < arrayOfModifiedBooks.length && !exception; i++)
@@ -93,15 +93,15 @@ class CatalogueMapper {
 					.catch(e => {
 						exception = e;
 					})
-                if (exception) {
-                    reject(exception);
-                }
-                else { 
-                    resolve(arrayOfModifiedBooks);
-                }
+				if (exception) {
+					reject(exception);
+				}
+				else { 
+					resolve(arrayOfModifiedBooks);
+				}
 			})
-        })
-    }
+		})
+	}
 
     getMagazines(callback) {
         if (callback) {
@@ -212,23 +212,23 @@ class CatalogueMapper {
 
     async modifyMovies(modifyProperties, callback) {
         return new Promise((resolve, reject) => {	
-			this.modify(this.movies, modifyProperties, callback);
+			this.modify(this.movies, modifyProperties, callback)
 			.then(arrayOfModifiedMovies => {
 				var exception;
 				for (var i = 0 ; i < arrayOfModifiedMovies.length && !exception; i++)
-					catalogGateway.updateMovie(arrayOfModifiedMovies[i])
+					.updateMovie(arrayOfModifiedMovies[i])
 					.catch(e => {
 						exception = e;
 					})
-                if (exception) {
-                    reject(exception);
-                }
-                else { 
-                    resolve(arrayOfModifiedMovies);
-                }
+				if (exception) {
+					reject(exception);
+				}
+				else { 
+					resolve(arrayOfModifiedMovies);
+				}
 			})
-        })
-    }
+		})
+	}
 
     getMusics(callback) {
         if (callback) {
