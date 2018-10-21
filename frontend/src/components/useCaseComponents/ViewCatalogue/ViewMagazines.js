@@ -122,7 +122,7 @@ export default class ViewMagazines extends Component {
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, magazineModified: false});
+        this.setState({ [e.target.name]: e.target.value, magazineModified: false, magazineModifiedMessage: ''});
     }
 
     modifyMagazineState(magazine) {
@@ -133,6 +133,7 @@ export default class ViewMagazines extends Component {
             language: magazine.language,
             isbn10: magazine.isbn10,
             isbn13: magazine.isbn13,
+            magazineModifiedMessage: '',
             modifyMagazine: true
         })
     }
@@ -163,8 +164,10 @@ export default class ViewMagazines extends Component {
             }).then((res => {
                 if (res.status === 200) {
                     console.log("deleted magazine");
+                    this.setState({ modifyMagazine: false, magazineModified: true, magazineModifiedMessage: 'Magazine removed successfully' })
                 } else {
                     console.log(res)
+                    this.setState({ magazineModified: true, bookModifiedMessage: 'Magazine could not be removed' })
                 }
             })).then(() => { this.componentDidMount(); });
         })

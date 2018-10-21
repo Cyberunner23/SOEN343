@@ -159,7 +159,7 @@ export default class ViewMovies extends Component {
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, movieModified: false });
+        this.setState({ [e.target.name]: e.target.value, movieModified: false, movieModifiedMessage: '' });
     }
 
     modifyMovieState(movie) {
@@ -174,6 +174,7 @@ export default class ViewMovies extends Component {
             releaseDate: movie.releaseDate,
             runTime: movie.runTime,
             eidr: movie.eidr,
+            movieModifiedMessage: '',
             modifyMovie: true
         });
     }
@@ -204,8 +205,10 @@ export default class ViewMovies extends Component {
             }).then((res => {
                 if (res.status === 200) {
                     console.log("deleted movie");
+                    this.setState({ modifyMovie: false, movieModified: true, movieModifiedMessage: 'Movie removed successfully' })
                 } else {
                     console.log(res)
+                    this.setState({ movieModified: true, movieModifiedMessage: 'Movie could not be removed' })
                 }
             })).then(() => { this.componentDidMount(); });
         })

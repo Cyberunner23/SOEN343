@@ -42,7 +42,7 @@ export default class ViewBooks extends Component {
 
     render() {
         var bookModifiedMessage;
-        if (this.state.bookModifiedMessage) {
+        if (this.state.bookModified) {
             bookModifiedMessage = (
                 <div>{this.state.bookModifiedMessage}</div>
             )
@@ -142,7 +142,7 @@ export default class ViewBooks extends Component {
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, bookModified: false });
+        this.setState({ [e.target.name]: e.target.value, bookModified: false, bookModifiedMessage: '' });
     }
 
     modifyBookState(book) {
@@ -155,6 +155,7 @@ export default class ViewBooks extends Component {
             language: book.language,
             isbn10: book.isbn10,
             isbn13: book.isbn13,
+            bookModifiedMessage: '',
             modifyBook: true
         })
     }
@@ -185,8 +186,10 @@ export default class ViewBooks extends Component {
             }).then((res => {
                 if (res.status === 200) {
                     console.log("deleted book");
+                    this.setState({ modifyBook: false, bookModified: true, bookModifiedMessage: 'Book removed successfully' })
                 } else {
                     console.log(res)
+                    this.setState({ bookModified: true, bookModifiedMessage: 'Book could not be removed' })
                 }
             })).then(() => { this.componentDidMount(); });
         })

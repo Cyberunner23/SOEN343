@@ -124,7 +124,7 @@ export default class ViewMusics extends Component {
     }
 
     handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, musicModified: false });
+        this.setState({ [e.target.name]: e.target.value, musicModified: false, musicModifiedMessage: '' });
     }
 
     modifyMusicState(music) {
@@ -135,6 +135,7 @@ export default class ViewMusics extends Component {
             label: music.label,
             releaseDate: music.releaseDate,
             asin: music.asin,
+            musicModifiedMessage: '',
             modifyMusic: true
         });
     }
@@ -165,8 +166,10 @@ export default class ViewMusics extends Component {
             }).then((res => {
                 if (res.status === 200) {
                     console.log("deleted music");
+                    this.setState({ modifyMusic: false, musicModified: true, musicModifiedMessage: 'Music removed successfully' })
                 } else {
                     console.log(res)
+                    this.setState({ musicModified: true, musicModifiedMessage: 'Music could not be removed' })
                 }
             })).then(() => { this.componentDidMount(); });
         })
