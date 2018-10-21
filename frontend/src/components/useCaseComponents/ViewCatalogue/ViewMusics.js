@@ -104,7 +104,7 @@ export default class ViewMusics extends Component {
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyMusic && this.state.asin === music.asin) ?
-                                        (<Button color="primary" onClick={() => { this.modifyMusic(music) }}>Confirm</Button>) :
+                                        (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
                                         (<Button color="primary" onClick={() => { this.modifyMusicState(music) }}>Edit</Button>)}
                                     <Button color="secondary" onClick={() => { this.removeMusics(music.asin) }}>Delete</Button>
                                 </TableCell>
@@ -148,8 +148,8 @@ export default class ViewMusics extends Component {
                     console.log('Music modified successfully');
                     this.setState({ modifyMusic: false, musicModified: true, musicModifiedMessage: 'Music ' + music.title + ' modified' })
                 } else {
-                    console.log('Music already modified');
-                    this.setState({ musicModified: true, musicModifiedMessage: 'Music already modified' })
+                    console.log('Modification could not be completed');
+                    this.setState({ musicModified: true, musicModifiedMessage: 'Modification could not be completed' })
                 }
             }).then(() => {
                 this.componentDidMount();

@@ -71,28 +71,28 @@ export default class ViewMagazines extends Component {
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ? (<TextField
-                                        name="title"
+                                        name="publisher"
                                         margin="dense"
                                         defaultValue={magazine.publisher}
                                         onChange={this.handleChange} />) : (magazine.publisher)}
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ? (<TextField
-                                        name="title"
+                                        name="date"
                                         margin="dense"
                                         defaultValue={magazine.date}
                                         onChange={this.handleChange} />) : (magazine.date)}
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ? (<TextField
-                                        name="title"
+                                        name="language"
                                         margin="dense"
                                         defaultValue={magazine.language}
                                         onChange={this.handleChange} />) : (magazine.language)}
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ? (<TextField
-                                        name="title"
+                                        name="isbn10"
                                         margin="dense"
                                         defaultValue={magazine.isbn10}
                                         onChange={this.handleChange} />) : (magazine.isbn10)}
@@ -102,7 +102,7 @@ export default class ViewMagazines extends Component {
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ?
-                                        (<Button color="primary" onClick={() => { this.modifyMagazine(magazine) }}>Confirm</Button>) :
+                                        (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
                                         (<Button color="primary" onClick={() => { this.modifyMagazineState(magazine) }}>Edit</Button>)}
                                     <Button color="secondary" onClick={() => { this.removeMagazines(magazine.isbn13) }}> Delete</Button>
                                 </TableCell>
@@ -146,8 +146,8 @@ export default class ViewMagazines extends Component {
                     console.log('Magazine modified successfully');
                     this.setState({ modifyMagazine: false, magazineModified: true, magazineModifiedMessage: 'Magazine ' + magazine.title + ' modified' })
                 } else {
-                    console.log('Magazine already modified');
-                    this.setState({ magazineModified: true, magazineModifiedMessage: 'magazine already modified' })
+                    console.log('Modification could not be completed');
+                    this.setState({ magazineModified: true, magazineModifiedMessage: 'Modification could not be completed' })
                 }
             }).then(() => {
                 this.componentDidMount();
@@ -173,10 +173,10 @@ export default class ViewMagazines extends Component {
     async modifyMagazine(props) {
         let title = props.title;
         let publisher = props.publisher;
-        let date= props.date;
-        let language= props.language;
-        let isbn10=props.isbn10;
-        let isbn13=props.isbn13;
+        let date = props.date;
+        let language = props.language;
+        let isbn10 = props.isbn10;
+        let isbn13 = props.isbn13;
 
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/modifyMagazine', {

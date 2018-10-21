@@ -168,8 +168,8 @@ export default class ViewBooks extends Component {
                     console.log('Book modified successfully');
                     this.setState({ modifyBook: false, bookModified: true, bookModifiedMessage: 'Book ' + book.title + ' modified' })
                 } else {
-                    console.log('Book already modified');
-                    this.setState({ bookModified: true, bookModifiedMessage: 'book already modified' })
+                    console.log('Modification could not be completed');
+                    this.setState({ bookModified: true, bookModifiedMessage: 'Modification could not be completed' })
                 }
             }).then(() => {
                 this.componentDidMount();

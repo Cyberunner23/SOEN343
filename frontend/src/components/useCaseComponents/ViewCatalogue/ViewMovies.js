@@ -139,7 +139,7 @@ export default class ViewMovies extends Component {
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyMovie && this.state.eidr === movie.eidr) ?
-                                        (<Button color="primary" onClick={() => { this.modifyMovie(movie) }}>Confirm</Button>) :
+                                        (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
                                         (<Button color="primary" onClick={() => { this.modifyMovieState(movie) }}>Edit</Button>)}
                                     <Button color="secondary" onClick={() => { this.removeMovies(movie.eidr) }}> Delete</Button>
                                 </TableCell>
@@ -187,8 +187,8 @@ export default class ViewMovies extends Component {
                     console.log('Movie modified successfully');
                     this.setState({ modifyMovie: false, movieModified: true, movieModifiedMessage: 'Movie ' + movie.title + ' modified' })
                 } else {
-                    console.log('Movie already modified');
-                    this.setState({ movieModified: true, movieModifiedMessage: 'Movie already modified' })
+                    console.log('Modification could not be completed');
+                    this.setState({ movieModified: true, movieModifiedMessage: 'Modification could not be completed' })
                 }
             }).then(() => {
                 this.componentDidMount();
