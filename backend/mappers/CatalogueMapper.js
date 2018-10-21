@@ -27,9 +27,9 @@ class CatalogueMapper {
 
     async addBook(jsonBook) {
         return new Promise((resolve, reject) => {
-            catalogGateway.addUser(jsonBook)
+            catalogGateway.addBook(jsonBook)
             .then(newBook => {
-                this.users.push(newBook);
+                this.books.push(newBook);
                 resolve(newBook);
             })
             .catch(exception => {
@@ -41,7 +41,7 @@ class CatalogueMapper {
     async removeBooks(callback) {
         return new Promise((resolve, reject) => {
             var removedBooks = [];
-            var isbnsToDelete = [];
+            var isbn13sToDelete = [];
 
             if (callback) {
 
@@ -55,7 +55,7 @@ class CatalogueMapper {
 
                 if (removedBooks.length > 0) {
                     removedBooks.forEach(book => {
-                        isbnsToDelete.push(book.isbn10);
+                        isbn13sToDelete.push(book.isbn13);
                     })
                 }
                 else {
@@ -68,12 +68,12 @@ class CatalogueMapper {
                 console.log('Removing all books. Hopefully this is actually what you wanted to do.');
                 removedBooks = this.books.splice(0, this.books.length);
                 removedBooks.forEach(book => {
-                    isbnsToDelete.push(book.isbn10);
+                    isbn13sToDelete.push(book.isbn13);
                 })
             }
 
 
-            catalogGateway.deleteBooks(isbnsToDelete)
+            catalogGateway.deleteBooks(isbn13sToDelete)
             .then(() => {
                 resolve(removedBooks);
             })
@@ -82,33 +82,24 @@ class CatalogueMapper {
             })
         })
     }
-
-    async modifyBooks(jsonBook) {
-        return new Promise((resolve, reject) => {
-            var booksWithIsbn = this.books.filter(book => {
-                return book.isbn13 === jsonBook.isbn13;
-            })
-            if (booksWithIsbn.length === 0) {
-                console.log('Could not update the requested book because it does not exist');
-                reject(Exceptions.InternalServerError);
-            }
-            else if (booksWithIsbn.length > 1) {
-                console.log('There is more than one book with the same ISBN13. Fix this!')
-                reject(Exceptions.InternalServerError);
-            }
-            else {  // booksWithIsbn.length must be 1
-                catalogGateway.updateBook(jsonBook)
-                .then(() => {
-                    var index = this.books.findIndex(book => {
-                        return book.isbn13 === jsonBook.isbn13;
-                    })
-                    this.books[index].timestamp = jsonBook.timestamp;
-                    resolve(this.books[index]);
-                })
-                .catch(exception => {
+	   
+    async modifyBooks(modifyProperties, callback) {
+        return new Promise((resolve, reject) => {	
+			this.modify(this.books, modifyProperties, callback);
+			.then(arrayOfModifiedBooks => {
+				var exception;
+				for (var i = 0 ; i < arrayOfModifiedBooks.length && !exception; i++)
+					catalogGateway.updateBook(arrayOfModifiedBooks[i])
+					.catch(e => {
+						exception = e;
+					})
+                if (exception) {
                     reject(exception);
-                })
-            }
+                }
+                else { 
+                    resolve(arrayOfModifiedBooks);
+                }
+			})
         })
     }
 
@@ -220,7 +211,23 @@ class CatalogueMapper {
     }
 
     async modifyMovies(modifyProperties, callback) {
-        return this.modify(this.movies, modifyProperties, callback);
+        return new Promise((resolve, reject) => {	
+			this.modify(this.movies, modifyProperties, callback);
+			.then(arrayOfModifiedMovies => {
+				var exception;
+				for (var i = 0 ; i < arrayOfModifiedMovies.length && !exception; i++)
+					catalogGateway.updateMovie(arrayOfModifiedMovies[i])
+					.catch(e => {
+						exception = e;
+					})
+                if (exception) {
+                    reject(exception);
+                }
+                else { 
+                    resolve(arrayOfModifiedMovies);
+                }
+			})
+        })
     }
 
     getMusics(callback) {

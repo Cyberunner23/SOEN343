@@ -26,8 +26,8 @@ class CatalogGateway{
             var query = 'INSERT INTO books (title, author, format, pages, publisher, language, isbn10, isbn13) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
             var inserts = [jsonBook.title, jsonBook.author, jsonBook.format, jsonBook.pages,
                            jsonBook.publisher, jsonBook.language, jsonBook.isbn10, jsonBook.isbn13];
-            query = mysql.format(query, inserts);
-            
+            query = mysql.format(query, inserts);            
+
             db.query(query, (err, response) => {
                 if (err) {
                     console.log(err);
@@ -56,11 +56,11 @@ class CatalogGateway{
             })
         })
     }
-    async deleteBooks(isbnsToDelete){
+    async deleteBooks(isbn13sToDelete){
         return new Promise((resolve, reject) => {
             var query;
-            if (isbnsToDelete) {
-                query = 'DELETE FROM books WHERE isbn13 IN (' + isbnsToDelete.join() + ')';
+            if (isbn13sToDelete) {
+                query = 'DELETE FROM books WHERE isbn13 IN (' + isbn13sToDelete.join() + ')';
             }
             else {
                 query = 'DELETE FROM books'
@@ -127,11 +127,11 @@ class CatalogGateway{
             })
         })
     }
-    async deleteMagazines(isbnsToDelete){
+    async deleteMagazines(isbn13sToDelete){
         return new Promise((resolve, reject) => {
             var query;
-            if(isbnsToDelete)  {
-                query='DELETE FROM magazines WHERE isbn13 IN (' + isbnsToDelete.join() + ')';
+            if(isbn13sToDelete)  {
+                query='DELETE FROM magazines WHERE isbn13 IN (' + isbn13sToDelete.join() + ')';
             }else{
                 query='Delete FROM magazines';
             }
