@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
+import TextField from '@material-ui/core/TextField';
+import Input from '@material-ui/core/Input';
 
-export default class ViewMusics extends Component {
+export default class AddMusic extends Component {
 
     constructor(props) {
         super(props);
@@ -13,7 +15,8 @@ export default class ViewMusics extends Component {
             asin: '',
             app: props.app,
             musics: [],
-            musicAdded: false
+            musicAdded: false,
+            authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -38,46 +41,55 @@ export default class ViewMusics extends Component {
         }
         var content;
         content = (
-
-            <div>
-                <ul>
-                    {this.state.musics.map((music, i) =>
-                        <li key={i}>{music.title} {music.artist}
-                            <button onClick={() => { this.removeMusics(music.title) }}> Delete</button>
-                        </li>
-                    )}
-                </ul>
-
-                <div className='UseCaseComponent'>
-                    <form onSubmit={this.handleSubmit} method="POST">
-                        <label>
-                            Title:
-        <input type="text" name="title" onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            Type:
-        <input type="text" name="type" onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            Artist:
-        <input type="text" name="artist" onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            Label:
-        <input type="text" name="label" onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            Release Date:
-        <input type="text" name="releaseDate" onChange={this.handleChange} />
-                        </label>
-                        <label>
-                            ASIN:
-        <input type="text" name="asin" onChange={this.handleChange} />
-                        </label>
-                        <button onClick={this.handleSubmit}>Submit</button>
-                    </form>
-                    {musicAddedMessage}
-                </div>
+            <div style={style.body}>
+                <form style={style.label} onSubmit={this.handleSubmit} method="POST">
+                    <TextField
+                        label="Title"
+                        name="title"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="Type"
+                        name="type"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="Artist"
+                        name="artist"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="Label"
+                        name="label"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="Released Date"
+                        name="releaseDate"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="ASIN"
+                        name="asin"
+                        margin="dense"
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <Input type="submit" style={style.label}>
+                        Add
+                    </Input>
+                </form>
+                {musicAddedMessage}
             </div>
         );
 
@@ -106,23 +118,7 @@ export default class ViewMusics extends Component {
                     this.setState({ musicAdded: true, musicAddedMessage: 'Music already added' })
                 }
             }).then(() => {
-                this.componentDidMount();
-            })
-    }
-
-    async removeMusics(title) {
-        return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/removeMusics', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title: title })
-            }).then((res => {
-                if (res.status === 200) {
-                    console.log("deleted music");
-                } else {
-                    console.log(res)
-                }
-            })).then(() => { this.componentDidMount(); });
+            this.componentDidMount();
         })
     }
 
@@ -138,7 +134,7 @@ export default class ViewMusics extends Component {
             fetch('/api/catalogue/addMusic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, type, artist, label, releaseDate, asin })
+                body: JSON.stringify({ title, type, artist, label, releaseDate, asin, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((music) => {
@@ -152,3 +148,12 @@ export default class ViewMusics extends Component {
         })
     }
 }
+
+const style = {
+    body: {
+        margin: 30
+    },
+    textField: {
+        width: 300
+    },
+};

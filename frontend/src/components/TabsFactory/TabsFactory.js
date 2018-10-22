@@ -10,6 +10,10 @@ import ViewBooks from '../useCaseComponents/ViewCatalogue/ViewBooks.js';
 import ViewMagazines from '../useCaseComponents/ViewCatalogue/ViewMagazines.js';
 import ViewMovies from '../useCaseComponents/ViewCatalogue/ViewMovies.js';
 import ViewMusics from '../useCaseComponents/ViewCatalogue/ViewMusics.js';
+import AddBook from "../useCaseComponents/ViewCatalogue/AddBook";
+import AddMagazine from "../useCaseComponents/ViewCatalogue/AddMagazine";
+import AddMovie from "../useCaseComponents/ViewCatalogue/AddMovie";
+import AddMusic from "../useCaseComponents/ViewCatalogue/AddMusic";
 
 var TabsState = Object.freeze({ 'Welcome': 0, 'Admin': 1, 'Client': 2 });
 
@@ -36,6 +40,7 @@ class TabsFactory {
                             <Tab>Register User</Tab>
                             <Tab>View Active Users</Tab>
                             <Tab>View Library Items</Tab>
+                            <Tab>Add Library Items</Tab>
                             <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
@@ -67,6 +72,28 @@ class TabsFactory {
                             <TabPanel>
                                 <ViewMusics app={app} />
                             </TabPanel>
+                            </Tabs>
+                        </TabPanel>
+                        <TabPanel>
+                            <Tabs>
+                                <TabList>
+                                    <Tab>Books</Tab>
+                                    <Tab>Magazines</Tab>
+                                    <Tab>Movies</Tab>
+                                    <Tab>Music</Tab>
+                                </TabList>
+                                <TabPanel>
+                                    <AddBook app={app} />
+                                </TabPanel>
+                                <TabPanel>
+                                    <AddMagazine app={app} />
+                                </TabPanel>
+                                <TabPanel>
+                                    <AddMovie app={app} />
+                                </TabPanel>
+                                <TabPanel>
+                                    <AddMusic app={app} />
+                                </TabPanel>
                             </Tabs>
                         </TabPanel>
                         <TabPanel>
