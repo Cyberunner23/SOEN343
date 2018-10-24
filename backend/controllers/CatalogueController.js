@@ -168,10 +168,12 @@ exports.modifyBook = async function (req, res) {
             return book.isbn13 === req.body.isbn13;
         })
         if(result.length === 1){
-            catalogueMapper.modifyBook(req.body)
-                .then((book) => {
+            catalogueMapper.modifyBooks(req.body, book => {
+                return book.isbn13 === req.body.isbn13
+            })
+                .then((books) => {
                     res.status(200);
-                    res.json(convertToFrontendBook(book));
+                    res.json(convertToFrontendBook(books[0]));
                 })
                 .catch((ex) => {
                     handleException(res, ex);
@@ -203,10 +205,12 @@ exports.modifyMusic = async function (req, res) {
             return music.asin === req.body.asin;
         })
         if(result.length === 1){
-            catalogueMapper.modifyMusic(req.body)
-                .then((music) => {
+            catalogueMapper.modifyMusics(req.body, music => {
+                return music.asin === req.body.asin;
+            })
+                .then((musics) => {
                     res.status(200);
-                    res.json(convertToFrontendMusic(music));
+                    res.json(convertToFrontendMusic(musics[0]));
                 })
                 .catch((ex) => {
                     handleException(res, ex);
@@ -238,10 +242,12 @@ exports.modifyMagazine = async function (req, res) {
             return magazine.isbn13 === req.body.isbn13;
         })
         if(result.length === 1){
-            catalogueMapper.modifyMagazine(req.body)
-                .then((magazine) => {
+            catalogueMapper.modifyMagazines(req.body, magazine => {
+                return magazine.isbn13 === req.body.isbn13;
+            })
+                .then((magazines) => {
                     res.status(200);
-                    res.json(convertToFrontendMagazine(magazine));
+                    res.json(convertToFrontendMagazine(magazines[0]));
                 })
                 .catch((ex) => {
                     handleException(res, ex);
@@ -273,10 +279,12 @@ exports.modifyMovie = async function (req, res){
             return movie.eidr === req.body.eidr;
         })
         if(result.length === 1){
-            catalogueMapper.modifyMovie(req.body)
-                .then((movie) => {
+            catalogueMapper.modifyMovies(req.body, movie => {
+                return movie.eidr === req.body.eidr;
+            })
+                .then((movies) => {
                     res.status(200);
-                    res.json(convertToFrontendMovie(movie));
+                    res.json(convertToFrontendMovie(movies[0]));
                 })
                 .catch((ex) => {
                     handleException(res, ex);
