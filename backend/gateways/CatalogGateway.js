@@ -41,7 +41,7 @@ class CatalogGateway{
     }
     async updateBook(jsonBook){
         return new Promise((resolve, reject) => {
-            var query = "UPDATE books SET title=? AND author=? AND format=? AND pages=? AND publisher=? AND language=? AND isbn10=? WHERE isbn13=?";
+            var query = "UPDATE books SET title=?, author=?, format=?, pages=?, publisher=?, language=?, isbn10=? WHERE isbn13=?";
             var inserts = [jsonBook.title, jsonBook.author, jsonBook.format, jsonBook.pages,
                 jsonBook.publisher, jsonBook.language, jsonBook.isbn10, jsonBook.isbn13];
             query = mysql.format(query, inserts);
@@ -113,7 +113,7 @@ class CatalogGateway{
     }
     async updateMagazine(jsonMagazines){
         return new Promise((resolve,reject) => {
-            var query= "UPDATE magazines SET title=? AND publisher=? AND date=? AND language=? AND isbn10=? WHERE isbn13=?";
+            var query= "UPDATE magazines SET title=?, publisher=?, date=?, language=?, isbn10=? WHERE isbn13=?";
             var inserts=[jsonMagazines.title, jsonMagazines.publisher, jsonMagazines.date, jsonMagazines.language, 
                 jsonMagazines.isbn10, jsonMagazines.isbn13];
             query=mysql.format(query,inserts);
@@ -182,7 +182,7 @@ class CatalogGateway{
     }
     async updateMovie(jsonMovie){
         return new Promise((resolve, reject) => {
-            var query = "UPDATE movies SET title=? AND director=? AND producers=? AND actors=? AND language=? AND subtitles=? AND dubbed=? AND releaseDate=? AND runTime=? WHERE eidr=?";
+            var query = "UPDATE movies SET title=?, director=?, producers=?, actors=?, language=?, subtitles=?, dubbed=?, releaseDate=?, runTime=? WHERE eidr=?";
             var inserts = [jsonMovie.title, jsonMovie.director, jsonMovie.producers, jsonMovie.actors,
                            jsonMovie.language, jsonMovie.subtitles, jsonMovie.dubbed, jsonMovie.releaseDate, jsonMovie.runTime, jsonMovie.eidr];
             query = mysql.format(query, inserts);
@@ -240,23 +240,23 @@ class CatalogGateway{
             var query='INSERT INTO musics (type, title, artist, label, releaseDate, asin ) VALUES (?,?,?,?,?,?)';
             var inserts=[jsonMusic.type, jsonMusic.title, jsonMusic.artist, 
                 jsonMusic.label, jsonMusic.releaseDate, jsonMusic.asin];
-        query = mysql.format(query, inserts);  
-        
-        db.query(query, (err, response)=>{
-            if (err) {
-                console.log(err);
-                reject(Exceptions.InternalServerError);
-            } else {
-                var newMusic = new Music(jsonMusic);
-                resolve (newMusic);
-            }
-        });
+            query = mysql.format(query, inserts);  
+            
+            db.query(query, (err, response)=>{
+                if (err) {
+                    console.log(err);
+                    reject(Exceptions.InternalServerError);
+                } else {
+                    var newMusic = new Music(jsonMusic);
+                    resolve (newMusic);
+                }
+            });
         })
     }
     
     async updateMusic(jsonMusic){
         return new Promise((resolve,reject) => {
-            var query="UPDATE musics SET type=? AND title=? AND artist=? AND label=? AND releaseDate=? WHERE asin=?";
+            var query="UPDATE musics SET type=?, title=?, artist=?, label=?, releaseDate=? WHERE asin=?";
             var inserts=[jsonMusic.type, jsonMusic.title, jsonMusic.artist, 
                 jsonMusic.label, jsonMusic.releaseDate, jsonMusic.asin];
             query=mysql.format(query, inserts);
@@ -323,7 +323,7 @@ getMagazineArray = (jsonMagazines) => {
 getMusicArray = (jsonMusics) => {
     var musics = [];
     jsonMusics.forEach((jsonMusic) => {
-        music.push(new Music(jsonMusic));
+        musics.push(new Music(jsonMusic));
     })
     return musics;
 } //Generates an array of all musics for modification
