@@ -4,18 +4,12 @@ const Operation = Object.freeze({
     'Update' : 1,
     'Delete' : 2
 });
-const Record = Object.freeze({
-    'Book': 0,
-    'Magazine': 1,
-    'Music': 2,
-    'Movie': 3
-})
 
 class CatalogueUnitOfWork {
     constructor() {
-        // Operations are jsons with an operation type, record type and an identifier
+        // Operations are jsons with an operation type and an identifier
         // For example, an add book operation has the following format:
-        // {operationType: Operation.Add, recordType: Record.Book, identifier: isbn13 }
+        // {operationType: Operation.Add, identifier: isbn13 }
         this.bookOperations = []; // book identifier: isbn13
         this.magazineOperations = []; // magazine identifier: isbn13
         this.musicOperations = []; // music identifier: asin
