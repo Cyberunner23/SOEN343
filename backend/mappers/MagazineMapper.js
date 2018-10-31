@@ -1,10 +1,10 @@
 const Magazine = require('../business_objects/Magazine').Magazine;
-const catalogGateway = require('../gateways/CatalogGateway').getInstance();
+const magazineGateway = require('../gateways/MagazineGateway').getInstance();
 
 class MagazineMapper {
     
     constructor () {
-        catalogGateway.loadMagazines()
+        magazineGateway.loadMagazines()
         .then(magazines => {
             this.magazines = magazines;
         })
@@ -26,7 +26,7 @@ class MagazineMapper {
         return new Promise((resolve, reject) => {
             var newMagazine = new Magazine(jsonMagazine);
             this.magazines.push(newMagazine);
-            catalogGateway.addMagazine(newMagazine)
+            magazineGateway.addMagazine(newMagazine)
             .catch(exception => {
                 reject(exception);
                 return;
@@ -53,7 +53,7 @@ class MagazineMapper {
             removedMagazines.forEach(magazine => {
                 isbn13sToDelete.push(magazine.isbn13);
             })
-            catalogGateway.deleteMagazines(isbn13sToDelete)
+            magazineGateway.deleteMagazines(isbn13sToDelete)
             .then(() => {
                 resolve(removedMagazines);
             })
@@ -69,7 +69,7 @@ class MagazineMapper {
             .then(async arrayOfModifiedMagazines => {
                 var exception = null;
                 for (var i = 0 ; i < arrayOfModifiedMagazines.length && exception === null; i++) {
-                    await catalogGateway.updateMagazine(arrayOfModifiedMagazines[i])
+                    await magazineGateway.updateMagazine(arrayOfModifiedMagazines[i])
                     .catch(e => {
                         exception = e;
                     })

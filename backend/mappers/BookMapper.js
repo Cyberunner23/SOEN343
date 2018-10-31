@@ -1,10 +1,10 @@
 const Book = require('../business_objects/Book').Book;
-const catalogGateway = require('../gateways/CatalogGateway').getInstance();
+const bookGateway = require('../gateways/BookGateway').getInstance();
 
 class BookMapper {
     
     constructor () {
-        catalogGateway.loadBooks()
+        bookGateway.loadBooks()
         .then(books => {
             this.books = books;
         })
@@ -26,7 +26,7 @@ class BookMapper {
         return new Promise((resolve, reject) => {
             var newBook = new Book(jsonBook);
             this.books.push(newBook);
-            catalogGateway.addBook(newBook)
+            bookGateway.addBook(newBook)
             .catch(exception => {
                 reject(exception);
                 return;
@@ -53,7 +53,7 @@ class BookMapper {
             removedBooks.forEach(book => {
                 isbn13sToDelete.push(book.isbn13);
             })
-            catalogGateway.deleteBooks(isbn13sToDelete)
+            bookGateway.deleteBooks(isbn13sToDelete)
             .then(() => {
                 resolve(removedBooks);
             })
@@ -69,7 +69,7 @@ class BookMapper {
             .then(async arrayOfModifiedBooks => {
                 var exception = null;
                 for (var i = 0 ; i < arrayOfModifiedBooks.length && exception === null; i++) {
-                    await catalogGateway.updateBook(arrayOfModifiedBooks[i])
+                    await bookGateway.updateBook(arrayOfModifiedBooks[i])
                     .catch(e => {
                         exception = e;
                     })

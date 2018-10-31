@@ -1,10 +1,10 @@
 const Movie = require('../business_objects/Movie.js').Movie;
-const catalogGateway = require('../gateways/CatalogGateway').getInstance();
+const movieGateway = require('../gateways/MovieGateway').getInstance();
 
 class MovieMapper {
     
     constructor () {
-        catalogGateway.loadMovies()
+        movieGateway.loadMovies()
         .then(movies => {
             this.movies = movies;
         })
@@ -26,7 +26,7 @@ class MovieMapper {
         return new Promise((resolve, reject) => {
             var newMovie = new Movie(jsonMovie);
             this.movies.push(newMovie);
-            catalogGateway.addMovie(newMovie)
+            movieGateway.addMovie(newMovie)
             .catch(exception => {
                 reject(exception);
                 return;
@@ -53,7 +53,7 @@ class MovieMapper {
             removedMovies.forEach(movie => {
                 eidrsToDelete.push(movie.eidr);
             })
-            catalogGateway.deleteMovies(eidrsToDelete)
+            movieGateway.deleteMovies(eidrsToDelete)
             .then(() => {
                 resolve(removedMovies);
             })
@@ -69,7 +69,7 @@ class MovieMapper {
             .then(async arrayOfModifiedMovies => {
                 var exception = null;
                 for (var i = 0 ; i < arrayOfModifiedMovies.length && exception === null; i++) {
-                    await catalogGateway.updateMovie(arrayOfModifiedMovies[i])
+                    await movieGateway.updateMovie(arrayOfModifiedMovies[i])
                     .catch(e => {
                         exception = e;
                     })

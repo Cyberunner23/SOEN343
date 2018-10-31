@@ -1,10 +1,10 @@
 const Music = require('../business_objects/Music.js').Music
-const catalogGateway = require('../gateways/CatalogGateway').getInstance();
+const musicGateway = require('../gateways/MusicGateway').getInstance();
 
 class MusicMapper {
     
     constructor () {
-        catalogGateway.loadMusics()
+        musicGateway.loadMusics()
         .then(musics => {
             this.musics = musics
         })
@@ -26,7 +26,7 @@ class MusicMapper {
         return new Promise((resolve, reject) => {
             var newMusic = new Music(jsonMusic);
             this.musics.push(newMusic);
-            catalogGateway.addMusic(newMusic)
+            musicGateway.addMusic(newMusic)
             .catch(exception => {
                 reject(exception);
                 return;
@@ -53,7 +53,7 @@ class MusicMapper {
             removedMusics.forEach(music => {
                 asinsToDelete.push(music.asin);
             })
-            catalogGateway.deleteMusics(asinsToDelete)
+            musicGateway.deleteMusics(asinsToDelete)
             .then(() => {
                 resolve(removedMusics);
             })
@@ -69,7 +69,7 @@ class MusicMapper {
             .then(async arrayOfModifiedMusics => {
                 var exception = null;
                 for (var i = 0 ; i < arrayOfModifiedMusics.length && exception === null; i++) {
-                    await catalogGateway.updateMusic(arrayOfModifiedMusics[i])
+                    await musicGateway.updateMusic(arrayOfModifiedMusics[i])
                     .catch(e => {
                         exception = e;
                     })
