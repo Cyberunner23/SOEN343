@@ -4,6 +4,7 @@ const Book = require('../business_objects/Book').Book;
 const Magazine = require('../business_objects/Magazine').Magazine;
 const Movie = require('../business_objects/Movie').Movie;
 const Music = require('../business_objects/Music').Music;
+const Exceptions = require('../Exceptions').Exceptions;
 
 class CatalogGateway{
     //books methods

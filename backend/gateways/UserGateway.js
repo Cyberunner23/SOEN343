@@ -2,6 +2,7 @@ const mysql = require('mysql');
 const db = require('../DatabaseConnection').getInstance();
 const User = require('../business_objects/user').User;
 const ActiveUser = require('../business_objects/activeUser').ActiveUser;
+const Exceptions = require('../Exceptions').Exceptions;
 
 class UserGateway {
 
