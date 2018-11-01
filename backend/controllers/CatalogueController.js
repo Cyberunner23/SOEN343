@@ -525,68 +525,41 @@ convertToFrontendMovie = (movie) => {
 
 //<editor-fold desc="Get methods" defaultstate="collapsed">
 exports.getBooks = async function(req, res) {
-    var result = catalogueMapper.getBooks((book) => {
-        var filters = req.body.filters;
-        return (filters.title === undefined || book.title.toLowerCase().includes(filters.title.toLowerCase())) &&
-                (filters.author === undefined || book.author.toLowerCase().includes(filters.author.toLowerCase())) &&
-                (filters.format === undefined || book.format.toLowerCase().includes(filters.format.toLowerCase())) &&
-                (filters.publisher === undefined || book.publisher.toLowerCase().includes(filters.publisher.toLowerCase())) &&
-                (filters.datePublished === undefined || book.datePublished.toLowerCase().includes(filters.datePublished.toLowerCase())) &&
-                (filters.lanugage === undefined || book.language.toLowerCase().includes(filters.datePublished.toLowerCase())) &&
-                (filters.pages === undefined || book.pages === filters.pages) &&
-                (filters.isbn10 === undefined || book.isbn10 === filters.isbn10) &&
-                (filters.isbn13 === undefined || book.isbn13 === filters.isbn13);
-    });
+    var result = catalogueMapper.getBooks((book) => {genFilter(book, req.body.filters)});
     res.status(200);
     res.json(result);
 }
 
 exports.getMusics = async function(req, res) {
-    var result= catalogueMapper.getMusics((music) => {
-        var filters = req.body.filters;
-        return (filters.title === undefined || music.title.toLowerCase().includes(filters.title.toLowerCase())) &&
-                (filters.artist === undefined || music.artist.toLowerCase().includes(filters.artist.toLowerCase())) &&
-                (filters.label === undefined || music.label.toLowerCase().includes(filters.label.toLowerCase())) &&
-                (filters.type === undefined || music.type.toLowerCase().includes(filters.type.toLowerCase())) &&
-                (filters.releaseDate === undefined || music.releaseDate.toLowerCase().includes(filters.releaseDate.toLowerCase())) &&
-                (filters.asin === undefined || music.asin.toLowerCase().includes(filters.asin.toLowerCase()));
-    });
+    var result= catalogueMapper.getMusics((music) => {genFilter(music, req.body.filters)});
     res.status(200);
     res.json(result);
 }
 
 exports.getMagazines = async function(req, res) {
-    var result= catalogueMapper.getMagazines((magazine) => {
-        var filters = req.body.filters;
-        return (filters.title === undefined || magazine.title.toLowerCase().includes(filters.title.toLowerCase())) &&
-                (filters.publisher === undefined || magazine.publisher.toLowerCase().includes(filters.publisher.toLowerCase())) &&
-                (filters.publishDate === undefined || magazine.publishDate.toLowerCase().includes(filters.publishDate.toLowerCase())) &&
-                (filters.language === undefined || magazine.language.toLowerCase().includes(filters.language.toLowerCase())) &&
-                (filters.isbn10 === undefined || magazine.isbn10 === filters.isbn10) &&
-                (filters.isbn13 === undefined || magazine.isbn13 === filters.isbn13);
-    });
+    var result= catalogueMapper.getMagazines((magazine) => {genFilter(magazine, req.body.filters)});
     res.status(200);
     res.json(result);
 }
 
 exports.getMovies = async function(req, res) {
-    var result= catalogueMapper.getMovies((movie) => {
-        var filters = req.body.filters;
-        return (filters.title === undefined || movie.title.toLowerCase().includes(filters.title.toLowerCase())) &&
-                (filters.director === undefined || movie.director.toLowerCase().includes(filters.director.toLowerCase())) &&
-                (filters.producers === undefined || movie.producers.toLowerCase().includes(filters.producers.toLowerCase())) &&
-                (filters.actors === undefined || movie.actors.toLowerCase().includes(filters.actors.toLowerCase())) &&
-                (filters.language === undefined || movie.language.toLowerCase().includes(filters.language.toLowerCase())) &&
-                (filters.subtitles === undefined || movie.subtitiles.toLowerCase().includes(filters.subtitles.toLowerCase())) &&
-                (filters.dubbed === undefined || movie.dubbed.toLowerCase().includes(filters.dubbed.toLowerCase())) &&
-                (filters.releaseDate === undefined || movie.releaseDate.toLowerCase().includes(filters.releaseDate.toLowerCase())) &&
-                (filters.runTime === undefined || movie.runTime.toLowerCase().includes(filters.runTime.toLowerCase())) &&
-                (filters.eidr === undefined || movie.eidr.toLowerCase().includes(filters.eidr.toLowerCase()));
-    });
+    var result= catalogueMapper.getMovies((movie) => {genFilter(movie, req.body.filters)});
     res.status(200);
     res.json(result);
 }
 //</editor-fold>
+
+genFilter = function(item, filters){
+    var toReturn = true;
+    for(var filter in filters){
+        if(isNaN(filter) || isNaN(item[filter])){
+            toReturn = toReturn && (filter === undefined || item[filter].toLowerCase().includes(filter.toLowerCase()));
+        } else {
+            toReturn = toReturn && (filter === undefined || item[filter] === filter);
+        }
+    };
+    return toReturn;
+}
 
 handleException = function(res, exception) {
     var message;
