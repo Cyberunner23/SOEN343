@@ -8,15 +8,15 @@ class Sorter {
     if(order == true){
 
       jsonArray.sort((record1, record2) => {
-      record1[field].localeCompare(record2[field], 'fr', {ignorePunctuation: true})
+      record1.field.localeCompare(record2.field, 'fr', {ignorePunctuation: true})
        });
 
     }else{
       jsonArray.sort((record1, record2) => {
-        record1[field].localeCompare(record2[field], 'fr', {ignorePunctuation: true})
+        record1.field.localeCompare(record2.field, 'fr', {ignorePunctuation: true})
          }); //sorts the array first
      jsonArray.reverse((record1, record2) => {
-     record1[field].localeCompare(record2[field], 'fr', {ignorePunctuation: true})
+     record1.field.localeCompare(record2.field, 'fr', {ignorePunctuation: true})
         }); //reverses the sorted array
     }
     
@@ -24,7 +24,16 @@ class Sorter {
   }
  
   function infSort(jsonArray, field, order){
-
+    if(order == true){
+      jsonArray.sort((record1, record2) => {
+        return record1.field -record2.field;
+      });
+    }
+    else{
+      jsonArray.sort((record1, record2) => {
+        return record2.field -recordq.field;
+      });
+    }
  }
 
 }
