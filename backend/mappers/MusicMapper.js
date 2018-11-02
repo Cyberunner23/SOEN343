@@ -4,7 +4,7 @@ const musicGateway = require('../gateways/MusicGateway').getInstance();
 class MusicMapper {
     
     constructor () {
-        musicGateway.loadMusics()
+        musicGateway.getMusics()
         .then(musics => {
             this.musics = musics
         })

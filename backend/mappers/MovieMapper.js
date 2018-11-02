@@ -4,7 +4,7 @@ const movieGateway = require('../gateways/MovieGateway').getInstance();
 class MovieMapper {
     
     constructor () {
-        movieGateway.loadMovies()
+        movieGateway.getMovies()
         .then(movies => {
             this.movies = movies;
         })

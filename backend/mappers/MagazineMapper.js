@@ -4,7 +4,7 @@ const magazineGateway = require('../gateways/MagazineGateway').getInstance();
 class MagazineMapper {
     
     constructor () {
-        magazineGateway.loadMagazines()
+        magazineGateway.getMagazines()
         .then(magazines => {
             this.magazines = magazines;
         })
