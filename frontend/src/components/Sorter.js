@@ -26,14 +26,16 @@ class Sorter {
   function infSort(jsonArray, field, order){
     if(order == true){
       jsonArray.sort((record1, record2) => {
-        return record1.field -record2.field;
+        return record1.field -record2.field;//ascending order
       });
     }
     else{
       jsonArray.sort((record1, record2) => {
-        return record2.field -recordq.field;
+        return record2.field -recordq.field;//descending order
       });
     }
+
+    return console.log(jsonArray);
  }
 
 }
