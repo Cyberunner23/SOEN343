@@ -4,7 +4,7 @@ const bookGateway = require('../gateways/BookGateway').getInstance();
 class BookMapper {
     
     constructor () {
-        bookGateway.loadBooks()
+        bookGateway.getBooks()
         .then(books => {
             this.books = books;
         })

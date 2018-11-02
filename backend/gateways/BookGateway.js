@@ -5,9 +5,23 @@ const Exceptions = require('../Exceptions').Exceptions;
 
 class BookGateway {
     
-    async loadBooks(){
+    async getBooks(jsonFilters){
         return new Promise((resolve, reject) => {
-            var query = "SELECT * FROM books";
+
+            if (jsonFilters === undefined) {
+                jsonFilters = {};
+            }
+
+            var query = "SELECT * FROM books WHERE " +
+                "title LIKE '%" + (jsonFilters.title || "") + "%' AND " +
+                "author LIKE '%" + (jsonFilters.author || "") + "%' AND " +
+                "format LIKE '%" + (jsonFilters.format || "") + "%' AND " +
+                "pages LIKE '%" + (jsonFilters.pages || "") + "%' AND " +
+                "publisher LIKE '%" + (jsonFilters.publisher || "") + "%' AND " +
+                "language LIKE '%" + (jsonFilters.language || "") + "%' AND " +
+                "isbn10 LIKE '%" + (jsonFilters.isbn10 || "") + "%' AND " +
+                "isbn13 LIKE '%" + (jsonFilters.isbn13 || "") + "%'";
+
             db.query(query, (err, result) => {
                 if (!err) {
                     resolve(getBookArray(result));
