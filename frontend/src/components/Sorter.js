@@ -14,7 +14,7 @@ class Sorter {
         return console.log(jsonArray);
     }
 
-    infSort(jsonArray, field, descending){
+    intSort(jsonArray, field, descending){
         jsonArray.sort((record1, record2) => {
             return record1.field -record2.field;//ascending order
         });
