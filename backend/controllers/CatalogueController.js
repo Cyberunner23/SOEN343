@@ -1,25 +1,13 @@
 //<editor-fold desc="Constants">
-const catalogueMapper = require('../mappers/CatalogueMapper').getInstance();
+const bookMapper = require('../mappers/BookMapper').getInstance();
+const magazineMapper = require('../mappers/MagazineMapper').getInstance();
+const musicMapper = require('../mappers/MusicMapper').getInstance();
+const movieMapper = require('../mappers/MovieMapper').getInstance();
 
 const identifyUser = require('./UserController').identifyUser;
 
 const Exceptions = require('../Exceptions').Exceptions;
 //</editor-fold>
-
-// TODO: update when frontend is written
-
-exports.viewItems = async function (req, res) {
-    
-    catalogueMapper.getCatalogue()
-            .then((view) => {
-                res.status(200);
-                res.json(convertToFrontendView(viewItems));
-            })
-            .catch((exception) => {
-                handleException(res, exception);
-    });
-    
-}
 
 exports.search = async function (req, res) {
     
@@ -38,11 +26,11 @@ exports.addBook = async function (req, res) {
             return;
         }
         // isbn is unique so use isbn to check for exiting book
-        var result = catalogueMapper.getBooks(book => {
+        var result = bookMapper.getBooks(book => {
             return book.isbn13 === req.body.isbn13;
         })
         if(result.length === 0){
-            catalogueMapper.addBook(req.body)
+            bookMapper.addBook(req.body)
                 .then((book) => {
                     res.status(200);
                     res.json(convertToFrontendBook(book));
@@ -69,11 +57,11 @@ exports.addMusic = async function (req, res) {
             return;
         }
         // asin is unique so use asin to check for existing music
-        var result = catalogueMapper.getMusics(music => {
+        var result = musicMapper.getMusics(music => {
             return music.asin === req.body.asin;
         })
         if(result.length === 0){
-            catalogueMapper.addMusic(req.body)
+            musicMapper.addMusic(req.body)
                 .then((music) => {
                     res.status(200);
                     res.json(convertToFrontendMusic(music));
@@ -100,11 +88,11 @@ exports.addMagazine = async function (req, res) {
             return;
         }
         // use isbn to check for existing magazine
-        var result = catalogueMapper.getMagazines(magazine => {
+        var result = magazineMapper.getMagazines(magazine => {
             return magazine.isbn13 === req.body.isbn13;
         })
         if(result.length === 0){
-            catalogueMapper.addMagazine(req.body)
+            magazineMapper.addMagazine(req.body)
                 .then((magazine) => {
                     res.status(200);
                     res.json(convertToFrontendMagazine(magazine));
@@ -131,11 +119,11 @@ exports.addMovie = async function (req, res){
             return;
         }
         // use title, director, and release date to check for existing movie
-        var result = catalogueMapper.getMovies(music => {
+        var result = movieMapper.getMovies(music => {
             return music.eidr === req.body.eidr;
         })
         if(result.length === 0){
-            catalogueMapper.addMovie(req.body)
+            movieMapper.addMovie(req.body)
                 .then((movie) => {
                     res.status(200);
                     res.json(convertToFrontendMovie(movie));
@@ -164,11 +152,11 @@ exports.modifyBook = async function (req, res) {
             return;
         }
         // find book
-        var result = catalogueMapper.getBooks(book => {
+        var result = bookMapper.getBooks(book => {
             return book.isbn13 === req.body.isbn13;
         })
         if(result.length === 1){
-            catalogueMapper.modifyBooks(req.body, book => {
+            bookMapper.modifyBooks(req.body, book => {
                 return book.isbn13 === req.body.isbn13
             })
                 .then((books) => {
@@ -201,11 +189,11 @@ exports.modifyMusic = async function (req, res) {
             return;
         }
         // find music
-        var result = catalogueMapper.getMusics(music => {
+        var result = musicMapper.getMusics(music => {
             return music.asin === req.body.asin;
         })
         if(result.length === 1){
-            catalogueMapper.modifyMusics(req.body, music => {
+            musicMapper.modifyMusics(req.body, music => {
                 return music.asin === req.body.asin;
             })
                 .then((musics) => {
@@ -238,11 +226,11 @@ exports.modifyMagazine = async function (req, res) {
             return;
         }
         // find magazine
-        var result = catalogueMapper.getMagazines(magazine => {
+        var result = magazineMapper.getMagazines(magazine => {
             return magazine.isbn13 === req.body.isbn13;
         })
         if(result.length === 1){
-            catalogueMapper.modifyMagazines(req.body, magazine => {
+            magazineMapper.modifyMagazines(req.body, magazine => {
                 return magazine.isbn13 === req.body.isbn13;
             })
                 .then((magazines) => {
@@ -275,11 +263,11 @@ exports.modifyMovie = async function (req, res){
             return;
         }
         // find movie
-        var result = catalogueMapper.getMovies(movie => {
+        var result = movieMapper.getMovies(movie => {
             return movie.eidr === req.body.eidr;
         })
         if(result.length === 1){
-            catalogueMapper.modifyMovies(req.body, movie => {
+            movieMapper.modifyMovies(req.body, movie => {
                 return movie.eidr === req.body.eidr;
             })
                 .then((movies) => {
@@ -314,11 +302,11 @@ exports.deleteBook = async function (req, res) {
             return;
         }
         // find book
-        var result = catalogueMapper.getBooks(book => {
+        var result = bookMapper.getBooks(book => {
             return book.isbn13 === req.body.isbn13;
         })
         if(result.length === 1){
-            catalogueMapper.removeBooks(book => {
+            bookMapper.removeBooks(book => {
                 return book.isbn13 === req.body.isbn13;
             })
                 .then(() => {
@@ -351,11 +339,11 @@ exports.deleteMusic = async function (req, res) {
             return;
         }
         // find music
-        var result = catalogueMapper.getMusics(music => {
+        var result = musicMapper.getMusics(music => {
             return music.asin === req.body.asin;
         })
         if(result.length === 1){
-            catalogueMapper.removeMusics(music => {
+            musicMapper.removeMusics(music => {
                 return music.asin === req.body.asin;
             })
                 .then(() => {
@@ -388,11 +376,11 @@ exports.deleteMagazine = async function (req, res) {
             return;
         }
         // find magazine
-        var result = catalogueMapper.getMagazines(magazine => {
+        var result = magazineMapper.getMagazines(magazine => {
             return magazine.isbn13 === req.body.isbn13;
         })
         if(result.length === 1){
-            catalogueMapper.removeMagazines(magazine => {
+            magazineMapper.removeMagazines(magazine => {
                 return magazine.isbn13 === req.body.isbn13;
             })
                 .then(() => {
@@ -425,11 +413,11 @@ exports.deleteMovie = async function (req, res){
             return;
         }
         // find movie
-        var result = catalogueMapper.getMovies(movie => {
+        var result = movieMapper.getMovies(movie => {
             return movie.eidr === req.body.eidr;
         })
         if(result.length === 1){
-            catalogueMapper.removeMovies(movie => {
+            movieMapper.removeMovies(movie => {
                 return movie.eidr === req.body.eidr;
             })
                 .then(() => {
@@ -524,22 +512,22 @@ convertToFrontendMovie = (movie) => {
 
 //<editor-fold desc="Get methods" defaultstate="collapsed">
 exports.getBooks = async function(req, res) {
-    var result= catalogueMapper.getBooks()
+    var result= bookMapper.getBooks()
     res.status(200);
     res.json(result);
 }
 exports.getMusics = async function(req, res) {
-    var result= catalogueMapper.getMusics()
+    var result= musicMapper.getMusics()
     res.status(200);
     res.json(result);
 }
 exports.getMagazines = async function(req, res) {
-    var result= catalogueMapper.getMagazines()
+    var result= magazineMapper.getMagazines()
     res.status(200);
     res.json(result);
 }
 exports.getMovies = async function(req, res) {
-    var result= catalogueMapper.getMovies()
+    var result= movieMapper.getMovies()
     res.status(200);
     res.json(result);
 }
