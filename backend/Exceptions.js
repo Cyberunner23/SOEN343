@@ -3,6 +3,7 @@ const Exceptions = Object.freeze({
     'EmailAlreadyUsed' : 1,
     'UserDoesNotExist' : 2,
     'Unauthorized' : 3,
-    'InvalidRequestBody' : 4
+    'InvalidRequestBody' : 4,
+    'PreconditionsNotMet' : 5
 });
 exports.Exceptions = Exceptions;
