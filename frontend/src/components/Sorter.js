@@ -4,7 +4,7 @@ class Sorter {
     //string for field to sort by (ex: book.title) -> use switch case?
     //boolean for ascending/descending -> change sorting type
 
-    function stringSort(jsonArray, field, order) {  
+    stringSort(jsonArray, field, order) {  
         if(order == true){
 
             jsonArray.sort((record1, record2) => {
@@ -23,7 +23,7 @@ class Sorter {
         return console.log(jsonArray);
     }
 
-    function infSort(jsonArray, field, order){
+    infSort(jsonArray, field, order){
         if(order == true){
             jsonArray.sort((record1, record2) => {
                 return record1.field -record2.field;//ascending order
