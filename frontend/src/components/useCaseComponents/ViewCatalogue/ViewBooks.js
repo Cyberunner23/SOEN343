@@ -6,6 +6,10 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import Typography from '@material-ui/core/Typography';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+
+const sorter = require('../../../helper_classes/Sorter.js').getInstance();
 
 export default class ViewBooks extends Component {
 
@@ -22,6 +26,7 @@ export default class ViewBooks extends Component {
             isbn13: '',
             app: props.app,
             books: [],
+            filters: [],
             modifyBook: false,
             bookModified: false,
             authToken: props.app.state.currentUser.authToken
@@ -50,16 +55,39 @@ export default class ViewBooks extends Component {
         var content;
         content = (
             <div>
+                <div style={style.format}>
+                    <Typography>Filter By...</Typography>
+                    <TextField label="titleFilter" name="title" margin="dense" onChange={this.handleChange} />
+                    <TextField label="author" name="author" margin="dense" onChange={this.handleChange} />
+                    <TextField label="format" name="format" margin="dense" onChange={this.handleChange} />
+                    <TextField label="pages" name="pages" margin="dense" onChange={this.handleChange} /> <br/>
+                    <TextField label="publisher" name="publisher" margin="dense" onChange={this.handleChange} />
+                    <TextField label="language" name="language" margin="dense" onChange={this.handleChange} />
+                    <TextField label="isbn10" name="isbn10" margin="dense" onChange={this.handleChange} />
+                    <TextField label="isbn13" name="isbn13" margin="dense" onChange={this.handleChange} />
+                </div>
                 {bookModifiedMessage}
-                <Table>
+                <Table style={style.format}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Author</TableCell>
-                            <TableCell>Format</TableCell>
-                            <TableCell>Pages</TableCell>
-                            <TableCell>Publisher</TableCell>
-                            <TableCell>Language</TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('author')} direction={'desc'}>Author</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('format')} direction={'desc'}>Format</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('pages')} direction={'desc'}>Pages</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('publisher')} direction={'desc'}>Publisher</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('language')} direction={'desc'}>Language</TableSortLabel>
+                            </TableCell>
                             <TableCell>ISBN-10</TableCell>
                             <TableCell>ISBN-13</TableCell>
                             <TableCell/>
@@ -160,6 +188,16 @@ export default class ViewBooks extends Component {
         })
     }
 
+    sort(field) {
+        if (field === 'pages') {
+            sorter.intSort(this.state.books, field, true);
+        }
+        else {
+            sorter.stringSort(this.state.books, field, true);
+        }
+        this.setState(this.state.books);
+    }
+
     async handleSubmit(event) {
         event.preventDefault();
 
@@ -221,5 +259,11 @@ export default class ViewBooks extends Component {
                 }
             });
         })
+    }
+}
+
+const style = {
+    format: {
+        marginTop: 50
     }
 }

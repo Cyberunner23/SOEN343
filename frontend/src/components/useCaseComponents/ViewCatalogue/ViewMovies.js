@@ -6,6 +6,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+
+const sorter = require('../../../helper_classes/Sorter.js').getInstance();
 
 export default class ViewMovies extends Component {
 
@@ -56,16 +59,36 @@ export default class ViewMovies extends Component {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Director</TableCell>
-                            <TableCell>Producers</TableCell>
-                            <TableCell>Actors</TableCell>
-                            <TableCell>Language</TableCell>
-                            <TableCell>Subtitles</TableCell>
-                            <TableCell>Dubbed</TableCell>
-                            <TableCell>Release Date</TableCell>
-                            <TableCell>Run Time</TableCell>
-                            <TableCell>EIDR</TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('director')} direction={'desc'}>Director</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('producers')} direction={'desc'}>Producers</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('actors')} direction={'desc'}>Actors</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('language')} direction={'desc'}>Language</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('subtitles')} direction={'desc'}>Subtitles</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('dubbed')} direction={'desc'}>Dubbed</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('releaseDate')} direction={'desc'}>Release Date</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('runTime')} direction={'desc'}>Run Time</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('eidr')} direction={'desc'}>EIDR</TableSortLabel>
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -177,6 +200,16 @@ export default class ViewMovies extends Component {
             movieModifiedMessage: '',
             modifyMovie: true
         });
+    }
+
+    sort(field) {
+        if (field === ('runtime' || 'eidr')) {
+            sorter.intSort(this.state.movies, field, true);
+        }
+        else {
+            sorter.stringSort(this.state.movies, field, true);
+        }
+        this.setState(this.state.movies);
     }
 
     async handleSubmit(event) {
