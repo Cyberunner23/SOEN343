@@ -6,7 +6,7 @@ class Sorter {
 
     stringSort(jsonArray, field, descending) {
         jsonArray.sort((record1, record2) => {
-            record1[field].localeCompare(record2[field], 'fr', {ignorePunctuation: true})
+            record1[field].localeCompare(record2[field], 'fr');
         })
         if (descending) {
             jsonArray.reverse();
