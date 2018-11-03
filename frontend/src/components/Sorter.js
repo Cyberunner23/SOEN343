@@ -11,7 +11,7 @@ class Sorter {
         if (descending) {
             jsonArray.reverse();
         }
-        return console.log(jsonArray);
+        console.log(jsonArray);
     }
 
     intSort(jsonArray, field, descending){
@@ -21,7 +21,7 @@ class Sorter {
         if (descending) {
             jsonArray.reverse();
         }
-        return console.log(jsonArray);
+        console.log(jsonArray);
     }
 }
 
