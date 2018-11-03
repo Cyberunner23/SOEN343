@@ -1,12 +1,13 @@
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
-const CatalogueController = require('./backend/controllers/CatalogueController').getInstance();
+
+const UserController = require('./backend/controllers/UserController').getInstance();
+const CatalogueCronJobController = require('./backend/controllers/CatalogueCronJobController').getInstance(); // get instance starts cron controller
 const bookController = require('./backend/controllers/BookController').getInstance();
 const magazineController = require('./backend/controllers/MagazineController').getInstance();
 const musicController = require('./backend/controllers/MusicController').getInstance();
 const movieController = require('./backend/controllers/MovieController').getInstance();
-const UserController = require('./backend/controllers/UserController').getInstance();
 
 const port = 5000;
 

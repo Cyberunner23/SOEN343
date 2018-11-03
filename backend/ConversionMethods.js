@@ -1,27 +1,6 @@
-//<editor-fold desc="Constants">
-const masterGateway = require('../gateways/MasterGateway').getInstance();
-//</editor-fold>
-
-persistChangesToDatabase = () => {
-    setInterval(() => {
-        masterGateway.executeTransaction()
-        .catch(exception => {
-            console.log('Something went wrong when attempting to persist catalogue changes to the database');
-        })
-    }, 10000)
-}
-
-class CatalogueController {
-
-    constructor () {
-        persistChangesToDatabase();
-    }
-}
-
-const instance = new CatalogueController();
-exports.getInstance = () => {
-    return instance;
-}
+// These conversion methods are artefacts from the old CatalogueController
+// The CatalogueController was split into record-specific controllers
+// These methods are not currently used, but are kept here in case we need them in the future
 
 convertToFrontendView = (catalogueItems) => {
     viewItems = [];
@@ -31,7 +10,6 @@ convertToFrontendView = (catalogueItems) => {
     return viewItems;
 }
 
-//<editor-fold desc="Conversion to frontend for single item" defaultstate="collapsed">
 convertToFrontendBook = (book) => {
     let title = book.title;
     let author = book.author;
@@ -86,4 +64,3 @@ convertToFrontendMovie = (movie) => {
         {title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr}
     );
 }
-//</editor-fold>
