@@ -28,4 +28,3 @@ const instance = new Sorter();
 exports.getInstance = () => {
     return instance;
 }
-

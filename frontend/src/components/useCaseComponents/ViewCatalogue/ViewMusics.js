@@ -6,6 +6,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+
+const sorter = require('../../../helper_classes/Sorter.js').getInstance();
 
 export default class ViewMusics extends Component {
 
@@ -52,12 +55,24 @@ export default class ViewMusics extends Component {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Type</TableCell>
-                            <TableCell>Artist</TableCell>
-                            <TableCell>Label</TableCell>
-                            <TableCell>Released Date</TableCell>
-                            <TableCell>ASIN</TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('type')} direction={'desc'}>Type</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('artist')} direction={'desc'}>Artist</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('label')} direction={'desc'}>Label</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('releaseDate')} direction={'desc'}>Release Date</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('asin')} direction={'desc'}>ASIN</TableSortLabel>
+                            </TableCell>
                             <TableCell/>
                         </TableRow>
                     </TableHead>
@@ -138,6 +153,16 @@ export default class ViewMusics extends Component {
             musicModifiedMessage: '',
             modifyMusic: true
         });
+    }
+
+    sort(field) {
+        if (field === 'asin') {
+            sorter.intSort(this.state.musics, field, true);
+        }
+        else {
+            sorter.stringSort(this.state.musics, field, true);
+        }
+        this.setState(this.state.musics);
     }
 
     async handleSubmit(event) {

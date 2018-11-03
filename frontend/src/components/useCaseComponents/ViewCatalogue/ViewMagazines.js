@@ -6,6 +6,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+
+const sorter = require('../../../helper_classes/Sorter.js').getInstance();
 
 export default class ViewMagazines extends Component {
     constructor(props) {
@@ -50,10 +53,14 @@ export default class ViewMagazines extends Component {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Publisher</TableCell>
-                            <TableCell>Date</TableCell>
-                            <TableCell>Language</TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel></TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Publisher</TableSortLabel></TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Date</TableSortLabel></TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Language</TableSortLabel></TableCell>
                             <TableCell>ISBN-10</TableCell>
                             <TableCell>ISBN-13</TableCell>
                             <TableCell/>
@@ -138,6 +145,11 @@ export default class ViewMagazines extends Component {
         })
     }
 
+    sort(field) {
+        sorter.stringSort(this.state.magazines, field, true);
+        this.setState(this.state.magazines);
+    }
+
     async handleSubmit(event) {
         event.preventDefault();
 
@@ -167,7 +179,7 @@ export default class ViewMagazines extends Component {
                     this.setState({ modifyMagazine: false, magazineModified: true, magazineModifiedMessage: 'Magazine removed successfully' })
                 } else {
                     console.log(res)
-                    this.setState({ magazineModified: true, bookModifiedMessage: 'Magazine could not be removed' })
+                    this.setState({ magazineModified: true, magazineModifiedMessage: 'Magazine could not be removed' })
                 }
             })).then(() => { this.componentDidMount(); });
         })
