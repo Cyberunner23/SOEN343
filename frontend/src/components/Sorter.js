@@ -1,4 +1,3 @@
-
 class Sorter {
     //json is for array of records 
     //string for field to sort by (ex: book.title) -> use switch case?
@@ -25,6 +24,8 @@ class Sorter {
     }
 }
 
-
-exports.Sorter=Sorter;   
+const instance = new Sorter();
+exports.getInstance = () => {
+    return instance;
+}
 
