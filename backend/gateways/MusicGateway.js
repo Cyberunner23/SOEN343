@@ -1,22 +1,22 @@
 const Music = require('../business_objects/Music').Music;
-const genericGateway = require('./GenericGatewayMethods');
+const masterGateway = require('./MasterGateway').getInstance();
 
 class MusicGateway {
     
     async getMusics(jsonFilters){
-        return genericGateway.get('musics', jsonFilters);
+        return masterGateway.get('musics', jsonFilters);
     }
 
     async addMusic(jsonMusic){
-        return genericGateway.add('musics', jsonMusic);
+        return masterGateway.add('musics', jsonMusic);
     }
 
     async updateMusic(jsonMusic){
-        return genericGateway.update('musics', new Music(jsonMusic), 'asin');
+        return masterGateway.update('musics', new Music(jsonMusic), 'asin');
     }
 
     async deleteMusics(asinsToDelete){
-        return genericGateway.delete('musics', 'asin', asinsToDelete);
+        return masterGateway.delete('musics', 'asin', asinsToDelete);
     }
 }
 

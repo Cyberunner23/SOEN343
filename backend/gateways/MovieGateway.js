@@ -1,22 +1,22 @@
 const Movie = require('../business_objects/Movie').Movie;
-const genericGateway = require('./GenericGatewayMethods');
+const masterGateway = require('./MasterGateway').getInstance();
 
 class MovieGateway {
     
     async getMovies(jsonFilters){
-        return genericGateway.get('movies', jsonFilters);
+        return masterGateway.get('movies', jsonFilters);
     }
 
     async addMovie(jsonMovie){
-        return genericGateway.add('movies', jsonMovie);
+        return masterGateway.add('movies', jsonMovie);
     }
 
     async updateMovie(jsonMovie){
-        return genericGateway.update('movies', new Movie(jsonMovie), 'eidr');
+        return masterGateway.update('movies', new Movie(jsonMovie), 'eidr');
     }
 
     async deleteMovies(eidrsToDelete){
-        return genericGateway.delete('movies', 'eidr', eidrsToDelete);
+        return masterGateway.delete('movies', 'eidr', eidrsToDelete);
     }
 }
 

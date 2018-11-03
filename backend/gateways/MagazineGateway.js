@@ -1,22 +1,22 @@
 const Magazine = require('../business_objects/Magazine').Magazine;
-const genericGateway = require('./GenericGatewayMethods');
+const masterGateway = require('./MasterGateway').getInstance();
 
 class MagazineGateway {
     
     async getMagazines(jsonFilters){
-        return genericGateway.get('magazines', jsonFilters);
+        return masterGateway.get('magazines', jsonFilters);
     }
 
     async addMagazine(jsonMagazine){
-        return genericGateway.add('magazines', jsonMagazine);
+        return masterGateway.add('magazines', jsonMagazine);
     }
 
     async updateMagazine(jsonMagazine){
-        return genericGateway.update('magazines', new Magazine(jsonMagazine), 'isbn13');
+        return masterGateway.update('magazines', new Magazine(jsonMagazine), 'isbn13');
     }
 
     async deleteMagazines(isbn13sToDelete){
-        return genericGateway.delete('magazines', 'isbn13', isbn13sToDelete);
+        return masterGateway.delete('magazines', 'isbn13', isbn13sToDelete);
     }
 }
 
