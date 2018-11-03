@@ -26,11 +26,7 @@ class MovieMapper {
         return new Promise((resolve, reject) => {
             var newMovie = new Movie(jsonMovie);
             this.movies.push(newMovie);
-            movieGateway.addMovie(newMovie)
-            .catch(exception => {
-                reject(exception);
-                return;
-            })
+            movieGateway.addMovie(newMovie);
             resolve(newMovie);
         })
     }
@@ -53,13 +49,8 @@ class MovieMapper {
             removedMovies.forEach(movie => {
                 eidrsToDelete.push(movie.eidr);
             })
-            movieGateway.deleteMovies(eidrsToDelete)
-            .then(() => {
-                resolve(removedMovies);
-            })
-            .catch(exception => {
-                reject(exception);
-            })
+            movieGateway.deleteMovies(eidrsToDelete);
+            resolve(removedMovies);
         })
     }
 
@@ -67,19 +58,10 @@ class MovieMapper {
         return new Promise(async (resolve, reject) => {    
             this.modify(this.movies, modifyProperties, callback)
             .then(async arrayOfModifiedMovies => {
-                var exception = null;
-                for (var i = 0 ; i < arrayOfModifiedMovies.length && exception === null; i++) {
-                    await movieGateway.updateMovie(arrayOfModifiedMovies[i])
-                    .catch(e => {
-                        exception = e;
-                    })
+                for (var i = 0 ; i < arrayOfModifiedMovies.length; i++) {
+                    await movieGateway.updateMovie(arrayOfModifiedMovies[i]);
                 }
-                if (exception !== null) {
-                    reject(exception);
-                }
-                else { 
-                    resolve(arrayOfModifiedMovies);
-                }
+                resolve(arrayOfModifiedMovies);
             })
         })
     }

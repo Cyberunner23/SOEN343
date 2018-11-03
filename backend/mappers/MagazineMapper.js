@@ -26,11 +26,7 @@ class MagazineMapper {
         return new Promise((resolve, reject) => {
             var newMagazine = new Magazine(jsonMagazine);
             this.magazines.push(newMagazine);
-            magazineGateway.addMagazine(newMagazine)
-            .catch(exception => {
-                reject(exception);
-                return;
-            })
+            magazineGateway.addMagazine(newMagazine);
             resolve(newMagazine);
         })
     }
@@ -53,13 +49,8 @@ class MagazineMapper {
             removedMagazines.forEach(magazine => {
                 isbn13sToDelete.push(magazine.isbn13);
             })
-            magazineGateway.deleteMagazines(isbn13sToDelete)
-            .then(() => {
-                resolve(removedMagazines);
-            })
-            .catch(exception => {
-                reject(exception);
-            })
+            magazineGateway.deleteMagazines(isbn13sToDelete);
+            resolve(removedMagazines);
         })
     }
 
@@ -67,19 +58,10 @@ class MagazineMapper {
         return new Promise(async (resolve, reject) => {    
             this.modify(this.magazines, modifyProperties, callback)
             .then(async arrayOfModifiedMagazines => {
-                var exception = null;
-                for (var i = 0 ; i < arrayOfModifiedMagazines.length && exception === null; i++) {
-                    await magazineGateway.updateMagazine(arrayOfModifiedMagazines[i])
-                    .catch(e => {
-                        exception = e;
-                    })
+                for (var i = 0 ; i < arrayOfModifiedMagazines.length; i++) {
+                    await magazineGateway.updateMagazine(arrayOfModifiedMagazines[i]);
                 }
-                if (exception !== null) {
-                    reject(exception);
-                }
-                else { 
-                    resolve(arrayOfModifiedMagazines);
-                }
+                resolve(arrayOfModifiedMagazines);
             })
         })
     }

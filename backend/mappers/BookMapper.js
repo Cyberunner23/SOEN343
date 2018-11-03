@@ -26,11 +26,7 @@ class BookMapper {
         return new Promise((resolve, reject) => {
             var newBook = new Book(jsonBook);
             this.books.push(newBook);
-            bookGateway.addBook(newBook)
-            .catch(exception => {
-                reject(exception);
-                return;
-            })
+            bookGateway.addBook(newBook);
             resolve(newBook);
         })
     }
@@ -53,13 +49,8 @@ class BookMapper {
             removedBooks.forEach(book => {
                 isbn13sToDelete.push(book.isbn13);
             })
-            bookGateway.deleteBooks(isbn13sToDelete)
-            .then(() => {
-                resolve(removedBooks);
-            })
-            .catch(exception => {
-                reject(exception);
-            })
+            bookGateway.deleteBooks(isbn13sToDelete);
+            resolve(removedBooks);
         })
     }
 
@@ -67,19 +58,10 @@ class BookMapper {
         return new Promise(async (resolve, reject) => {    
             this.modify(this.books, modifyProperties, callback)
             .then(async arrayOfModifiedBooks => {
-                var exception = null;
-                for (var i = 0 ; i < arrayOfModifiedBooks.length && exception === null; i++) {
-                    await bookGateway.updateBook(arrayOfModifiedBooks[i])
-                    .catch(e => {
-                        exception = e;
-                    })
+                for (var i = 0 ; i < arrayOfModifiedBooks.length; i++) {
+                    await bookGateway.updateBook(arrayOfModifiedBooks[i]);
                 }
-                if (exception !== null) {
-                    reject(exception);
-                }
-                else {
-                    resolve(arrayOfModifiedBooks);
-                }
+                resolve(arrayOfModifiedBooks);
             })
         })
     }

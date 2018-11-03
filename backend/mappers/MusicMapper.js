@@ -26,11 +26,7 @@ class MusicMapper {
         return new Promise((resolve, reject) => {
             var newMusic = new Music(jsonMusic);
             this.musics.push(newMusic);
-            musicGateway.addMusic(newMusic)
-            .catch(exception => {
-                reject(exception);
-                return;
-            })
+            musicGateway.addMusic(newMusic);
             resolve(newMusic);
         })
     }
@@ -53,13 +49,8 @@ class MusicMapper {
             removedMusics.forEach(music => {
                 asinsToDelete.push(music.asin);
             })
-            musicGateway.deleteMusics(asinsToDelete)
-            .then(() => {
-                resolve(removedMusics);
-            })
-            .catch(exception => {
-                reject(exception);
-            })
+            musicGateway.deleteMusics(asinsToDelete);
+            resolve(removedMusics);
         })
     }
 
@@ -67,19 +58,10 @@ class MusicMapper {
         return new Promise(async (resolve, reject) => {    
             this.modify(this.musics, modifyProperties, callback)
             .then(async arrayOfModifiedMusics => {
-                var exception = null;
-                for (var i = 0 ; i < arrayOfModifiedMusics.length && exception === null; i++) {
-                    await musicGateway.updateMusic(arrayOfModifiedMusics[i])
-                    .catch(e => {
-                        exception = e;
-                    })
+                for (var i = 0 ; i < arrayOfModifiedMusics.length; i++) {
+                    await musicGateway.updateMusic(arrayOfModifiedMusics[i]);
                 }
-                if (exception !== null) {
-                    reject(exception);
-                }
-                else { 
-                    resolve(arrayOfModifiedMusics);
-                }
+                resolve(arrayOfModifiedMusics);
             })
         })
     }

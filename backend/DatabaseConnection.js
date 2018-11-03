@@ -5,7 +5,8 @@ const connection = mysql.createConnection({
     host: 'localhost',
     user: utils.getPropertyIfExists(process.env, 'SQLUser', 'root'),
     password: utils.getPropertyIfExists(process.env, 'SQLPassword', ''),
-    database: 'soen343'
+    database: 'soen343',
+    multipleStatements: true
 });
 
 exports.getInstance = function () {
