@@ -13,7 +13,7 @@ exports.GenericCatalogueController = class GenericCatalogueController {
     }
 
     async get(req, res) {
-        var result = this.mapper.get()
+        var result = this.mapper.get(item => {filter(item, req.body.filters)})
         res.status(200);
         res.json(result);
     }
@@ -122,6 +122,18 @@ exports.GenericCatalogueController = class GenericCatalogueController {
             handleException(res, ex);
         });
     }
+}
+
+filter = function(item, filters){
+    var toReturn = true;
+    for(var filter in filters){
+        if(isNaN(filter) || isNaN(item[filter])){
+            toReturn = toReturn && (filter === undefined || item[filter].toLowerCase().includes(filter.toLowerCase()));
+        } else {
+            toReturn = toReturn && (filter === undefined || item[filter].includes(filter));
+        }
+    }
+    return toReturn;
 }
 
 handleException = function(res, exception) {
