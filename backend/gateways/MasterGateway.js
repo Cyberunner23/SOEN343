@@ -1,4 +1,3 @@
-
 const db = require('../DatabaseConnection').getInstance();
 const Exceptions = require('../Exceptions').Exceptions;
 
@@ -30,9 +29,6 @@ class MasterGateway {
                         reject(Exceptions.InternalServerError);
                     }
                 })
-            }
-            else {
-                console.log('MasterGateway: no changes to persist');
             }
             this.stateChangingQueries = []; // this should be null later
         })
@@ -77,7 +73,7 @@ class MasterGateway {
     
     update (tableName, record, identifier) {
         var pairs = [];
-        for (field in record) {
+        for (var field in record) {
             pairs.push(field + "='" + record[field] + "'");
         }
 

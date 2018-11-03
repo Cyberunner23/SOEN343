@@ -3,20 +3,20 @@ const masterGateway = require('./MasterGateway').getInstance();
 
 class MagazineGateway {
     
-    async getMagazines(jsonFilters){
+    async get(jsonFilters){
         return masterGateway.get('magazines', jsonFilters);
     }
 
-    async addMagazine(jsonMagazine){
-        return masterGateway.add('magazines', jsonMagazine);
+    add(jsonMagazine){
+        masterGateway.add('magazines', new Magazine(jsonMagazine));
     }
 
-    async updateMagazine(jsonMagazine){
-        return masterGateway.update('magazines', new Magazine(jsonMagazine), 'isbn13');
+    update(jsonMagazine){
+        masterGateway.update('magazines', new Magazine(jsonMagazine), 'isbn13');
     }
 
-    async deleteMagazines(isbn13sToDelete){
-        return masterGateway.delete('magazines', 'isbn13', isbn13sToDelete);
+    delete(isbn13sToDelete){
+        masterGateway.delete('magazines', 'isbn13', isbn13sToDelete);
     }
 }
 

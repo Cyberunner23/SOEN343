@@ -3,20 +3,20 @@ const masterGateway = require('./MasterGateway').getInstance();
 
 class MusicGateway {
     
-    async getMusics(jsonFilters){
+    async get(jsonFilters){
         return masterGateway.get('musics', jsonFilters);
     }
 
-    async addMusic(jsonMusic){
-        return masterGateway.add('musics', jsonMusic);
+    add(jsonMusic){
+        masterGateway.add('musics', new Music(jsonMusic));
     }
 
-    async updateMusic(jsonMusic){
-        return masterGateway.update('musics', new Music(jsonMusic), 'asin');
+    update(jsonMusic){
+        masterGateway.update('musics', new Music(jsonMusic), 'asin');
     }
 
-    async deleteMusics(asinsToDelete){
-        return masterGateway.delete('musics', 'asin', asinsToDelete);
+    delete(asinsToDelete){
+        masterGateway.delete('musics', 'asin', asinsToDelete);
     }
 }
 

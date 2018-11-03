@@ -3,20 +3,20 @@ const masterGateway = require('./MasterGateway').getInstance();
 
 class MovieGateway {
     
-    async getMovies(jsonFilters){
+    async get(jsonFilters){
         return masterGateway.get('movies', jsonFilters);
     }
 
-    async addMovie(jsonMovie){
-        return masterGateway.add('movies', jsonMovie);
+    add(jsonMovie){
+        masterGateway.add('movies', new Movie(jsonMovie));
     }
 
-    async updateMovie(jsonMovie){
-        return masterGateway.update('movies', new Movie(jsonMovie), 'eidr');
+    update(jsonMovie){
+        masterGateway.update('movies', new Movie(jsonMovie), 'eidr');
     }
 
-    async deleteMovies(eidrsToDelete){
-        return masterGateway.delete('movies', 'eidr', eidrsToDelete);
+    delete(eidrsToDelete){
+        masterGateway.delete('movies', 'eidr', eidrsToDelete);
     }
 }
 

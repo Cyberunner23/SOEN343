@@ -3,20 +3,20 @@ const masterGateway = require('./MasterGateway').getInstance();
 
 class BookGateway {
     
-    async getBooks(jsonFilters){
+    async get(jsonFilters){
         return masterGateway.get('books', jsonFilters);
     }
 
-    async addBook(jsonBook){
-        return masterGateway.add('books', jsonBook);
+    add(jsonBook){
+        masterGateway.add('books', new Book(jsonBook));
     }
 
-    async updateBook(jsonBook){
-        return masterGateway.update('books', new Book(jsonBook), 'isbn13');
+    update(jsonBook){
+        masterGateway.update('books', new Book(jsonBook), 'isbn13');
     }
 
-    async deleteBooks(isbn13sToDelete){
-        return masterGateway.delete('books', 'isbn13', isbn13sToDelete);
+    delete(isbn13sToDelete){
+        masterGateway.delete('books', 'isbn13', isbn13sToDelete);
     }
 }
 
