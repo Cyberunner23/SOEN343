@@ -151,7 +151,7 @@ exports.GenericMapper = class GenericMapper {
                 var arrayOfModifiedRecords = [];
                 recordsToModify.forEach(record => {
                     var identifier = record[this.identifier];
-                    var previousOperations = this.unitOfWork.get(operation => {return operation.identifer === identifier});
+                    var previousOperations = this.unitOfWork.get().filter(operation => {return operation.identifier === identifier});
                     this.modifyHelper(record, modifyProperties);
                     arrayOfModifiedRecords.push(record);
                     // Unit of work guarantees that size is either 0 or 1
