@@ -40,11 +40,11 @@ exports.GenericIdentityMap = class GenericIdentityMap {
                 return identifier === record[this.identifier];
             })
             if (index === -1) {
-                var err = 'Cannot remove record in identity map because there is no record with the specified identifier';
-                console.log(err);
-                throw err;
+                // Record cannot be deleted because it wasn't found. Because of how the mapper is coded, this is often completely normal.
             }
-            removedRecords.push(this.records.splice(index, 1));
+            else {
+                removedRecords.push(this.records.splice(index, 1));
+            }
         })
         return removedRecords;
     }

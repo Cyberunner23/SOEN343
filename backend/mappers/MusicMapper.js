@@ -9,7 +9,6 @@ class MusicMapper extends GenericMapper {
         this.identifier = 'asin';
         this.identityMap = musicIdentityMap;
         this.gateway = musicGateway;
-        this.initialize();
     }
 }
 

@@ -4,7 +4,7 @@ const Exceptions = require('../Exceptions').Exceptions;
 class MasterGateway {
 
     constructor () {
-        this.stateChangingQueries = []; // this should be null later
+        this.stateChangingQueries = null; // this should be null later
     }
 
     createTransaction() {
@@ -30,7 +30,7 @@ class MasterGateway {
                     }
                 })
             }
-            this.stateChangingQueries = []; // this should be null later
+            this.stateChangingQueries = null; // this should be null later
         })
     }
 

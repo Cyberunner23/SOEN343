@@ -1,84 +1,156 @@
+const GenericUnitOfWork = require('../unitsOfWork/GenericUnitOfWork').GenericUnitOfWork;
+const OperationType = require('../unitsOfWork/GenericUnitOfWork').OperationType;
+const Exceptions = require('../Exceptions').Exceptions;
+
 exports.GenericMapper = class GenericMapper {
 
     constructor () {
         this.identifier = 'identifier';
         this.identityMap = null;
         this.gateway = null;
+        this.unitOfWork = new GenericUnitOfWork();
     }
 
-    initialize() {
-        this.gateway.get()
-        .then(records => {
-            records.forEach(record => {
-                this.identityMap.add(record);
+    sendChangesToGateway() {
+        var identities = this.identityMap.get();
+        this.identityMap.clear();
+
+        var operations = this.unitOfWork.get();
+        this.unitOfWork.clear();
+
+        operations.forEach(operation => {
+            var operationType = operation.operationType;
+            var identifier = operation.identifier;
+            if (operationType === OperationType.Delete) {
+                this.gateway.delete(identifier);
+            }
+            else {
+                var record = identities.find(record => {
+                    return record[this.identifier] === identifier;
+                })
+                console.log('record: ' + JSON.stringify(record));
+                if (operationType === OperationType.Add) {
+                    this.gateway.add(record);
+                }
+                else if (operationType === OperationType.Update) {
+                    this.gateway.update(record);
+                }
+            }
+        })
+    }
+
+    async get(callback) {
+        if (callback === undefined) {
+            callback = record => {return true}; // get all records;
+        }
+        return new Promise(async (resolve, reject) => {
+            var identities = this.identityMap.get(callback);
+            var operations = this.unitOfWork.get();
+            this.gateway.get()
+            .then(databaseEntries => {
+
+                databaseEntries = databaseEntries.filter(callback);
+
+                var operationIdentifiers = [];
+                operations.forEach(operation => {
+                    operationIdentifiers.push(operation.identifier);
+                })
+        
+                databaseEntries = databaseEntries.filter(entry => {
+                    return !operationIdentifiers.includes(entry[this.identifier]);
+                })
+
+                resolve(identities.concat(databaseEntries));
+            })
+            .catch(exception => {
+                reject(exception);
             })
         })
     }
 
-    get(callback) {
-        return this.identityMap.get(callback);
-    }
-
     async add(record) {
         return new Promise((resolve, reject) => {
-            this.identityMap.add(record);
-            this.gateway.add(record);
-            resolve(record);
+
+            var identifier = this.identifier;
+            this.get(rec => {
+                return rec[identifier] === record[identifier];
+            })
+            .then(records => {
+                if (records.length === 0) {
+                    this.identityMap.add(record);
+                    this.unitOfWork.add(record[identifier]);
+                    resolve(record);
+                }
+                else {
+                    reject(Exceptions.BadRequest);
+                }
+            })
+            .catch(exception => {
+                reject(exception);
+            })
         })
     }
 
     async remove(callback) {
         new Promise((resolve, reject) => {
-            var removedRecords = [];
-            if (callback) {
-                removedRecords = this.identityMap.get(record => {
-                    return callback(record);
-                })
-            } else {
-                removedRecords = this.identityMap.get();
+
+            if (callback === undefined) {
+                callback = record => {return true}; // select all records
             }
-            var identifiersToRemove = [];
-            removedRecords.forEach(record => {
-                identifiersToRemove.push(record[this.identifier]);
+
+            this.get(callback)
+            .then(recordsToRemove => {
+                var identifiersToRemove = [];
+                recordsToRemove.forEach(record => {
+                    identifiersToRemove.push(record[this.identifier]);
+                })
+                this.identityMap.remove(identifiersToRemove);
+                identifiersToRemove.forEach(identifier => {
+                    this.unitOfWork.delete(identifier);
+                })
+                resolve(recordsToRemove);
             })
-            this.identityMap.remove(identifiersToRemove);
-            this.gateway.delete(identifiersToRemove);
-            resolve(removedRecords);
+            .catch(exception => {
+                reject(exception);
+            })
         })
     }
 
     async modify(modifyProperties, callback) {
+        console.log('mapper.modify');
         return new Promise(async (resolve, reject) => {
-            var arrayOfModifiedRecords = this.modifyHelper(this.identityMap.get(callback), modifyProperties, callback);
-            for (var i = 0 ; i < arrayOfModifiedRecords.length; i++) {
-                await this.gateway.update(arrayOfModifiedRecords[i]);
-            }
-            resolve(arrayOfModifiedRecords);
+            this.get(callback)
+            .then(recordsToModify => {
+                var arrayOfModifiedRecords = this.modifyHelper(recordsToModify, modifyProperties);
+                arrayOfModifiedRecords.forEach(record => {
+                    this.unitOfWork.update(record[this.identifier]);
+                    var matchingIdentities = this.identityMap.get(identity => {
+                        return identity[this.identifier] === record[this.identifier];
+                    });
+                    if (matchingIdentities.length === 0) {
+                        this.identityMap.add(record);
+                    }
+                    else {
+                        this.identifier.update(record);
+                    }
+                })
+                resolve(arrayOfModifiedRecords);
+            })
+            .catch(exception => {
+                reject(exception);
+            })
         })
     }
 
     /**
-     * Modify items in the supplied cache that meet the selector criterea, with
-     * the keys to be modified and their value in the supplied modifyProperties.
-     * Return the modified objects.
+     * Modify records in toModify with the supplied modifyProperties.
+     * Return the modified records.
      * 
-     * @param {any[]} cache - The array of objects to select from
+     * @param {any[]} toModify - The array of records to modify
      * @param {JSON} modifyProperties - Collection of named properties and their values
-     * @param {Function} [selector] - Function that takes a cache item and returns true 
-     *                                if it is to be modified
      */
-    modifyHelper(cache, modifyProperties, selector) {
-            let toModify = [];
-
-            // Select objects to modify
-            if (selector) {
-                toModify = cache.filter(selector);
-            } else { // Without selector predicate, modify all items
-                toModify = cache;
-            }
-
-            // Copy the properties defined in modifyProperties to selected items
-            toModify.forEach((item) => {
+    modifyHelper(toModify, modifyProperties) {
+            toModify.forEach(item => {
                 for (let property in modifyProperties) {
                     item[property] = modifyProperties[property];
                 }

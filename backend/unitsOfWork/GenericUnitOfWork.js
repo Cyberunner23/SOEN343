@@ -4,6 +4,7 @@ const OperationType= Object.freeze({
     'Update' : 1,
     'Delete' : 2
 });
+exports.OperationType = OperationType;
 
 exports.GenericUnitOfWork = class GenericUnitOfWork {
     constructor() {
@@ -34,7 +35,7 @@ exports.GenericUnitOfWork = class GenericUnitOfWork {
         else throw Exceptions.InvalidRequestBody;
     }
 
-    updateItem(identifierValue){ 
+    update(identifierValue){ 
         // update operations override add and previous update operations, but attempting to override a delete operation should throw an exception
         if(!this.operations.find(i => {return i['identifier'] === identifierValue;})) 
         this.operations.push({'operationType': OperationType.Update, 'identifier': identifierValue});
@@ -51,7 +52,7 @@ exports.GenericUnitOfWork = class GenericUnitOfWork {
         else throw Exceptions.InvalidRequestBody;
     }
 
-    deleteItem(identifierValue){
+    delete(identifierValue){
         // delete operations override add and update operations, but attempting to override a previous delete should throw an exception
         if(!this.operations.find(i => {return i['identifier'] === identifierValue;})) 
         this.operations.push({'operationType': OperationType.Delete, 'identifier': identifierValue});
