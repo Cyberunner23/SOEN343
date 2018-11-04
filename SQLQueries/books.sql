@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 18, 2018 at 08:58 PM
+-- Generation Time: Nov 04, 2018 at 12:56 AM
 -- Server version: 10.1.35-MariaDB
 -- PHP Version: 7.2.9
 
@@ -35,8 +35,8 @@ CREATE TABLE `books` (
   `pages` int(11) NOT NULL,
   `publisher` varchar(255) NOT NULL,
   `language` varchar(255) NOT NULL,
-  `isbn10` bigint(20) NOT NULL,
-  `isbn13` bigint(20) NOT NULL
+  `isbn10` varchar(13) NOT NULL,
+  `isbn13` varchar(17) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
