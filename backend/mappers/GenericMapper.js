@@ -121,15 +121,15 @@ exports.GenericMapper = class GenericMapper {
             .then(recordsToModify => {
                 var arrayOfModifiedRecords = this.modifyHelper(recordsToModify, modifyProperties);
                 arrayOfModifiedRecords.forEach(record => {
-                    this.unitOfWork.update(record[this.identifier]);
                     var matchingIdentities = this.identityMap.get(identity => {
                         return identity[this.identifier] === record[this.identifier];
                     });
                     if (matchingIdentities.length === 0) {
                         this.identityMap.add(record);
+                        this.unitOfWork.update(record[this.identifier]);
                     }
                     else {
-                        this.identifier.update(record);
+                        this.identityMap.update(record);
                     }
                 })
                 resolve(arrayOfModifiedRecords);
