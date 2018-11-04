@@ -6,6 +6,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import Typography from '@material-ui/core/Typography';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
 const sorter = require('../../../helper_classes/Sorter.js').getInstance();
@@ -15,20 +16,13 @@ export default class ViewMovies extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: '',
-            director: '',
-            producers: '',
-            actors: '',
-            language: '',
-            subtitles: '',
-            dubbed: '',
-            releaseDate: '',
-            runTime: '',
+            title: '', director: '', producers: '', actors: '', language: '', subtitles: '', dubbed: '', releaseDate: '', runTime: '', eidr: '',
+            titleFilter: '', directorFilter: '', producersFilter: '', actorsFilter: '', languageFilter: '', subtitlesFilter: '', dubbedFilter: '',
+            releaseDateFilter: '', runTimeFilter: '', eidrFilter: '',
             app: props.app,
             movies: [],
             modifyMovie: false,
             movieModified: false,
-            eidr: '',
             desc: false,
             authToken: props.app.state.currentUser.authToken
         };
@@ -56,6 +50,20 @@ export default class ViewMovies extends Component {
         var content;
         content = (
             <div>
+                <div style={style.format}>
+                    <Typography>Filter By...</Typography>
+                    <TextField style={style.field} label="title" name="titleFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="director" name="directorFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="producers" name="producersFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="actors" name="actorsFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="language" name="languageFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="subtitles" name="subtitlesFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="dubbed" name="dubbedFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="releaseDate" name="releaseDateFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="runTime" name="runTimeFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="eidr" name="eidrFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
+                </div>
                 {movieModifiedMessage}
                 <Table>
                     <TableHead>
@@ -213,6 +221,35 @@ export default class ViewMovies extends Component {
         this.setState({movies: this.state.movies, desc: !this.state.desc});
     }
 
+    filter() {
+        let title = this.state.titleFilter;
+        let director = this.state.directorFilter;
+        let producers = this.state.producersFilter;
+        let actors = this.state.actorsFilter;
+        let language = this.state.languageFilter;
+        let subtitles = this.state.subtitlesFilter;
+        let dubbed = this.state.dubbedFilter;
+        let releaseDate = this.state.releaseDateFilter;
+        let runTime = this.state.runTimeFilter;
+        let eidr = this.state.eidrFilter;
+        let jsonObject = {title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr};
+
+        Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
+
+        //convert json to url params
+        let url = Object.keys(jsonObject).map(function(k) {
+            return encodeURIComponent(k) + '=' + encodeURIComponent(jsonObject[k])
+        }).join('&');
+
+        fetch('/api/catalogue/getMovies?' + url, {
+            method: 'GET'
+        }).then(res => {
+            res.json().then(
+                movies => this.setState({ movies: movies })
+            )
+        });
+    }
+
     async handleSubmit(event) {
         event.preventDefault();
 
@@ -276,5 +313,15 @@ export default class ViewMovies extends Component {
                 }
             });
         })
+    }
+}
+
+const style = {
+    format: {
+        marginTop: 25,
+        marginBottom: 25
+    },
+    field: {
+        paddingRight: 10
     }
 }

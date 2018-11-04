@@ -6,6 +6,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import Typography from '@material-ui/core/Typography';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
 const sorter = require('../../../helper_classes/Sorter.js').getInstance();
@@ -14,12 +15,8 @@ export default class ViewMagazines extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: '',
-            publisher: '',
-            date: '',
-            language: '',
-            isbn10: '',
-            isbn13: '',
+            title: '', publisher: '', date: '', language: '', isbn10: '', isbn13: '',
+            titleFilter: '', publisherFilter: '', dateFilter: '', languageFilter: '', isbn10Filter: '', isbn13Filter: '',
             app: props.app,
             magazines: [],
             modifyMagazine: false,
@@ -50,6 +47,16 @@ export default class ViewMagazines extends Component {
         var content;
         content = (
             <div>
+                <div style={style.format}>
+                    <Typography>Filter By...</Typography>
+                    <TextField style={style.field} label="title" name="titleFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="publisher" name="publisherFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="date" name="dateFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="language" name="languageFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="isbn10" name="isbn10Filter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="isbn13" name="isbn13Filter" margin="dense" onChange={this.handleChange} /><br/>
+                    <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
+                </div>
                 {magazineModifiedMessage}
                 <Table>
                     <TableHead>
@@ -159,6 +166,31 @@ export default class ViewMagazines extends Component {
         this.setState({magazines: this.state.magazines, desc: !this.state.desc});
     }
 
+    filter() {
+        let title = this.state.titleFilter;
+        let publisher = this.state.publisherFilter;
+        let date = this.state.dateFilter;
+        let language = this.state.languageFilter;
+        let isbn10 = this.state.isbn10Filter;
+        let isbn13 = this.state.isbn13Filter;
+        let jsonObject = {title, publisher, date, language, isbn10, isbn13};
+
+        Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
+
+        //convert json to url params
+        let url = Object.keys(jsonObject).map(function(k) {
+            return encodeURIComponent(k) + '=' + encodeURIComponent(jsonObject[k])
+        }).join('&');
+
+        fetch('/api/catalogue/getMagazines?' + url, {
+            method: 'GET'
+        }).then(res => {
+            res.json().then(
+                magazines => this.setState({ magazines: magazines })
+            )
+        });
+    }
+
     async handleSubmit(event) {
         event.preventDefault();
 
@@ -218,5 +250,15 @@ export default class ViewMagazines extends Component {
                 }
             });
         })
+    }
+}
+
+const style = {
+    format: {
+        marginTop: 25,
+        marginBottom: 25
+    },
+    field: {
+        paddingRight: 10
     }
 }

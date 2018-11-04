@@ -6,6 +6,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import Typography from '@material-ui/core/Typography';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
 const sorter = require('../../../helper_classes/Sorter.js').getInstance();
@@ -15,12 +16,8 @@ export default class ViewMusics extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            type: '',
-            title: '',
-            artist: '',
-            label: '',
-            releaseDate: '',
-            asin: '',
+            type: '', title: '', artist: '', label: '', releaseDate: '', asin: '',
+            typeFilter: '', titleFilter: '', artistFilter: '', labelFilter: '', releaseDateFilter: '', asinFilter: '',
             app: props.app,
             musics: [],
             modifyMusic: false,
@@ -52,6 +49,16 @@ export default class ViewMusics extends Component {
         var content;
         content = (
             <div>
+                <div style={style.format}>
+                    <Typography>Filter By...</Typography>
+                    <TextField style={style.field} label="title" name="titleFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="type" name="typeFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="artist" name="artistFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="label" name="labelFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="releaseDate" name="releaseDateFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="asin" name="asinFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
+                </div>
                 {musicModifiedMessage}
                 <Table>
                     <TableHead>
@@ -145,8 +152,8 @@ export default class ViewMusics extends Component {
 
     modifyMusicState(music) {
         this.setState({
-            type: music.type,
             title: music.title,
+            type: music.type,
             artist: music.artist,
             label: music.label,
             releaseDate: music.releaseDate,
@@ -164,6 +171,31 @@ export default class ViewMusics extends Component {
             sorter.stringSort(this.state.musics, field, this.state.desc);
         }
         this.setState({musics: this.state.musics, desc: !this.state.desc});
+    }
+
+    filter() {
+        let title = this.state.titleFilter;
+        let type = this.state.typeFilter;
+        let artist = this.state.artistFilter;
+        let label = this.state.labelFilter;
+        let releaseDate = this.state.releaseDateFilter;
+        let asin = this.state.asinFilter;
+        let jsonObject = {title, type, artist, label, releaseDate, asin};
+
+        Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
+
+        //convert json to url params
+        let url = Object.keys(jsonObject).map(function(k) {
+            return encodeURIComponent(k) + '=' + encodeURIComponent(jsonObject[k])
+        }).join('&');
+
+        fetch('/api/catalogue/getMusics?' + url, {
+            method: 'GET'
+        }).then(res => {
+            res.json().then(
+                musics => this.setState({ musics: musics })
+            )
+        });
     }
 
     async handleSubmit(event) {
@@ -225,5 +257,15 @@ export default class ViewMusics extends Component {
                 }
             });
         })
+    }
+}
+
+const style = {
+    format: {
+        marginTop: 25,
+        marginBottom: 25
+    },
+    field: {
+        paddingRight: 10
     }
 }

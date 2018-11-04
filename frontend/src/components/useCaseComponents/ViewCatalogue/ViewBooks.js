@@ -16,17 +16,11 @@ export default class ViewBooks extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: '',
-            author: '',
-            format: '',
-            pages: '',
-            publisher: '',
-            language: '',
-            isbn10: '',
-            isbn13: '',
+            title: '', author: '', format: '', pages: '', publisher: '', language: '', isbn10: '', isbn13: '',
+            titleFilter: '', authorFilter: '', formatFilter: '', pagesFilter: '', publisherFilter: '', languageFilter: '', isbn10Filter: '', isbn13Filter: '',
             app: props.app,
             books: [],
-            filters: [],
+            url: '',
             modifyBook: false,
             bookModified: false,
             desc: false,
@@ -58,14 +52,15 @@ export default class ViewBooks extends Component {
             <div>
                 <div style={style.format}>
                     <Typography>Filter By...</Typography>
-                    <TextField label="titleFilter" name="title" margin="dense" onChange={this.handleChange} />
-                    <TextField label="author" name="author" margin="dense" onChange={this.handleChange} />
-                    <TextField label="format" name="format" margin="dense" onChange={this.handleChange} />
-                    <TextField label="pages" name="pages" margin="dense" onChange={this.handleChange} /> <br/>
-                    <TextField label="publisher" name="publisher" margin="dense" onChange={this.handleChange} />
-                    <TextField label="language" name="language" margin="dense" onChange={this.handleChange} />
-                    <TextField label="isbn10" name="isbn10" margin="dense" onChange={this.handleChange} />
-                    <TextField label="isbn13" name="isbn13" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="title" name="titleFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="author" name="authorFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="format" name="formatFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="pages" name="pagesFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="publisher" name="publisherFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="language" name="languageFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="isbn10" name="isbn10Filter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="isbn13" name="isbn13Filter" margin="dense" onChange={this.handleChange} /><br/>
+                    <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
                 </div>
                 {bookModifiedMessage}
                 <Table style={style.format}>
@@ -203,6 +198,33 @@ export default class ViewBooks extends Component {
         this.setState({books: this.state.books, desc: !this.state.desc});
     }
 
+    filter() {
+        let title = this.state.titleFilter;
+        let author = this.state.authorFilter;
+        let format = this.state.formatFilter;
+        let pages = this.state.pagesFilter;
+        let publisher = this.state.publisherFilter;
+        let language = this.state.languageFilter;
+        let isbn10 = this.state.isbn10Filter;
+        let isbn13 = this.state.isbn13Filter;
+        let jsonObject = {title, author, format, pages, publisher, language, isbn10, isbn13};
+
+        Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
+
+        //convert json to url params
+        let url = Object.keys(jsonObject).map(function(k) {
+            return encodeURIComponent(k) + '=' + encodeURIComponent(jsonObject[k])
+        }).join('&');
+
+        fetch('/api/catalogue/getBooks?' + url, {
+            method: 'GET'
+        }).then(res => {
+            res.json().then(
+                books => this.setState({ books: books })
+            )
+        });
+    }
+
     async handleSubmit(event) {
         event.preventDefault();
 
@@ -269,6 +291,10 @@ export default class ViewBooks extends Component {
 
 const style = {
     format: {
-        marginTop: 50
+        marginTop: 25,
+        marginBottom: 25
+    },
+    field: {
+        paddingRight: 10
     }
 }
