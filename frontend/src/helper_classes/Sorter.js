@@ -5,7 +5,7 @@ class Sorter {
 
     stringSort(jsonArray, field, descending) {
         jsonArray.sort((record1, record2) => {
-            return record1[field].localeCompare(record2[field]);
+            return record1[field].toString().localeCompare(record2[field].toString());
         })
         if (descending) {
             jsonArray.reverse();
@@ -15,7 +15,7 @@ class Sorter {
 
     intSort(jsonArray, field, descending){
         jsonArray.sort((record1, record2) => {
-            return record1[field] -record2[field];//ascending order
+            return record1[field] - record2[field];//ascending order
         });
         if (descending) {
             jsonArray.reverse();

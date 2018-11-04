@@ -29,6 +29,7 @@ export default class ViewMovies extends Component {
             modifyMovie: false,
             movieModified: false,
             eidr: '',
+            desc: false,
             authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
@@ -204,12 +205,12 @@ export default class ViewMovies extends Component {
 
     sort(field) {
         if (field === ('runtime' || 'eidr')) {
-            sorter.intSort(this.state.movies, field, true);
+            sorter.intSort(this.state.movies, field, this.state.desc);
         }
         else {
-            sorter.stringSort(this.state.movies, field, true);
+            sorter.stringSort(this.state.movies, field, this.state.desc);
         }
-        this.setState(this.state.movies);
+        this.setState({movies: this.state.movies, desc: !this.state.desc});
     }
 
     async handleSubmit(event) {

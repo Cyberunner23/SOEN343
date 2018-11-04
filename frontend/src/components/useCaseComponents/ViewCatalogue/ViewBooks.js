@@ -29,6 +29,7 @@ export default class ViewBooks extends Component {
             filters: [],
             modifyBook: false,
             bookModified: false,
+            desc: false,
             authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
@@ -88,8 +89,12 @@ export default class ViewBooks extends Component {
                             <TableCell>
                                 <TableSortLabel onClick={() => this.sort('language')} direction={'desc'}>Language</TableSortLabel>
                             </TableCell>
-                            <TableCell>ISBN-10</TableCell>
-                            <TableCell>ISBN-13</TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('isbn10')} direction={'desc'}>ISBN-10</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('isbn13')} direction={'desc'}>ISBN-13</TableSortLabel>
+                            </TableCell>
                             <TableCell/>
                         </TableRow>
                     </TableHead>
@@ -190,12 +195,12 @@ export default class ViewBooks extends Component {
 
     sort(field) {
         if (field === 'pages') {
-            sorter.intSort(this.state.books, field, true);
+            sorter.intSort(this.state.books, field, this.state.desc);
         }
         else {
-            sorter.stringSort(this.state.books, field, true);
+            sorter.stringSort(this.state.books, field, this.state.desc);
         }
-        this.setState(this.state.books);
+        this.setState({books: this.state.books, desc: !this.state.desc});
     }
 
     async handleSubmit(event) {

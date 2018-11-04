@@ -24,6 +24,7 @@ export default class ViewMagazines extends Component {
             magazines: [],
             modifyMagazine: false,
             magazineModified: false,
+            desc: false,
             authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
@@ -54,15 +55,23 @@ export default class ViewMagazines extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel></TableCell>
+                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                            </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Publisher</TableSortLabel></TableCell>
+                                <TableSortLabel onClick={() => this.sort('publisher')} direction={'desc'}>Publisher</TableSortLabel>
+                            </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Date</TableSortLabel></TableCell>
+                                <TableSortLabel onClick={() => this.sort('date')} direction={'desc'}>Date</TableSortLabel>
+                            </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Language</TableSortLabel></TableCell>
-                            <TableCell>ISBN-10</TableCell>
-                            <TableCell>ISBN-13</TableCell>
+                                <TableSortLabel onClick={() => this.sort('language')} direction={'desc'}>Language</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('isbn10')} direction={'desc'}>ISBN-10</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('isbn13')} direction={'desc'}>ISBN-13</TableSortLabel>
+                            </TableCell>
                             <TableCell/>
                         </TableRow>
                     </TableHead>
@@ -146,8 +155,8 @@ export default class ViewMagazines extends Component {
     }
 
     sort(field) {
-        sorter.stringSort(this.state.magazines, field, true);
-        this.setState(this.state.magazines);
+        sorter.stringSort(this.state.magazines, field, this.state.desc);
+        this.setState({magazines: this.state.magazines, desc: !this.state.desc});
     }
 
     async handleSubmit(event) {

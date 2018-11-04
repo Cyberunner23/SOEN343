@@ -25,6 +25,7 @@ export default class ViewMusics extends Component {
             musics: [],
             modifyMusic: false,
             musicModified: false,
+            desc: false,
             authToken: props.app.state.currentUser.authToken
         };
         this.handleChange = this.handleChange.bind(this);
@@ -157,12 +158,12 @@ export default class ViewMusics extends Component {
 
     sort(field) {
         if (field === 'asin') {
-            sorter.intSort(this.state.musics, field, true);
+            sorter.intSort(this.state.musics, field, this.state.desc);
         }
         else {
-            sorter.stringSort(this.state.musics, field, true);
+            sorter.stringSort(this.state.musics, field, this.state.desc);
         }
-        this.setState(this.state.musics);
+        this.setState({musics: this.state.musics, desc: !this.state.desc});
     }
 
     async handleSubmit(event) {
