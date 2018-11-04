@@ -19,54 +19,64 @@ exports.GenericUnitOfWork = class GenericUnitOfWork {
         this.operations = [];
     }
 
-    add(identifierValue){
-        if(!this.operations.find(i => {return i['identifier'] === identifierValue;})) 
-        this.operations.push({'operationType': OperationType.Add, 'identifier': identifierValue});
-        else if(this.operations.some(i => 
-            { return i['identifier'] === identifierValue && (i['operationType'] === OperationType.Add || i['operationType'] === OperationType.Update);})){
-            throw Exceptions.Unauthorized;
+    markClean(identifierValue) {
+        var index = this.operations.findIndex(operation => {
+            return operation.identifier === identifierValue;
+        })
+        if (index === -1) {
+            console.log('Failed to mark identifier as clean in unit of work because identifier does not exist');
+            throw Exceptions.InternalServerError;
         }
-        else if(this.operations.some(i => { return i['identifier'] === identifierValue && i['operationType'] === OperationType.Delete;})){
-            var item = this.operations.findIndex(i => {
-                return i['identifier'] === identifierValue && i['operationType'] === OperationType.Delete;
-            });
-            this.operations[item] = {'operationType': OperationType.Add, 'identifier': identifierValue};
+        else {
+            this.operations.splice(index, 1);
         }
-        else throw Exceptions.InvalidRequestBody;
     }
 
-    update(identifierValue){ 
-        // update operations override add and previous update operations, but attempting to override a delete operation should throw an exception
-        if(!this.operations.find(i => {return i['identifier'] === identifierValue;})) 
-        this.operations.push({'operationType': OperationType.Update, 'identifier': identifierValue});
-        else if(this.operations.some(i => 
-            { return i['identifier'] === identifierValue && (i['operationType'] === OperationType.Add || i['operationType'] === OperationType.Update);})){
-                var item = this.operations.findIndex(i => {
-                    return i['identifier'] === identifierValue && (i['operationType'] === OperationType.Add || i['operationType'] === OperationType.Update);
-                });
-                this.operations[item] = {'operationType': OperationType.Update, 'identifier': identifierValue};
+    add(identifierValue){
+        var previousOperation = this.operations.find(operation => {
+            return operation.identifier === identifierValue;
+        })
+        if (previousOperation === undefined) {
+            this.operations.push({'operationType': OperationType.Add, 'identifier': identifierValue});
         }
-        else if(this.operations.some(i => { return i['identifier'] === identifierValue && i['operationType'] === OperationType.Delete;})){
-            throw Exceptions.Unauthorized;
+        else if (previousOperation.operationType === OperationType.Update || previousOperation.operationType === OperationType.Delete) {
+            console.log("Failed to add identifier to unit of work because identifier is already used for update or delete operation.");
+            throw Exceptions.InternalServerError;
         }
-        else throw Exceptions.InvalidRequestBody;
+    }
+
+    update(identifierValue){
+        var previousOperation = this.operations.find(operation => {
+            return operation.identifier === identifierValue;
+        })
+        if (previousOperation === undefined) {
+            this.operations.push({'operationType': OperationType.Update, 'identifier': identifierValue});
+        }
+        else if (previousOperation.operationType === OperationType.Delete) {
+            previousOperation.operationType = OperationType.Update;
+        }
+        else if (previousOperation.operationType === OperationType.Update) {
+            console.log('Failed to update identifier in unit of work because identifier is already used for add operation');
+            throw Exceptions.InternalServerError;
+        }
+        var previousOperation = this.operations.find(operation => {
+            return operation.identifier === identifierValue;
+        })
     }
 
     delete(identifierValue){
-        // delete operations override add and update operations, but attempting to override a previous delete should throw an exception
-        if(!this.operations.find(i => {return i['identifier'] === identifierValue;})) 
-        this.operations.push({'operationType': OperationType.Delete, 'identifier': identifierValue});
-        else if(this.operations.some(i => 
-            { return i['identifier'] === identifierValue && (i['operationType'] === OperationType.Add || i['operationType'] === OperationType.Update);})){
-                var item = this.operations.findIndex(i => {
-                    return i['identifier'] === identifierValue && (i['operationType'] === OperationType.Add || i['operationType'] === OperationType.Update);
-                });
-                this.operations[item] = {'operationType': OperationType.Delete, 'identifier': identifierValue};
+        var previousOperation = this.operations.find(operation => {
+            return operation.identifier === identifierValue;
+        })
+        if (previousOperation === undefined) {
+            this.operations.push({'operationType': OperationType.Delete, 'identifier': identifierValue});
         }
-        else if(this.operations.some(i => { return i['identifier'] === identifierValue && i['operationType'] === OperationType.Delete;})){
-            throw Exceptions.Unauthorized;
+        else if (previousOperation.operationType === OperationType.Update) {
+            previousOperation.operationType = OperationType.Delete;
         }
-        else throw Exceptions.InvalidRequestBody;
+        else if (previousOperation.operationType === OperationType.Add) {
+            console.log('Failed to delete identifier in unit of work because identifier is already used for add operation');
+        }
     }
 
     // Only 1 operation can be associated with a unique catalogue item at any given time

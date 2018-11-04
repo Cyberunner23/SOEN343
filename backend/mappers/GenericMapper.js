@@ -76,8 +76,26 @@ exports.GenericMapper = class GenericMapper {
             })
             .then(records => {
                 if (records.length === 0) {
-                    this.identityMap.add(record);
-                    this.unitOfWork.add(record[identifier]);
+                    var identifier = record[this.identifier];
+                    var previousOperations = this.unitOfWork.get().filter(operation => {return operation.identifier === identifier});
+                    // Unit of work guarantees that size is either 0 or 1
+                    if (previousOperations.length === 0) {
+                        this.identityMap.add(record);
+                        this.unitOfWork.add(identifier);
+                    }
+                    else {
+                        // size should be 1
+                        var previousOperation = previousOperations[0];
+                        if (previousOperation.operationType === OperationType.Delete) {
+                            this.identityMap.add(record);
+                            this.unitOfWork.update(record[this.identifier]);
+                        }
+                        else {
+                            console.log('GenericMapper: In this context, if a previous operation exists, it must be a delete.');
+                            reject(Exceptions.InternalServerError);
+                            return;
+                        }
+                    }
                     resolve(record);
                 }
                 else {
@@ -92,20 +110,31 @@ exports.GenericMapper = class GenericMapper {
 
     async remove(callback) {
         new Promise((resolve, reject) => {
-
-            if (callback === undefined) {
-                callback = record => {return true}; // select all records
-            }
-
             this.get(callback)
             .then(recordsToRemove => {
-                var identifiersToRemove = [];
                 recordsToRemove.forEach(record => {
-                    identifiersToRemove.push(record[this.identifier]);
-                })
-                this.identityMap.remove(identifiersToRemove);
-                identifiersToRemove.forEach(identifier => {
-                    this.unitOfWork.delete(identifier);
+                    var identifier = record[this.identifier];
+                    var previousOperations = this.unitOfWork.get().filter(operation => {return operation.identifier === identifier});
+                    // Unit of work guarantees that size is either 0 or 1
+                    if (previousOperations.length === 0) {
+                        this.unitOfWork.delete(identifier);
+                    }
+                    else {
+                        // size should be 1
+                        var previousOperation = previousOperations[0];
+                        if (previousOperation.operationType === OperationType.Add) {
+                            this.identityMap.remove([identifier]);
+                            this.unitOfWork.markClean(identifier);
+                        }
+                        else if (previousOperation.operationType === OperationType.Update) {
+                            this.identityMap.remove([identifier]);
+                            this.unitOfWork.delete(identifier);
+                        }
+                        else if (previousOperation.operationType === OperationType.Delete) {
+                            console.log('Mapper: cannot double delete!');
+                            throw Exceptions.InternalServerError;
+                        }
+                    }
                 })
                 resolve(recordsToRemove);
             })
@@ -119,17 +148,30 @@ exports.GenericMapper = class GenericMapper {
         return new Promise(async (resolve, reject) => {
             this.get(callback)
             .then(recordsToModify => {
-                var arrayOfModifiedRecords = this.modifyHelper(recordsToModify, modifyProperties);
-                arrayOfModifiedRecords.forEach(record => {
-                    var matchingIdentities = this.identityMap.get(identity => {
-                        return identity[this.identifier] === record[this.identifier];
-                    });
-                    if (matchingIdentities.length === 0) {
+                var arrayOfModifiedRecords = [];
+                recordsToModify.forEach(record => {
+                    var identifier = record[this.identifier];
+                    var previousOperations = this.unitOfWork.get(operation => {return operation.identifer === identifier});
+                    this.modifyHelper(record, modifyProperties);
+                    arrayOfModifiedRecords.push(record);
+                    // Unit of work guarantees that size is either 0 or 1
+                    if (previousOperations.length === 0) {
                         this.identityMap.add(record);
-                        this.unitOfWork.update(record[this.identifier]);
+                        this.unitOfWork.update(identifier);
                     }
                     else {
-                        this.identityMap.update(record);
+                        // size should be 1
+                        var previousOperation = previousOperations[0];
+                        if (previousOperation.operationType === OperationType.Add) {
+                            this.identityMap.update(record);
+                        }
+                        else if (previousOperation.operationType === OperationType.Update) {
+                            this.identityMap.update(record);
+                        }
+                        else if (previousOperation.operationType === OperationType.Delete) {
+                            this.identityMap.add(record);
+                            this.unitOfWork.update(identifier);
+                        }
                     }
                 })
                 resolve(arrayOfModifiedRecords);
@@ -141,18 +183,14 @@ exports.GenericMapper = class GenericMapper {
     }
 
     /**
-     * Modify records in toModify with the supplied modifyProperties.
-     * Return the modified records.
+     * Modify the record with the supplied modifyProperties.
      * 
-     * @param {any[]} toModify - The array of records to modify
+     * @param {any} record - The record to modify
      * @param {JSON} modifyProperties - Collection of named properties and their values
      */
-    modifyHelper(toModify, modifyProperties) {
-            toModify.forEach(item => {
-                for (let property in modifyProperties) {
-                    item[property] = modifyProperties[property];
-                }
-            });
-            return toModify;
+    modifyHelper(record, modifyProperties) {
+        for (let property in modifyProperties) {
+            record[property] = modifyProperties[property];
+        }
     }
 }
