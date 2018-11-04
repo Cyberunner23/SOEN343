@@ -28,7 +28,6 @@ exports.GenericMapper = class GenericMapper {
                 var record = identities.find(record => {
                     return record[this.identifier] === identifier;
                 })
-                console.log('record: ' + JSON.stringify(record));
                 if (operationType === OperationType.Add) {
                     this.gateway.add(record);
                 }
@@ -117,7 +116,6 @@ exports.GenericMapper = class GenericMapper {
     }
 
     async modify(modifyProperties, callback) {
-        console.log('mapper.modify');
         return new Promise(async (resolve, reject) => {
             this.get(callback)
             .then(recordsToModify => {

@@ -72,9 +72,7 @@ exports.GenericCatalogueController = class GenericCatalogueController {
                 return record[this.identifier] === req.body[this.identifier];
             })
             .then(result => {
-                console.log('then');
                 if(result.length === 1){
-                    console.log('result.length === 1')
                     this.mapper.modify(new this.recordType(req.body), record => {
                         return record[this.identifier] === req.body[this.identifier];
                     })
