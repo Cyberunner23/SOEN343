@@ -11,8 +11,11 @@ exports.GenericUnitOfWork = class GenericUnitOfWork {
         this.operations = [];
     }
 
-    get() {
-        return this.operations;
+    get(callback) {
+        if (callback === undefined) {
+            callback = operation => {return true}; // return all operations
+        }
+        return this.operations.filter(callback);
     }
 
     clear() {
