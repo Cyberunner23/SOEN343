@@ -38,17 +38,14 @@ exports.GenericMapper = class GenericMapper {
         })
     }
 
-    async get(callback) {
-        if (callback === undefined) {
-            callback = record => {return true}; // get all records;
-        }
+    async get(filters) {
         return new Promise(async (resolve, reject) => {
-            var identities = this.identityMap.get(callback);
+            var identities = this.identityMap.get(record => {
+                return filter(record, filters);
+            });
             var operations = this.unitOfWork.get();
-            this.gateway.get()
+            this.gateway.get(filters)
             .then(databaseEntries => {
-
-                databaseEntries = databaseEntries.filter(callback);
 
                 var operationIdentifiers = [];
                 operations.forEach(operation => {
@@ -69,19 +66,19 @@ exports.GenericMapper = class GenericMapper {
 
     async add(record) {
         return new Promise((resolve, reject) => {
-
-            var identifier = this.identifier;
-            this.get(rec => {
-                return rec[identifier] === record[identifier];
-            })
+            var filters = {};
+            filters[this.identifier] = record[this.identifier];
+            this.get(filters)
             .then(records => {
                 if (records.length === 0) {
-                    var identifier = record[this.identifier];
-                    var previousOperations = this.unitOfWork.get().filter(operation => {return operation.identifier === identifier});
+                    var identifierValue = record[this.identifier];
+                    var previousOperations = this.unitOfWork.get(operation => {
+                        return operation.identifier === identifierValue
+                    });
                     // Unit of work guarantees that size is either 0 or 1
                     if (previousOperations.length === 0) {
                         this.identityMap.add(record);
-                        this.unitOfWork.add(identifier);
+                        this.unitOfWork.add(identifierValue);
                     }
                     else {
                         // size should be 1
@@ -108,27 +105,29 @@ exports.GenericMapper = class GenericMapper {
         })
     }
 
-    async remove(callback) {
+    async remove(filters) {
         new Promise((resolve, reject) => {
-            this.get(callback)
+            this.get(filters)
             .then(recordsToRemove => {
                 recordsToRemove.forEach(record => {
-                    var identifier = record[this.identifier];
-                    var previousOperations = this.unitOfWork.get().filter(operation => {return operation.identifier === identifier});
+                    var identifierValue = record[this.identifier];
+                    var previousOperations = this.unitOfWork.get(operation => {
+                        return operation.identifier === identifierValue
+                    });
                     // Unit of work guarantees that size is either 0 or 1
                     if (previousOperations.length === 0) {
-                        this.unitOfWork.delete(identifier);
+                        this.unitOfWork.delete(identifierValue);
                     }
                     else {
                         // size should be 1
                         var previousOperation = previousOperations[0];
                         if (previousOperation.operationType === OperationType.Add) {
-                            this.identityMap.remove([identifier]);
-                            this.unitOfWork.markClean(identifier);
+                            this.identityMap.remove(identifierValue);
+                            this.unitOfWork.markClean(identifierValue);
                         }
                         else if (previousOperation.operationType === OperationType.Update) {
-                            this.identityMap.remove([identifier]);
-                            this.unitOfWork.delete(identifier);
+                            this.identityMap.remove(identifierValue);
+                            this.unitOfWork.delete(identifierValue);
                         }
                         else if (previousOperation.operationType === OperationType.Delete) {
                             console.log('Mapper: cannot double delete!');
@@ -144,20 +143,22 @@ exports.GenericMapper = class GenericMapper {
         })
     }
 
-    async modify(modifyProperties, callback) {
+    async modify(filters, modifyProperties) {
         return new Promise(async (resolve, reject) => {
-            this.get(callback)
+            this.get(filters)
             .then(recordsToModify => {
                 var arrayOfModifiedRecords = [];
                 recordsToModify.forEach(record => {
-                    var identifier = record[this.identifier];
-                    var previousOperations = this.unitOfWork.get().filter(operation => {return operation.identifier === identifier});
+                    var identifierValue = record[this.identifier];
+                    var previousOperations = this.unitOfWork.get(operation => {
+                        return operation.identifier === identifierValue
+                    });
                     this.modifyHelper(record, modifyProperties);
                     arrayOfModifiedRecords.push(record);
                     // Unit of work guarantees that size is either 0 or 1
                     if (previousOperations.length === 0) {
                         this.identityMap.add(record);
-                        this.unitOfWork.update(identifier);
+                        this.unitOfWork.update(identifierValue);
                     }
                     else {
                         // size should be 1
@@ -170,7 +171,7 @@ exports.GenericMapper = class GenericMapper {
                         }
                         else if (previousOperation.operationType === OperationType.Delete) {
                             this.identityMap.add(record);
-                            this.unitOfWork.update(identifier);
+                            this.unitOfWork.update(identifierValue);
                         }
                     }
                 })
@@ -193,4 +194,12 @@ exports.GenericMapper = class GenericMapper {
             record[property] = modifyProperties[property];
         }
     }
+}
+
+filter = (record, filters) => {
+    var toReturn = true;
+    for(var field in filters){
+        toReturn = toReturn && record[field].toString().toLowerCase().includes(filters[field].toString().toLowerCase());
+    }
+    return toReturn;
 }

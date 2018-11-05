@@ -14,9 +14,7 @@ exports.GenericCatalogueController = class GenericCatalogueController {
     }
 
     async get(req, res) {
-        this.mapper.get(record => {
-            return filter(record, req.body.filters);
-        })
+        this.mapper.get(req.query)
         .then(result => {
             res.status(200);
             res.json(result);
@@ -34,9 +32,9 @@ exports.GenericCatalogueController = class GenericCatalogueController {
                 return;
             }
             // isbn is unique so use isbn to check for exiting record
-            this.mapper.get(record => {
-                return record[this.identifier] === req.body[this.identifier];
-            })
+            var filters = {};
+            filters[this.identifier] = req.body[this.identifier];
+            this.mapper.get(filters)
             .then(result => {
                 if(result.length === 0){
                     this.mapper.add(new this.recordType(req.body))
@@ -70,14 +68,12 @@ exports.GenericCatalogueController = class GenericCatalogueController {
                 return;
             }
             // find record
-            this.mapper.get(record => {
-                return record[this.identifier] === req.body[this.identifier];
-            })
+            var filters = {};
+            filters[this.identifier] = req.body[this.identifier];
+            this.mapper.get(filters)
             .then(result => {
                 if(result.length === 1){
-                    this.mapper.modify(new this.recordType(req.body), record => {
-                        return record[this.identifier] === req.body[this.identifier];
-                    })
+                    this.mapper.modify(filters, new this.recordType(req.body))
                     .then(record => {
                         res.status(200);
                         res.json(record[0]);
@@ -112,14 +108,12 @@ exports.GenericCatalogueController = class GenericCatalogueController {
                 return;
             }
             // find record
-            this.mapper.get(record => {
-                return record[this.identifier] === req.body[this.identifier];
-            })
+            var filters = {};
+            filters[this.identifier] = req.body[this.identifier];
+            this.mapper.get(filters)
             .then(result => {
                 if(result.length === 1){
-                    this.mapper.remove(record => {
-                        return record[this.identifier] === req.body[this.identifier];
-                    })
+                    this.mapper.remove(filters)
                         .then(() => {
                             res.status(200);
                             res.send();
@@ -145,14 +139,6 @@ exports.GenericCatalogueController = class GenericCatalogueController {
             handleException(res, ex);
         });
     }
-}
-
-filter = (record, filters) => {
-    var toReturn = true;
-    for(var field in filters){
-        toReturn = toReturn && record[field].toString().toLowerCase().includes(filters[field].toString().toLowerCase());
-    }
-    return toReturn;
 }
 
 handleException = function(res, exception) {
