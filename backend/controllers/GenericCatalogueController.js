@@ -13,7 +13,7 @@ exports.GenericCatalogueController = class GenericCatalogueController {
     }
 
     async get(req, res) {
-        var result = this.mapper.get(item => {filter(item, req.body.filters)})
+        var result = this.mapper.get()
         res.status(200);
         res.json(result);
     }
