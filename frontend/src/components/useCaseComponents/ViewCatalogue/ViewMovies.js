@@ -6,27 +6,26 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import Typography from '@material-ui/core/Typography';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+
+const sorter = require('../../../helper_classes/Sorter.js').getInstance();
 
 export default class ViewMovies extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            title: '',
-            director: '',
-            producers: '',
-            actors: '',
-            language: '',
-            subtitles: '',
-            dubbed: '',
-            releaseDate: '',
-            runTime: '',
+            title: '', director: '', producers: '', actors: '', language: '', subtitles: '', dubbed: '', releaseDate: '', runTime: '', eidr: '',
+            titleFilter: '', directorFilter: '', producersFilter: '', actorsFilter: '', languageFilter: '', subtitlesFilter: '', dubbedFilter: '',
+            releaseDateFilter: '', runTimeFilter: '', eidrFilter: '',
             app: props.app,
             movies: [],
             modifyMovie: false,
             movieModified: false,
-            eidr: '',
-            authToken: props.app.state.currentUser.authToken
+            desc: false,
+            authToken: props.app.state.currentUser.authToken,
+            is_admin: props.is_admin
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -52,20 +51,54 @@ export default class ViewMovies extends Component {
         var content;
         content = (
             <div>
+                <div style={style.format}>
+                    <Typography>Filter By...</Typography>
+                    <TextField style={style.field} label="title" name="titleFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="director" name="directorFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="producers" name="producersFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="actors" name="actorsFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="language" name="languageFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="subtitles" name="subtitlesFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="dubbed" name="dubbedFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="release date" name="releaseDateFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="run time" name="runTimeFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="EIDR" name="eidrFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
+                </div>
                 {movieModifiedMessage}
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Director</TableCell>
-                            <TableCell>Producers</TableCell>
-                            <TableCell>Actors</TableCell>
-                            <TableCell>Language</TableCell>
-                            <TableCell>Subtitles</TableCell>
-                            <TableCell>Dubbed</TableCell>
-                            <TableCell>Release Date</TableCell>
-                            <TableCell>Run Time</TableCell>
-                            <TableCell>EIDR</TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('director')} direction={'desc'}>Director</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('producers')} direction={'desc'}>Producers</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('actors')} direction={'desc'}>Actors</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('language')} direction={'desc'}>Language</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('subtitles')} direction={'desc'}>Subtitles</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('dubbed')} direction={'desc'}>Dubbed</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('releaseDate')} direction={'desc'}>Release Date</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('runTime')} direction={'desc'}>Run Time</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('eidr')} direction={'desc'}>EIDR</TableSortLabel>
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -137,12 +170,17 @@ export default class ViewMovies extends Component {
                                 <TableCell>
                                     {movie.eidr}
                                 </TableCell>
+                                {this.state.is_admin === 1 &&
                                 <TableCell>
                                     {(this.state.modifyMovie && this.state.eidr === movie.eidr) ?
                                         (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
                                         (<Button color="primary" onClick={() => { this.modifyMovieState(movie) }}>Edit</Button>)}
                                     <Button color="secondary" onClick={() => { this.removeMovies(movie.eidr) }}> Delete</Button>
-                                </TableCell>
+                                </TableCell>}
+                                {this.state.is_admin === 0 &&
+                                <TableCell>
+                                    <Button variant="contained" color="secondary" disabled>Add to Cart</Button>
+                                </TableCell>}
                             </TableRow>
                         )}
                     </TableBody>
@@ -176,6 +214,45 @@ export default class ViewMovies extends Component {
             eidr: movie.eidr,
             movieModifiedMessage: '',
             modifyMovie: true
+        });
+    }
+
+    sort(field) {
+        if (field === ('runtime' || 'eidr')) {
+            sorter.intSort(this.state.movies, field, this.state.desc);
+        }
+        else {
+            sorter.stringSort(this.state.movies, field, this.state.desc);
+        }
+        this.setState({movies: this.state.movies, desc: !this.state.desc});
+    }
+
+    filter() {
+        let title = this.state.titleFilter;
+        let director = this.state.directorFilter;
+        let producers = this.state.producersFilter;
+        let actors = this.state.actorsFilter;
+        let language = this.state.languageFilter;
+        let subtitles = this.state.subtitlesFilter;
+        let dubbed = this.state.dubbedFilter;
+        let releaseDate = this.state.releaseDateFilter;
+        let runTime = this.state.runTimeFilter;
+        let eidr = this.state.eidrFilter;
+        let jsonObject = {title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr};
+
+        Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
+
+        //convert json to url params
+        let url = Object.keys(jsonObject).map(function(k) {
+            return encodeURIComponent(k) + '=' + encodeURIComponent(jsonObject[k])
+        }).join('&');
+
+        fetch('/api/catalogue/getMovies?' + url, {
+            method: 'GET'
+        }).then(res => {
+            res.json().then(
+                movies => this.setState({ movies: movies })
+            )
         });
     }
 
@@ -242,5 +319,15 @@ export default class ViewMovies extends Component {
                 }
             });
         })
+    }
+}
+
+const style = {
+    format: {
+        marginTop: 25,
+        marginBottom: 25
+    },
+    field: {
+        paddingRight: 10
     }
 }

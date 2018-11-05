@@ -61,16 +61,16 @@ class TabsFactory {
                                     <Tab>Music</Tab>
                                 </TabList>
                             <TabPanel>
-                                <ViewBooks app={app} />
+                                <ViewBooks app={app} is_admin={1} />
                             </TabPanel>
                             <TabPanel>
-                                <ViewMagazines app={app} />
+                                <ViewMagazines app={app} is_admin={1} />
                             </TabPanel>
                             <TabPanel>
-                                <ViewMovies app={app} />
+                                <ViewMovies app={app} is_admin={1} />
                             </TabPanel>
                             <TabPanel>
-                                <ViewMusics app={app} />
+                                <ViewMusics app={app} is_admin={1} />
                             </TabPanel>
                             </Tabs>
                         </TabPanel>
@@ -106,11 +106,30 @@ class TabsFactory {
                 return (
                     <Tabs>
                         <TabList>
-                            <Tab>Oops!</Tab>
+                            <Tab>Browse Catalogue</Tab>
                             <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
-                            Oops! Nothing to see here...
+                            <Tabs>
+                                <TabList>
+                                    <Tab>Books</Tab>
+                                    <Tab>Magazines</Tab>
+                                    <Tab>Movies</Tab>
+                                    <Tab>Music</Tab>
+                                </TabList>
+                                <TabPanel>
+                                    <ViewBooks app={app} is_admin={0} />
+                                </TabPanel>
+                                <TabPanel>
+                                    <ViewMagazines app={app} is_admin={0} />
+                                </TabPanel>
+                                <TabPanel>
+                                    <ViewMovies app={app} is_admin={0} />
+                                </TabPanel>
+                                <TabPanel>
+                                    <ViewMusics app={app} is_admin={0} />
+                                </TabPanel>
+                            </Tabs>
                         </TabPanel>
                         <TabPanel>
                             <Logout app={app} />
