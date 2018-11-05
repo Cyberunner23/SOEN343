@@ -1,5 +1,6 @@
 GenericCatalogueController = require('./GenericCatalogueController').GenericCatalogueController;
 musicMapper = require('../mappers/MusicMapper').getInstance();
+Music = require('../business_objects/Music').Music;
 
 class MusicController extends GenericCatalogueController {
     constructor() {
@@ -7,6 +8,7 @@ class MusicController extends GenericCatalogueController {
         this.mapper = musicMapper;
         this.recordName = 'music';
         this.identifier = 'asin';
+        this.recordType = Music;
     }
 }
 

@@ -1,10 +1,11 @@
 const db = require('../DatabaseConnection').getInstance();
 const Exceptions = require('../Exceptions').Exceptions;
+const SqlString = require('SqlString');
 
 class MasterGateway {
 
     constructor () {
-        this.stateChangingQueries = []; // this should be null later
+        this.stateChangingQueries = null; // this should be null later
     }
 
     createTransaction() {
@@ -30,7 +31,7 @@ class MasterGateway {
                     }
                 })
             }
-            this.stateChangingQueries = []; // this should be null later
+            this.stateChangingQueries = null; // this should be null later
         })
     }
 
@@ -38,11 +39,11 @@ class MasterGateway {
         return new Promise((resolve, reject) => {
     
             var query = "SELECT * FROM " + tableName;
-    
-            if (jsonFilters !== undefined) {
+            
+            if (!isEmpty(jsonFilters)) {
                 var pairs = [];
                 for (var filter in jsonFilters) {
-                    pairs.push(filter + " LIKE '%" + jsonFilters[filter] + "%'");
+                    pairs.push(filter + " LIKE " + SqlString.escape("%" + jsonFilters[filter] + "%"));
                 }
                 query += " WHERE " + pairs.join(" AND ");
             }
@@ -64,7 +65,7 @@ class MasterGateway {
         var values = [];
         for (var field in record) {
             fields.push(field);
-            values.push("'" + record[field] + "'");
+            values.push(SqlString.escape(record[field]));
         }
         var query = "INSERT INTO " + tableName + " (" + fields + ") VALUES(" + values + ")";
 
@@ -74,18 +75,18 @@ class MasterGateway {
     update (tableName, record, identifier) {
         var pairs = [];
         for (var field in record) {
-            pairs.push(field + "='" + record[field] + "'");
+            pairs.push(field + "=" + SqlString.escape(record[field]));
         }
 
-        var query = "UPDATE " + tableName + " SET " + pairs + " WHERE " + identifier + "='" + record[identifier] + "'";
+        var query = "UPDATE " + tableName + " SET " + pairs + " WHERE " + identifier + "=" + SqlString.escape(record[identifier]);
 
         this.stateChangingQueries.push(query);
     }
     
-    delete (tableName, identifier, identifiersToDelete) {
+    delete (tableName, identifierName, identifierValue) {
         var query = "DELETE FROM " + tableName;
-        if (identifier !== undefined && identifiersToDelete !== undefined) {
-            query += " WHERE " + identifier + " IN (" + identifiersToDelete + ")";
+        if (identifierName !== undefined && identifierValue !== undefined) {
+            query += " WHERE " + identifierName + "=" + SqlString.escape(identifierValue);
         }
     
         this.stateChangingQueries.push(query);
@@ -95,4 +96,12 @@ class MasterGateway {
 const instance = new MasterGateway();
 exports.getInstance = () => {
     return instance;
+}
+
+isEmpty = obj => {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
 }

@@ -6,23 +6,25 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import Typography from '@material-ui/core/Typography';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+
+const sorter = require('../../../helper_classes/Sorter.js').getInstance();
 
 export default class ViewMusics extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            type: '',
-            title: '',
-            artist: '',
-            label: '',
-            releaseDate: '',
-            asin: '',
+            type: '', title: '', artist: '', label: '', releaseDate: '', asin: '',
+            typeFilter: '', titleFilter: '', artistFilter: '', labelFilter: '', releaseDateFilter: '', asinFilter: '',
             app: props.app,
             musics: [],
             modifyMusic: false,
             musicModified: false,
-            authToken: props.app.state.currentUser.authToken
+            desc: false,
+            authToken: props.app.state.currentUser.authToken,
+            is_admin: props.is_admin
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -48,16 +50,38 @@ export default class ViewMusics extends Component {
         var content;
         content = (
             <div>
+                <div style={style.format}>
+                    <Typography>Filter By...</Typography>
+                    <TextField style={style.field} label="title" name="titleFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="type" name="typeFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="artist" name="artistFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="label" name="labelFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="release date" name="releaseDateFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="ASIN" name="asinFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
+                </div>
                 {musicModifiedMessage}
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Type</TableCell>
-                            <TableCell>Artist</TableCell>
-                            <TableCell>Label</TableCell>
-                            <TableCell>Released Date</TableCell>
-                            <TableCell>ASIN</TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('type')} direction={'desc'}>Type</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('artist')} direction={'desc'}>Artist</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('label')} direction={'desc'}>Label</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('releaseDate')} direction={'desc'}>Release Date</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('asin')} direction={'desc'}>ASIN</TableSortLabel>
+                            </TableCell>
                             <TableCell/>
                         </TableRow>
                     </TableHead>
@@ -102,12 +126,17 @@ export default class ViewMusics extends Component {
                                 <TableCell>
                                     {music.asin}
                                 </TableCell>
+                                {this.state.is_admin === 1 &&
                                 <TableCell>
                                     {(this.state.modifyMusic && this.state.asin === music.asin) ?
                                         (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
                                         (<Button color="primary" onClick={() => { this.modifyMusicState(music) }}>Edit</Button>)}
                                     <Button color="secondary" onClick={() => { this.removeMusics(music.asin) }}>Delete</Button>
-                                </TableCell>
+                                </TableCell>}
+                                {this.state.is_admin === 0 &&
+                                <TableCell>
+                                    <Button variant="contained" color="secondary" disabled>Add to Cart</Button>
+                                </TableCell>}
                             </TableRow>
                         )}
                     </TableBody>
@@ -129,14 +158,49 @@ export default class ViewMusics extends Component {
 
     modifyMusicState(music) {
         this.setState({
-            type: music.type,
             title: music.title,
+            type: music.type,
             artist: music.artist,
             label: music.label,
             releaseDate: music.releaseDate,
             asin: music.asin,
             musicModifiedMessage: '',
             modifyMusic: true
+        });
+    }
+
+    sort(field) {
+        if (field === 'asin') {
+            sorter.intSort(this.state.musics, field, this.state.desc);
+        }
+        else {
+            sorter.stringSort(this.state.musics, field, this.state.desc);
+        }
+        this.setState({musics: this.state.musics, desc: !this.state.desc});
+    }
+
+    filter() {
+        let title = this.state.titleFilter;
+        let type = this.state.typeFilter;
+        let artist = this.state.artistFilter;
+        let label = this.state.labelFilter;
+        let releaseDate = this.state.releaseDateFilter;
+        let asin = this.state.asinFilter;
+        let jsonObject = {title, type, artist, label, releaseDate, asin};
+
+        Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
+
+        //convert json to url params
+        let url = Object.keys(jsonObject).map(function(k) {
+            return encodeURIComponent(k) + '=' + encodeURIComponent(jsonObject[k])
+        }).join('&');
+
+        fetch('/api/catalogue/getMusics?' + url, {
+            method: 'GET'
+        }).then(res => {
+            res.json().then(
+                musics => this.setState({ musics: musics })
+            )
         });
     }
 
@@ -199,5 +263,15 @@ export default class ViewMusics extends Component {
                 }
             });
         })
+    }
+}
+
+const style = {
+    format: {
+        marginTop: 25,
+        marginBottom: 25
+    },
+    field: {
+        paddingRight: 10
     }
 }

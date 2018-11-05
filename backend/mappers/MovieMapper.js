@@ -9,7 +9,6 @@ class MovieMapper extends GenericMapper {
         this.identifier = 'eidr';
         this.identityMap = movieIdentityMap;
         this.gateway = movieGateway;
-        this.initialize();
     }
 }
 

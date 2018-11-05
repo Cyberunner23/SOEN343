@@ -6,25 +6,25 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import Typography from '@material-ui/core/Typography';
+import TableSortLabel from '@material-ui/core/TableSortLabel';
+
+const sorter = require('../../../helper_classes/Sorter.js').getInstance();
 
 export default class ViewBooks extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            title: '',
-            author: '',
-            format: '',
-            pages: '',
-            publisher: '',
-            language: '',
-            isbn10: '',
-            isbn13: '',
+            title: '', author: '', format: '', pages: '', publisher: '', language: '', isbn10: '', isbn13: '',
+            titleFilter: '', authorFilter: '', formatFilter: '', pagesFilter: '', publisherFilter: '', languageFilter: '', isbn10Filter: '', isbn13Filter: '',
             app: props.app,
             books: [],
             modifyBook: false,
             bookModified: false,
-            authToken: props.app.state.currentUser.authToken
+            desc: false,
+            authToken: props.app.state.currentUser.authToken,
+            is_admin: props.is_admin
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -50,18 +50,46 @@ export default class ViewBooks extends Component {
         var content;
         content = (
             <div>
+                <div style={style.format}>
+                    <Typography>Filter By...</Typography>
+                    <TextField style={style.field} label="title" name="titleFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="author" name="authorFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="format" name="formatFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="pages" name="pagesFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="publisher" name="publisherFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="language" name="languageFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="ISBN-10" name="isbn10Filter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="ISBN-13" name="isbn13Filter" margin="dense" onChange={this.handleChange} /><br/>
+                    <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
+                </div>
                 {bookModifiedMessage}
-                <Table>
+                <Table style={style.format}>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Title</TableCell>
-                            <TableCell>Author</TableCell>
-                            <TableCell>Format</TableCell>
-                            <TableCell>Pages</TableCell>
-                            <TableCell>Publisher</TableCell>
-                            <TableCell>Language</TableCell>
-                            <TableCell>ISBN-10</TableCell>
-                            <TableCell>ISBN-13</TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('author')} direction={'desc'}>Author</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('format')} direction={'desc'}>Format</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('pages')} direction={'desc'}>Pages</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('publisher')} direction={'desc'}>Publisher</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('language')} direction={'desc'}>Language</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('isbn10')} direction={'desc'}>ISBN-10</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('isbn13')} direction={'desc'}>ISBN-13</TableSortLabel>
+                            </TableCell>
                             <TableCell/>
                         </TableRow>
                     </TableHead>
@@ -120,12 +148,17 @@ export default class ViewBooks extends Component {
                                 <TableCell>
                                     {book.isbn13}
                                 </TableCell>
+                                {this.state.is_admin === 1 &&
                                 <TableCell>
                                     {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ?
-                                        (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
-                                        (<Button color="primary" onClick={() => { this.modifyBookState(book) }}>Edit</Button>)}
+                                    (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
+                                    (<Button color="primary" onClick={() => { this.modifyBookState(book) }}>Edit</Button>)}
                                     <Button color="secondary" onClick={() => { this.removeBooks(book.isbn13) }}>Delete</Button>
-                                </TableCell>
+                                </TableCell>}
+                                {this.state.is_admin === 0 &&
+                                <TableCell>
+                                    <Button variant="contained" color="secondary" disabled>Add to Cart</Button>
+                                </TableCell>}
                             </TableRow>
                         )}
                     </TableBody>
@@ -158,6 +191,43 @@ export default class ViewBooks extends Component {
             bookModifiedMessage: '',
             modifyBook: true
         })
+    }
+
+    sort(field) {
+        if (field === 'pages') {
+            sorter.intSort(this.state.books, field, this.state.desc);
+        }
+        else {
+            sorter.stringSort(this.state.books, field, this.state.desc);
+        }
+        this.setState({books: this.state.books, desc: !this.state.desc});
+    }
+
+    filter() {
+        let title = this.state.titleFilter;
+        let author = this.state.authorFilter;
+        let format = this.state.formatFilter;
+        let pages = this.state.pagesFilter;
+        let publisher = this.state.publisherFilter;
+        let language = this.state.languageFilter;
+        let isbn10 = this.state.isbn10Filter;
+        let isbn13 = this.state.isbn13Filter;
+        let jsonObject = {title, author, format, pages, publisher, language, isbn10, isbn13};
+
+        Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
+
+        //convert json to url params
+        let url = Object.keys(jsonObject).map(function(k) {
+            return encodeURIComponent(k) + '=' + encodeURIComponent(jsonObject[k])
+        }).join('&');
+
+        fetch('/api/catalogue/getBooks?' + url, {
+            method: 'GET'
+        }).then(res => {
+            res.json().then(
+                books => this.setState({ books: books })
+            )
+        });
     }
 
     async handleSubmit(event) {
@@ -221,5 +291,15 @@ export default class ViewBooks extends Component {
                 }
             });
         })
+    }
+}
+
+const style = {
+    format: {
+        marginTop: 25,
+        marginBottom: 25
+    },
+    field: {
+        paddingRight: 10
     }
 }
