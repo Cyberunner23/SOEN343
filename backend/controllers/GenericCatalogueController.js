@@ -15,7 +15,7 @@ exports.GenericCatalogueController = class GenericCatalogueController {
 
     async get(req, res) {
         this.mapper.get(record => {
-            return filter(record, req.query);
+            return filter(record, req.body.filters);
         })
         .then(result => {
             res.status(200);
