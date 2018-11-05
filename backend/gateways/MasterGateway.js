@@ -39,8 +39,8 @@ class MasterGateway {
         return new Promise((resolve, reject) => {
     
             var query = "SELECT * FROM " + tableName;
-    
-            if (jsonFilters !== undefined) {
+            
+            if (!isEmpty(jsonFilters)) {
                 var pairs = [];
                 for (var filter in jsonFilters) {
                     pairs.push(filter + " LIKE " + SqlString.escape("%" + jsonFilters[filter] + "%"));
@@ -96,4 +96,12 @@ class MasterGateway {
 const instance = new MasterGateway();
 exports.getInstance = () => {
     return instance;
+}
+
+isEmpty = obj => {
+    for(var key in obj) {
+        if(obj.hasOwnProperty(key))
+            return false;
+    }
+    return true;
 }
