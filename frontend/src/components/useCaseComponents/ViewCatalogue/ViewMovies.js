@@ -24,7 +24,8 @@ export default class ViewMovies extends Component {
             modifyMovie: false,
             movieModified: false,
             desc: false,
-            authToken: props.app.state.currentUser.authToken
+            authToken: props.app.state.currentUser.authToken,
+            is_admin: props.is_admin
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -59,9 +60,9 @@ export default class ViewMovies extends Component {
                     <TextField style={style.field} label="language" name="languageFilter" margin="dense" onChange={this.handleChange} /><br/>
                     <TextField style={style.field} label="subtitles" name="subtitlesFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="dubbed" name="dubbedFilter" margin="dense" onChange={this.handleChange} />
-                    <TextField style={style.field} label="releaseDate" name="releaseDateFilter" margin="dense" onChange={this.handleChange} />
-                    <TextField style={style.field} label="runTime" name="runTimeFilter" margin="dense" onChange={this.handleChange} />
-                    <TextField style={style.field} label="eidr" name="eidrFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="release date" name="releaseDateFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="run time" name="runTimeFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="EIDR" name="eidrFilter" margin="dense" onChange={this.handleChange} /><br/>
                     <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
                 </div>
                 {movieModifiedMessage}
@@ -169,12 +170,17 @@ export default class ViewMovies extends Component {
                                 <TableCell>
                                     {movie.eidr}
                                 </TableCell>
+                                {this.state.is_admin === 1 &&
                                 <TableCell>
                                     {(this.state.modifyMovie && this.state.eidr === movie.eidr) ?
                                         (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
                                         (<Button color="primary" onClick={() => { this.modifyMovieState(movie) }}>Edit</Button>)}
                                     <Button color="secondary" onClick={() => { this.removeMovies(movie.eidr) }}> Delete</Button>
-                                </TableCell>
+                                </TableCell>}
+                                {this.state.is_admin === 0 &&
+                                <TableCell>
+                                    <Button variant="contained" color="secondary" disabled>Add to Cart</Button>
+                                </TableCell>}
                             </TableRow>
                         )}
                     </TableBody>

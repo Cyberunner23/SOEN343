@@ -22,7 +22,8 @@ export default class ViewMagazines extends Component {
             modifyMagazine: false,
             magazineModified: false,
             desc: false,
-            authToken: props.app.state.currentUser.authToken
+            authToken: props.app.state.currentUser.authToken,
+            is_admin: props.is_admin
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -53,8 +54,8 @@ export default class ViewMagazines extends Component {
                     <TextField style={style.field} label="publisher" name="publisherFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="date" name="dateFilter" margin="dense" onChange={this.handleChange} /><br/>
                     <TextField style={style.field} label="language" name="languageFilter" margin="dense" onChange={this.handleChange} />
-                    <TextField style={style.field} label="isbn10" name="isbn10Filter" margin="dense" onChange={this.handleChange} />
-                    <TextField style={style.field} label="isbn13" name="isbn13Filter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="ISBN-10" name="isbn10Filter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="ISBN-13" name="isbn13Filter" margin="dense" onChange={this.handleChange} /><br/>
                     <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
                 </div>
                 {magazineModifiedMessage}
@@ -123,12 +124,17 @@ export default class ViewMagazines extends Component {
                                 <TableCell>
                                     {magazine.isbn13}
                                 </TableCell>
+                                {this.state.is_admin === 1 &&
                                 <TableCell>
                                     {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ?
                                         (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
                                         (<Button color="primary" onClick={() => { this.modifyMagazineState(magazine) }}>Edit</Button>)}
                                     <Button color="secondary" onClick={() => { this.removeMagazines(magazine.isbn13) }}> Delete</Button>
-                                </TableCell>
+                                </TableCell>}
+                                {this.state.is_admin === 0 &&
+                                <TableCell>
+                                    <Button variant="contained" color="secondary" disabled>Add to Cart</Button>
+                                </TableCell>}
                             </TableRow>
                         )}
                     </TableBody>

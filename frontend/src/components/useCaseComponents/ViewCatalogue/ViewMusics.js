@@ -23,7 +23,8 @@ export default class ViewMusics extends Component {
             modifyMusic: false,
             musicModified: false,
             desc: false,
-            authToken: props.app.state.currentUser.authToken
+            authToken: props.app.state.currentUser.authToken,
+            is_admin: props.is_admin
         };
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
@@ -55,8 +56,8 @@ export default class ViewMusics extends Component {
                     <TextField style={style.field} label="type" name="typeFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="artist" name="artistFilter" margin="dense" onChange={this.handleChange} /><br/>
                     <TextField style={style.field} label="label" name="labelFilter" margin="dense" onChange={this.handleChange} />
-                    <TextField style={style.field} label="releaseDate" name="releaseDateFilter" margin="dense" onChange={this.handleChange} />
-                    <TextField style={style.field} label="asin" name="asinFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="release date" name="releaseDateFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="ASIN" name="asinFilter" margin="dense" onChange={this.handleChange} /><br/>
                     <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
                 </div>
                 {musicModifiedMessage}
@@ -125,12 +126,17 @@ export default class ViewMusics extends Component {
                                 <TableCell>
                                     {music.asin}
                                 </TableCell>
+                                {this.state.is_admin === 1 &&
                                 <TableCell>
                                     {(this.state.modifyMusic && this.state.asin === music.asin) ?
                                         (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
                                         (<Button color="primary" onClick={() => { this.modifyMusicState(music) }}>Edit</Button>)}
                                     <Button color="secondary" onClick={() => { this.removeMusics(music.asin) }}>Delete</Button>
-                                </TableCell>
+                                </TableCell>}
+                                {this.state.is_admin === 0 &&
+                                <TableCell>
+                                    <Button variant="contained" color="secondary" disabled>Add to Cart</Button>
+                                </TableCell>}
                             </TableRow>
                         )}
                     </TableBody>
