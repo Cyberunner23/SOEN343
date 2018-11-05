@@ -14,7 +14,9 @@ exports.GenericCatalogueController = class GenericCatalogueController {
     }
 
     async get(req, res) {
-        this.mapper.get()
+        this.mapper.get(record => {
+            return filter(record, req.body.filters);
+        })
         .then(result => {
             res.status(200);
             res.json(result);
@@ -145,14 +147,10 @@ exports.GenericCatalogueController = class GenericCatalogueController {
     }
 }
 
-filter = function(item, filters){
+filter = (record, filters) => {
     var toReturn = true;
-    for(var filter in filters){
-        if(isNaN(filter) || isNaN(item[filter])){
-            toReturn = toReturn && (filter === undefined || item[filter].toLowerCase().includes(filter.toLowerCase()));
-        } else {
-            toReturn = toReturn && (filter === undefined || item[filter].includes(filter));
-        }
+    for(var field in filters){
+        toReturn = toReturn && record[field].toString().toLowerCase().includes(filters[field].toString().toLowerCase());
     }
     return toReturn;
 }
