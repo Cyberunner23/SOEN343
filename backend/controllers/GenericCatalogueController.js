@@ -145,6 +145,18 @@ exports.GenericCatalogueController = class GenericCatalogueController {
     }
 }
 
+filter = function(item, filters){
+    var toReturn = true;
+    for(var filter in filters){
+        if(isNaN(filter) || isNaN(item[filter])){
+            toReturn = toReturn && (filter === undefined || item[filter].toLowerCase().includes(filter.toLowerCase()));
+        } else {
+            toReturn = toReturn && (filter === undefined || item[filter].includes(filter));
+        }
+    }
+    return toReturn;
+}
+
 handleException = function(res, exception) {
     var message;
     switch(exception){
