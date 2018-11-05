@@ -82,10 +82,10 @@ class MasterGateway {
         this.stateChangingQueries.push(query);
     }
     
-    delete (tableName, identifier, identifiersToDelete) {
+    delete (tableName, identifierName, identifierValue) {
         var query = "DELETE FROM " + tableName;
-        if (identifier !== undefined && identifiersToDelete !== undefined) {
-            query += " WHERE " + identifier + " IN (" + identifiersToDelete + ")";
+        if (identifierName !== undefined && identifierValue !== undefined) {
+            query += " WHERE " + identifierName + "='" + identifierValue + "'";
         }
     
         this.stateChangingQueries.push(query);
