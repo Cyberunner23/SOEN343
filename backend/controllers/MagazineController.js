@@ -1,5 +1,6 @@
 GenericCatalogueController = require('./GenericCatalogueController').GenericCatalogueController;
 magazineMapper = require('../mappers/MagazineMapper').getInstance();
+Magazine = require('../business_objects/Magazine').Magazine;
 
 class MagazineController extends GenericCatalogueController {
     constructor() {
@@ -7,6 +8,7 @@ class MagazineController extends GenericCatalogueController {
         this.mapper = magazineMapper;
         this.recordName = 'magazine';
         this.identifier = 'isbn13';
+        this.recordType = Magazine;
     }
 }
 

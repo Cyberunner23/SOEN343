@@ -9,7 +9,6 @@ class BookMapper extends GenericMapper {
         this.identifier = 'isbn13';
         this.identityMap = bookIdentityMap;
         this.gateway = bookGateway;
-        this.initialize();
     }
 }
 

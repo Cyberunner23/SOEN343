@@ -9,7 +9,6 @@ class MagazineMapper extends GenericMapper {
         this.identifier = 'isbn13';
         this.identityMap = magazineIdentityMap;
         this.gateway = magazineGateway;
-        this.initialize();
     }
 }
 

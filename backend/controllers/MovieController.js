@@ -1,5 +1,6 @@
 GenericCatalogueController = require('./GenericCatalogueController').GenericCatalogueController;
 movieMapper = require('../mappers/MovieMapper').getInstance();
+Movie = require('../business_objects/Movie').Movie;
 
 class MovieController extends GenericCatalogueController {
     constructor() {
@@ -7,6 +8,7 @@ class MovieController extends GenericCatalogueController {
         this.mapper = movieMapper;
         this.recordName = 'movie';
         this.identifier = 'eidr';
+        this.recordType = Movie;
     }
 }
 
