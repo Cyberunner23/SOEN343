@@ -15,12 +15,12 @@ exports.GenericCatalogueController = class GenericCatalogueController {
 
     async get(req, res) {
         this.mapper.get(req.query)
-        .then(result => {
+        .then(records => {
             res.status(200);
-            res.json(result);
+            res.json(records);
         })
-        .catch(exception => {
-            handleException(res, exception);
+        .catch(ex => {
+            handleException(res, ex);
         })
     }
     
@@ -31,31 +31,16 @@ exports.GenericCatalogueController = class GenericCatalogueController {
                 handleException(res, Exceptions.Unauthorized);
                 return;
             }
-            // isbn is unique so use isbn to check for exiting record
-            var filters = {};
-            filters[this.identifier] = req.body[this.identifier];
-            this.mapper.get(filters)
-            .then(result => {
-                if(result.length === 0){
-                    this.mapper.add(new this.recordType(req.body))
-                        .then(record => {
-                            res.status(200);
-                            res.json(record);
-                        })
-                        .catch(ex => {
-                            handleException(res, ex);
-                        });
-                } else {
-                    console.log(this.recordName + ' already in catalogue');
-                    res.status(400);
-                    res.send();
-                }
+            this.mapper.add(new this.recordType(req.body))
+            .then(record => {
+                res.status(200);
+                res.json(record);
             })
-            .catch(exception => {
-                handleException(res, exception);
-            })
+            .catch(ex => {
+                handleException(res, ex);
+            });
         })
-        .catch((ex) => {
+        .catch(ex => {
             handleException(res, ex);
         });
     }
@@ -67,33 +52,21 @@ exports.GenericCatalogueController = class GenericCatalogueController {
                 handleException(res, Exceptions.Unauthorized);
                 return;
             }
-            // find record
             var filters = {};
             filters[this.identifier] = req.body[this.identifier];
-            this.mapper.get(filters)
-            .then(result => {
-                if(result.length === 1){
-                    this.mapper.modify(filters, new this.recordType(req.body))
-                    .then(record => {
-                        res.status(200);
-                        res.json(record[0]);
-                    })
-                    .catch(ex => {
-                        handleException(res, ex);
-                    });
-                } else if(result.length === 0) {
-                    console.log(this.recordName + ' does not exist');
-                    res.status(400);
-                    res.send();
-                } else {
-                    console.log('found more than one ' + this.recordName + ' to modify');
-                    res.status(400);
-                    res.send();
+            this.mapper.modify(filters, new this.recordType(req.body))
+            .then(updatedRecords => {
+                if (updatedRecords.length === 0) {
+                    handleException(res, Exceptions.BadRequest);
+                }
+                else {
+                    res.status(200);
+                    res.json(updatedRecords[0]); // There should be only 1 record because the filter is a unique identifier
                 }
             })
-            .catch(exception => {
-                handleException(res, exception);
-            })
+            .catch(ex => {
+                handleException(res, ex);
+            });
         })
         .catch((ex) => {
             handleException(res, ex);
@@ -107,33 +80,21 @@ exports.GenericCatalogueController = class GenericCatalogueController {
                 handleException(res, Exceptions.Unauthorized);
                 return;
             }
-            // find record
             var filters = {};
             filters[this.identifier] = req.body[this.identifier];
-            this.mapper.get(filters)
-            .then(result => {
-                if(result.length === 1){
-                    this.mapper.remove(filters)
-                        .then(() => {
-                            res.status(200);
-                            res.send();
-                        })
-                        .catch((ex) => {
-                            handleException(res, ex);
-                        });
-                } else if(result.length === 0) {
-                    console.log(this.recordName + ' does not exist');
-                    res.status(400);
-                    res.send();
-                } else {
-                    console.log('found more than one ' + this.recordName + ' to delete');
-                    res.status(400);
-                    res.send();
-                }
-            })
-            .catch(exception => {
-                handleException(res, exception);
-            })
+            this.mapper.remove(filters)
+                .then(removedRecords => {
+                    if (removedRecords.length === 0) {
+                        handleException(res, Exceptions.BadRequest);
+                    }
+                    else {
+                        res.status(200);
+                        res.json(removedRecords[0]); // There should be only 1 record because the filter is a unique identifier
+                    }
+                })
+                .catch(ex => {
+                    handleException(res, ex);
+                });
         })
         .catch((ex) => {
             handleException(res, ex);
@@ -144,10 +105,19 @@ exports.GenericCatalogueController = class GenericCatalogueController {
 handleException = function(res, exception) {
     var message;
     switch(exception){
+        case Exceptions.BadRequest:
+            message = "BadRequest";
+            res.status(400);
+            break;
+        case Exceptions.Unauthorized:
+            message = "Unauthorized";
+            res.status(401);
+            break;
         case Exceptions.InternalServerError:
         default:
             message = "InternalServerError";
             res.status(500);
+            break;
     }
     res.json({err: message});
 }
