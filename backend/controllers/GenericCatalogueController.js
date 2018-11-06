@@ -83,18 +83,18 @@ exports.GenericCatalogueController = class GenericCatalogueController {
             var filters = {};
             filters[this.identifier] = req.body[this.identifier];
             this.mapper.remove(filters)
-                .then(removedRecords => {
-                    if (removedRecords.length === 0) {
-                        handleException(res, Exceptions.BadRequest);
-                    }
-                    else {
-                        res.status(200);
-                        res.json(removedRecords[0]); // There should be only 1 record because the filter is a unique identifier
-                    }
-                })
-                .catch(ex => {
-                    handleException(res, ex);
-                });
+            .then(removedRecords => {
+                if (removedRecords.length === 0) {
+                    handleException(res, Exceptions.BadRequest);
+                }
+                else {
+                    res.status(200);
+                    res.json(removedRecords[0]); // There should be only 1 record because the filter is a unique identifier
+                }
+            })
+            .catch(ex => {
+                handleException(res, ex);
+            });
         })
         .catch((ex) => {
             handleException(res, ex);

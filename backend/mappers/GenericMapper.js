@@ -106,7 +106,7 @@ exports.GenericMapper = class GenericMapper {
     }
 
     async remove(filters) {
-        new Promise((resolve, reject) => {
+        return new Promise((resolve, reject) => {
             this.get(filters)
             .then(recordsToRemove => {
                 recordsToRemove.forEach(record => {
