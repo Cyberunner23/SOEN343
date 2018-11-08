@@ -46,5 +46,5 @@ app.post('/api/catalogue/removeMovies', movieController.delete);
 app.post('/api/reservation/getReservations', reservationController.getReservations);
 app.post('/api/reservation/addToCart', reservationController.addToCart);
 app.post('/api/reservation/removeFromCart', reservationController.removeFromCart);
-app.post('/api/reservation/rentRecord', reservationController.rentRecord);
+app.post('/api/reservation/borrowRecord', reservationController.borrowRecord);
 app.post('/api/reservation/returnRecord', reservationController.returnRecord);

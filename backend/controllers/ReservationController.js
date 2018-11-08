@@ -16,7 +16,7 @@ exports.ReservationController = class ReservationController {
         this.getReservations = this.getReservations.bind(this);
         this.addToCart = this.addToCart.bind(this);
         this.removeFromCart = this.removeFromCart.bind(this);
-        this.rentRecord = this.rentRecord.bind(this);
+        this.borrowRecord = this.borrowRecord.bind(this);
         this.returnRecord = this.returnRecord.bind(this);
     }
 
@@ -38,7 +38,7 @@ exports.ReservationController = class ReservationController {
         
     }
     
-    async rentRecord (req, res) {
+    async borrowRecord (req, res) {
         
 
 
