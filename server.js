@@ -8,6 +8,7 @@ const bookController = require('./backend/controllers/BookController').getInstan
 const magazineController = require('./backend/controllers/MagazineController').getInstance();
 const musicController = require('./backend/controllers/MusicController').getInstance();
 const movieController = require('./backend/controllers/MovieController').getInstance();
+const reservationController = require('./backend/controllers/ReservationController').getInstance();
 
 const port = 5000;
 
@@ -41,3 +42,9 @@ app.get('/api/catalogue/getMovies', movieController.get);
 app.post('/api/catalogue/addMovie', movieController.add);
 app.post('/api/catalogue/modifyMovie', movieController.modify);
 app.post('/api/catalogue/removeMovies', movieController.delete);
+
+app.post('/api/reservation/getReservations', reservationController.getReservations);
+app.post('/api/reservation/addToCart', reservationController.addToCart);
+app.post('/api/reservation/removeFromCart', reservationController.removeFromCart);
+app.post('/api/reservation/rentRecord', reservationController.rentRecord);
+app.post('/api/reservation/returnRecord', reservationController.returnRecord);
