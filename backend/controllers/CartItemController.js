@@ -19,6 +19,7 @@ exports.CartItemController = class CartItemController {
 
     async getCartItems(req, res) {
         // req.body.authToken
+        // req.body.filters
     }
     
     async addToCart (req, res) {

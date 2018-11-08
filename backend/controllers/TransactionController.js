@@ -20,6 +20,7 @@ exports.TransactionController = class TransactionController {
 
     async getTransactions(req, res) {
         // req.body.authToken
+        // req.body.filters
     }
     
     async borrowRecord (req, res) {
