@@ -7,7 +7,7 @@ const Exceptions = require('../Exceptions').Exceptions;
 const transactionMapper = require('../mappers/TransactionMapper').getInstance();
 const Transaction = require('../business_objects/Transaction').Transaction;
 
-exports.TransactionController = class TransactionController {
+class TransactionController {
     constructor() {
         this.mapper = transactionMapper;
         this.recordName = 'transaction';

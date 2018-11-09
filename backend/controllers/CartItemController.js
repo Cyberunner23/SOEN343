@@ -6,7 +6,7 @@ const Exceptions = require('../Exceptions').Exceptions;
 const cartItemMapper = require('../mappers/CartItemMapper').getInstance();
 const CartItem = require('../business_objects/CartItem').CartItem;
 
-exports.CartItemController = class CartItemController {
+class CartItemController {
     constructor() {
         this.mapper = cartItemMapper;
         this.recordName = 'cartItem';
