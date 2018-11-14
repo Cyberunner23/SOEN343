@@ -179,7 +179,7 @@ export default class ViewMovies extends Component {
                                 </TableCell>}
                                 {this.state.is_admin === 0 &&
                                 <TableCell>
-                                    <Button variant="contained" color="secondary" disabled>Add to Cart</Button>
+                                    <Button variant="contained" color="secondary" onClick={() => { this.addMovieToCart(movie.eidr) }} disabled>Add to Cart</Button>
                                 </TableCell>}
                             </TableRow>
                         )}
@@ -276,6 +276,24 @@ export default class ViewMovies extends Component {
     async removeMovies(eidr) {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/removeMovies', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ eidr: eidr, authToken: this.state.authToken})
+            }).then((res => {
+                if (res.status === 200) {
+                    console.log("deleted movie");
+                    this.setState({ modifyMovie: false, movieModified: true, movieModifiedMessage: 'Movie removed successfully' })
+                } else {
+                    console.log(res)
+                    this.setState({ movieModified: true, movieModifiedMessage: 'Movie could not be removed' })
+                }
+            })).then(() => { this.componentDidMount(); });
+        })
+    }
+
+    async addMovieToCart(eidr) {
+        return new Promise((resolve, reject) => {
+            fetch('/api/catalogue/addToCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ eidr: eidr, authToken: this.state.authToken})

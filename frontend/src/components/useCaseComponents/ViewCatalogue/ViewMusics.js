@@ -135,7 +135,7 @@ export default class ViewMusics extends Component {
                                 </TableCell>}
                                 {this.state.is_admin === 0 &&
                                 <TableCell>
-                                    <Button variant="contained" color="secondary" disabled>Add to Cart</Button>
+                                    <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(music.asin) }} disabled>Add to Cart</Button>
                                 </TableCell>}
                             </TableRow>
                         )}
@@ -224,6 +224,24 @@ export default class ViewMusics extends Component {
     async removeMusics(asin) {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/removeMusics', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ asin: asin, authToken: this.state.authToken})
+            }).then((res => {
+                if (res.status === 200) {
+                    console.log("deleted music");
+                    this.setState({ modifyMusic: false, musicModified: true, musicModifiedMessage: 'Music removed successfully' })
+                } else {
+                    console.log(res)
+                    this.setState({ musicModified: true, musicModifiedMessage: 'Music could not be removed' })
+                }
+            })).then(() => { this.componentDidMount(); });
+        })
+    }
+
+    async addMusicToCart(asin) {
+        return new Promise((resolve, reject) => {
+            fetch('/api/catalogue/addToCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ asin: asin, authToken: this.state.authToken})
