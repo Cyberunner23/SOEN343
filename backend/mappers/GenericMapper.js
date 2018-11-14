@@ -43,9 +43,10 @@ exports.GenericMapper = class GenericMapper {
     }
 
     async get(filters) {
+        var mapper = this;
         var promise;
-        lock.async.readLock(function (error, release) {
-            promise = privateGet(filters);
+        await lock.async.readLock(async function (error, release) {
+            promise = mapper.privateGet(filters);
             release();
         })
 
@@ -83,7 +84,7 @@ exports.GenericMapper = class GenericMapper {
     async add(record) {
         var mapper = this;
         var promise;
-        lock.async.writeLock(function (error, release) {
+        await lock.async.writeLock(async function (error, release) {
             promise = new Promise((resolve, reject) => {
                 var filters = {};
                 filters[mapper.identifier] = record[mapper.identifier];
@@ -124,6 +125,7 @@ exports.GenericMapper = class GenericMapper {
             })
             release();
         })
+        console.log('promise: ' + JSON.stringify(promise));
         return promise;
     }
 
