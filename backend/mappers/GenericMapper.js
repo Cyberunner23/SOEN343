@@ -125,7 +125,6 @@ exports.GenericMapper = class GenericMapper {
             })
             release();
         })
-        console.log('promise: ' + JSON.stringify(promise));
         return promise;
     }
 
