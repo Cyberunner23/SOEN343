@@ -12,7 +12,6 @@ exports.GenericMapper = class GenericMapper {
         this.identityMap = null;
         this.gateway = null;
         this.unitOfWork = new GenericUnitOfWork();
-        this.get = this.get.bind(this);
     }
 
     sendChangesToGateway() {
