@@ -45,10 +45,11 @@ exports.GenericMapper = class GenericMapper {
     async get(filters) {
         var mapper = this;
         var promise;
-        await lock.async.readLock(async function (error, release) {
+        await lock.async.readLock(async function (error, release) 
+        {
             promise = mapper.privateGet(filters);
             release();
-        })
+        });
 
         return promise;
     }
@@ -131,7 +132,7 @@ exports.GenericMapper = class GenericMapper {
     async remove(filters) {
         var mapper = this;
         var promise;
-        lock.async.writeLock(function (error, release) {
+        await lock.async.writeLock(async function (error, release) {
             promise = new Promise((resolve, reject) => {
                 mapper.privateGet(filters)
                     .then(recordsToRemove => {
@@ -176,36 +177,36 @@ exports.GenericMapper = class GenericMapper {
         var mapper = this;
         var promise;
 
-        lock.async.writeLock(function (error, release) {
+        await lock.async.writeLock(async function (error, release) {
 
             promise = new Promise(async (resolve, reject) => {
                 this.privateGet(filters)
                     .then(recordsToModify => {
                         var arrayOfModifiedRecords = [];
                         recordsToModify.forEach(record => {
-                            var identifierValue = record[this.identifier];
-                            var previousOperations = this.unitOfWork.get(operation => {
+                            var identifierValue = record[mapper.identifier];
+                            var previousOperations = mapper.unitOfWork.get(operation => {
                                 return operation.identifier === identifierValue
                             });
-                            this.modifyHelper(record, modifyProperties);
+                            mapper.modifyHelper(record, modifyProperties);
                             arrayOfModifiedRecords.push(record);
                             // Unit of work guarantees that size is either 0 or 1
                             if (previousOperations.length === 0) {
-                                this.identityMap.add(record);
-                                this.unitOfWork.update(identifierValue);
+                                mapper.identityMap.add(record);
+                                mapper.unitOfWork.update(identifierValue);
                             }
                             else {
                                 // size should be 1
                                 var previousOperation = previousOperations[0];
                                 if (previousOperation.operationType === OperationType.Add) {
-                                    this.identityMap.update(record);
+                                    mapper.identityMap.update(record);
                                 }
                                 else if (previousOperation.operationType === OperationType.Update) {
-                                    this.identityMap.update(record);
+                                    mapper.identityMap.update(record);
                                 }
                                 else if (previousOperation.operationType === OperationType.Delete) {
-                                    this.identityMap.add(record);
-                                    this.unitOfWork.update(identifierValue);
+                                    mapper.identityMap.add(record);
+                                    mapper.unitOfWork.update(identifierValue);
                                 }
                             }
                         })
