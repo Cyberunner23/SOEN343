@@ -133,7 +133,7 @@ export default class ViewMagazines extends Component {
                                 </TableCell>}
                                 {this.state.is_admin === 0 &&
                                 <TableCell>
-                                    <Button variant="contained" color="secondary" disabled>Add to Cart</Button>
+                                    <Button variant="contained" color="secondary" onClick={() => { this.addMagazinetoCart(magazine.isbn13) }} disabled>Add to Cart</Button>
                                 </TableCell>}
                             </TableRow>
                         )}
@@ -217,6 +217,24 @@ export default class ViewMagazines extends Component {
     async removeMagazines(isbn) {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/removeMagazines', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isbn13: isbn, authToken: this.state.authToken})
+            }).then((res => {
+                if (res.status === 200) {
+                    console.log("deleted magazine");
+                    this.setState({ modifyMagazine: false, magazineModified: true, magazineModifiedMessage: 'Magazine removed successfully' })
+                } else {
+                    console.log(res)
+                    this.setState({ magazineModified: true, magazineModifiedMessage: 'Magazine could not be removed' })
+                }
+            })).then(() => { this.componentDidMount(); });
+        })
+    }
+
+    async addMagazinetoCart(isbn) {
+        return new Promise((resolve, reject) => {
+            fetch('/api/catalogue/addToCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ isbn13: isbn, authToken: this.state.authToken})

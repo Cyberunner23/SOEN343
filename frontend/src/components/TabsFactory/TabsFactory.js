@@ -10,6 +10,8 @@ import ViewBooks from '../useCaseComponents/ViewCatalogue/ViewBooks.js';
 import ViewMagazines from '../useCaseComponents/ViewCatalogue/ViewMagazines.js';
 import ViewMovies from '../useCaseComponents/ViewCatalogue/ViewMovies.js';
 import ViewMusics from '../useCaseComponents/ViewCatalogue/ViewMusics.js';
+import ViewCart from '../useCaseComponents/ViewCatalogue/ViewCart.js';
+import ViewLoans from '../useCaseComponents/ViewCatalogue/ViewLoans.js';
 import AddBook from "../useCaseComponents/ViewCatalogue/AddBook";
 import AddMagazine from "../useCaseComponents/ViewCatalogue/AddMagazine";
 import AddMovie from "../useCaseComponents/ViewCatalogue/AddMovie";
@@ -116,6 +118,8 @@ class TabsFactory {
                                     <Tab>Magazines</Tab>
                                     <Tab>Movies</Tab>
                                     <Tab>Music</Tab>
+                                    <Tab>My Cart</Tab>
+                                    <Tab>My Loans</Tab>
                                 </TabList>
                                 <TabPanel>
                                     <ViewBooks app={app} is_admin={0} />
@@ -128,6 +132,12 @@ class TabsFactory {
                                 </TabPanel>
                                 <TabPanel>
                                     <ViewMusics app={app} is_admin={0} />
+                                </TabPanel>
+                                <TabPanel>
+                                    <ViewCart app={app} is_admin={0} />
+                                </TabPanel>
+                                <TabPanel>
+                                    <ViewLoans app={app} is_admin={0} />
                                 </TabPanel>
                             </Tabs>
                         </TabPanel>
