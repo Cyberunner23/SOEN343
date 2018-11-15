@@ -17,19 +17,64 @@ class CartItemController {
         this.removeFromCart = this.removeFromCart.bind(this);
     }
 
-    async getCartItems(req, res) {
-        // req.body.authToken
-        // req.body.filters
+    async getCartItems(req, res) 
+    {
+        identifyUser(req.body.authToken)
+        .then(async user => 
+        {
+            // Users only
+            if (user.is_admin)
+            {
+                handleException(res, Exceptions.Unauthorized);
+                return;
+            }
+
+            // req.body.filters
+        })
+        .catch(ex => 
+        {
+            handleException(res, ex);
+        });
     }
     
-    async addToCart (req, res) {
-        // req.body.authToken
-        // req.body.recordId
+    async addToCart (req, res) 
+    {
+        identifyUser(req.body.authToken)
+        .then(async user => 
+        {
+            // Users only
+            if (user.is_admin)
+            {
+                handleException(res, Exceptions.Unauthorized);
+                return;
+            }
+
+            // req.body.recordId
+        })
+        .catch(ex => 
+        {
+            handleException(res, ex);
+        });
     }
     
-    async removeFromCart (req, res) {
-        // req.body.authToken
-        // req.body.recordId
+    async removeFromCart (req, res) 
+    {
+        identifyUser(req.body.authToken)
+        .then(async user => 
+        {
+            // Users only
+            if (user.is_admin)
+            {
+                handleException(res, Exceptions.Unauthorized);
+                return;
+            }
+
+            // req.body.recordId
+        })
+        .catch(ex => 
+        {
+            handleException(res, ex);
+        });
     }
 }
 
