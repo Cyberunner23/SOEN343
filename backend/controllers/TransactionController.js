@@ -18,19 +18,64 @@ class TransactionController {
         this.returnRecord = this.returnRecord.bind(this);
     }
 
-    async getTransactions(req, res) {
-        // req.body.authToken
-        // req.body.filters
+    async getTransactions(req, res) 
+    {
+        identifyUser(req.body.authToken)
+        .then(async user => 
+        {
+            if (!user.is_admin)
+            {
+                handleException(res, Exceptions.Unauthorized);
+                return;
+            }
+
+            // req.body.filters
+        })
+        .catch(ex => 
+        {
+            handleException(res, ex);
+        });
+
     }
     
-    async borrowRecord (req, res) {
-        // req.body.authToken
-        // req.body.recordId
+    async borrowRecord (req, res) 
+    {
+        identifyUser(req.body.authToken)
+        .then(async user => 
+        {
+            // Users only
+            if (user.is_admin)
+            {
+                handleException(res, Exceptions.Unauthorized);
+                return;
+            }
+
+            // req.body.recordId
+        })
+        .catch(ex => 
+        {
+            handleException(res, ex);
+        });
     }
     
-    async returnRecord (req, res) {
-        // req.body.authToken
-        // req.body.recordId
+    async returnRecord (req, res)
+    {
+        identifyUser(req.body.authToken)
+        .then(async user => 
+        {
+            // Users only
+            if (user.is_admin)
+            {
+                handleException(res, Exceptions.Unauthorized);
+                return;
+            }
+
+            // req.body.recordId
+        })
+        .catch(ex => 
+        {
+            handleException(res, ex);
+        });
     }
 }
 
