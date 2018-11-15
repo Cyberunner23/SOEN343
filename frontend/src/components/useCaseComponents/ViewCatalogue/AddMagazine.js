@@ -12,6 +12,7 @@ export default class AddMagazine extends Component {
             language: '',
             isbn10: '',
             isbn13: '',
+            count: '',
             app: props.app,
             magazines: [],
             magazineAdded: false,
@@ -83,6 +84,13 @@ export default class AddMagazine extends Component {
                         style={style.textField}
                         onChange={this.handleChange} />
                     <br/>
+                    <TextField
+                        label="Count"
+                        name="count"
+                        margin="dense"
+                        style={style.page}
+                        onChange={this.handleChange} />
+                    <br/>
                     <Input type="submit" style={style.label}>
                         Add
                     </Input>
@@ -132,7 +140,7 @@ export default class AddMagazine extends Component {
             fetch('/api/catalogue/addMagazine', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({title, publisher, date, language, isbn10, isbn13, authToken: this.state.authToken})
+                body: JSON.stringify({title, publisher, date, language, isbn10, isbn13, count, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((magazine) => {
@@ -153,5 +161,9 @@ const style = {
     },
     textField: {
         width: 300
+    },
+    page: {
+        marginLeft: 10,
+        width: 90
     },
 };

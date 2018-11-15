@@ -16,8 +16,8 @@ export default class ViewBooks extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: '', author: '', format: '', pages: '', publisher: '', language: '', isbn10: '', isbn13: '',
-            titleFilter: '', authorFilter: '', formatFilter: '', pagesFilter: '', publisherFilter: '', languageFilter: '', isbn10Filter: '', isbn13Filter: '',
+            title: '', author: '', format: '', pages: '', publisher: '', language: '', isbn10: '', isbn13: '', count: '',
+            titleFilter: '', authorFilter: '', formatFilter: '', pagesFilter: '', publisherFilter: '', languageFilter: '', isbn10Filter: '', isbn13Filter: '', countFilter: '',
             app: props.app,
             books: [],
             modifyBook: false,
@@ -60,6 +60,7 @@ export default class ViewBooks extends Component {
                     <TextField style={style.field} label="language" name="languageFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="ISBN-10" name="isbn10Filter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="ISBN-13" name="isbn13Filter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="count" name="countFilter" margin="dense" onChange={this.handleChange} /><br/>
                     <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
                 </div>
                 {bookModifiedMessage}
@@ -89,6 +90,9 @@ export default class ViewBooks extends Component {
                             </TableCell>
                             <TableCell>
                                 <TableSortLabel onClick={() => this.sort('isbn13')} direction={'desc'}>ISBN-13</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('count')} direction={'desc'}>Count</TableSortLabel>
                             </TableCell>
                             <TableCell/>
                         </TableRow>
@@ -146,6 +150,13 @@ export default class ViewBooks extends Component {
                                         onChange={this.handleChange} />) : (book.isbn10)}
                                 </TableCell>
                                 <TableCell>
+                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
+                                        name="count"
+                                        margin="dense"
+                                        defaultValue={book.count}
+                                        onChange={this.handleChange} />) : (book.count)}
+                                </TableCell>
+                                <TableCell>
                                     {book.isbn13}
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
@@ -188,6 +199,7 @@ export default class ViewBooks extends Component {
             language: book.language,
             isbn10: book.isbn10,
             isbn13: book.isbn13,
+            count: book.count,
             bookModifiedMessage: '',
             modifyBook: true
         })
@@ -212,7 +224,8 @@ export default class ViewBooks extends Component {
         let language = this.state.languageFilter;
         let isbn10 = this.state.isbn10Filter;
         let isbn13 = this.state.isbn13Filter;
-        let jsonObject = {title, author, format, pages, publisher, language, isbn10, isbn13};
+        let count = this.state.count;
+        let jsonObject = {title, author, format, pages, publisher, language, isbn10, isbn13, count};
 
         Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
 
@@ -274,12 +287,13 @@ export default class ViewBooks extends Component {
         let language = props.language;
         let isbn10 = props.isbn10;
         let isbn13 = props.isbn13;
+        let count = props.count;
 
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/modifyBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, author, format, pages, publisher, language, isbn10, isbn13 , authToken: this.state.authToken})
+                body: JSON.stringify({ title, author, format, pages, publisher, language, isbn10, isbn13, count , authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((book) => {

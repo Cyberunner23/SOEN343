@@ -16,8 +16,8 @@ export default class ViewMusics extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            type: '', title: '', artist: '', label: '', releaseDate: '', asin: '',
-            typeFilter: '', titleFilter: '', artistFilter: '', labelFilter: '', releaseDateFilter: '', asinFilter: '',
+            type: '', title: '', artist: '', label: '', releaseDate: '', asin: '', count: '',
+            typeFilter: '', titleFilter: '', artistFilter: '', labelFilter: '', releaseDateFilter: '', asinFilter: '', countFilter: '',
             app: props.app,
             musics: [],
             modifyMusic: false,
@@ -58,6 +58,7 @@ export default class ViewMusics extends Component {
                     <TextField style={style.field} label="label" name="labelFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="release date" name="releaseDateFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="ASIN" name="asinFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="count" name="countFilter" margin="dense" onChange={this.handleChange} /><br/>
                     <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
                 </div>
                 {musicModifiedMessage}
@@ -81,6 +82,9 @@ export default class ViewMusics extends Component {
                             </TableCell>
                             <TableCell>
                                 <TableSortLabel onClick={() => this.sort('asin')} direction={'desc'}>ASIN</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('count')} direction={'desc'}>Count</TableSortLabel>
                             </TableCell>
                             <TableCell/>
                         </TableRow>
@@ -124,6 +128,13 @@ export default class ViewMusics extends Component {
                                         onChange={this.handleChange} />) : (music.releaseDate)}
                                 </TableCell>
                                 <TableCell>
+                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
+                                        name="count"
+                                        margin="dense"
+                                        defaultValue={music.count}
+                                        onChange={this.handleChange} />) : (music.count)}
+                                </TableCell>
+                                <TableCell>
                                     {music.asin}
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
@@ -164,6 +175,7 @@ export default class ViewMusics extends Component {
             label: music.label,
             releaseDate: music.releaseDate,
             asin: music.asin,
+            count: music.count,
             musicModifiedMessage: '',
             modifyMusic: true
         });
@@ -186,7 +198,8 @@ export default class ViewMusics extends Component {
         let label = this.state.labelFilter;
         let releaseDate = this.state.releaseDateFilter;
         let asin = this.state.asinFilter;
-        let jsonObject = {title, type, artist, label, releaseDate, asin};
+        let count = this.state.countFilter;
+        let jsonObject = {title, type, artist, label, releaseDate, asin, count};
 
         Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
 
@@ -246,12 +259,13 @@ export default class ViewMusics extends Component {
         let label = props.label;
         let releaseDate = props.releaseDate;
         let asin = props.asin;
+        let count = props.count;
 
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/modifyMusic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, type, artist, label, releaseDate, asin, authToken: this.state.authToken})
+                body: JSON.stringify({ title, type, artist, label, releaseDate, asin, count, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((music) => {

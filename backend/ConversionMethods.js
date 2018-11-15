@@ -20,8 +20,9 @@ convertToFrontendBook = (book) => {
     let language = book.language;
     let isbn10 = book.isbn10;
     let isbn13 = book.isbn13;
+    let count = book.count;
     return (
-        {title, author, format, pages, publisher, datePublished, language, isbn10, isbn13}
+        {title, author, format, pages, publisher, datePublished, language, isbn10, isbn13, count}
     );
 }
 
@@ -32,8 +33,9 @@ convertToFrontendMusic = (music) => {
     let type = music.type;
     let releaseDate = music.releaseDate;
     let asin = music.asin;
+    let count = music.count;
     return (
-        {title, artist, label, type, releaseDate, asin}
+        {title, artist, label, type, releaseDate, asin, count}
     );
 }
 
@@ -44,8 +46,9 @@ convertToFrontendMagazine = (magazine) => {
     let language = magazine.language;
     let isbn10 = magazine.isbn10;
     let isbn13 = magazine.isbn13;
+    let count = magazine.count;
     return (
-        {title, publisher, publishDate, language, isbn10, isbn13}
+        {title, publisher, publishDate, language, isbn10, isbn13, count}
     );
 }
 
@@ -60,7 +63,8 @@ convertToFrontendMovie = (movie) => {
     let releaseDate = movie.releaseDate;
     let runTime = movie.runTime;
     let eidr = movie.eidr;
+    let count = movie.count;
     return (
-        {title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr}
+        {title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr, count}
     );
 }
