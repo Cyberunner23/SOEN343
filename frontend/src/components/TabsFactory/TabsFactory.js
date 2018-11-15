@@ -14,6 +14,7 @@ import AddBook from "../useCaseComponents/ViewCatalogue/AddBook";
 import AddMagazine from "../useCaseComponents/ViewCatalogue/AddMagazine";
 import AddMovie from "../useCaseComponents/ViewCatalogue/AddMovie";
 import AddMusic from "../useCaseComponents/ViewCatalogue/AddMusic";
+import Loans from "../useCaseComponents/Loans.js";
 
 var TabsState = Object.freeze({ 'Welcome': 0, 'Admin': 1, 'Client': 2 });
 
@@ -39,6 +40,7 @@ class TabsFactory {
                             <Tab>Register Admin</Tab>
                             <Tab>Register User</Tab>
                             <Tab>View Active Users</Tab>
+                            <Tab>View Loans</Tab>
                             <Tab>View Library Items</Tab>
                             <Tab>Add Library Items</Tab>
                             <Tab>Logout</Tab>
@@ -51,6 +53,9 @@ class TabsFactory {
                         </TabPanel>
                         <TabPanel>
                             <ActiveUsers app={app} />
+                        </TabPanel>
+                        <TabPanel>
+                            <Loans app={app} is_admin={1} />
                         </TabPanel>
                         <TabPanel>
                             <Tabs>
