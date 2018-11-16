@@ -35,7 +35,8 @@ CREATE TABLE `musics` (
   `label` varchar(255) NOT NULL,
   `releaseDate` varchar(255) NOT NULL,
   `asin` varchar(10) NOT NULL,
-  `count` int(11) NOT NULL
+  `numAvailable` int(11) NOT NULL,
+  `numTotal` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --

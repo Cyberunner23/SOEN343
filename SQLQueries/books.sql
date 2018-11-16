@@ -37,7 +37,8 @@ CREATE TABLE `books` (
   `language` varchar(255) NOT NULL,
   `isbn10` varchar(13) NOT NULL,
   `isbn13` varchar(17) NOT NULL,
-  `count` int(11) NOT NULL
+  `numAvailable` int(11) NOT NULL,
+  `numTotal` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
