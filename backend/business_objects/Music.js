@@ -6,7 +6,8 @@ class Music {
         this.label= props.label;
         this.releaseDate= props.releaseDate;
         this.asin= props.asin;
-        this.count= props.count;
+        this.numAvailable= props.numAvailable;
+		this.numTotal= props.numTotal;
     }
 }
 exports.Music = Music; 

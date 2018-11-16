@@ -15,7 +15,8 @@ export default class AddBook extends Component {
             language: '',
             isbn10: '',
             isbn13: '',
-            count: '',
+            numAvailable: '',
+			numTotal: '',
             app: props.app,
             books: [],
             bookAdded: false,
@@ -102,8 +103,8 @@ export default class AddBook extends Component {
                         onChange={this.handleChange} />
                     <br/>
                     <TextField
-                        label="Count"
-                        name="count"
+                        label="Copies Available"
+                        name="numAvailable"
                         margin="dense"
                         style={style.page}
                         onChange={this.handleChange} />
@@ -154,13 +155,14 @@ export default class AddBook extends Component {
         let language = props.language;
         let isbn10 = props.isbn10;
         let isbn13 = props.isbn13;
-        let count = props.count;
+        let numAvailable = props.numAvailable;
+		let numTotal= props.numTotal;
 
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/addBook', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, author, format, pages, publisher, language, isbn10, isbn13, count , authToken: this.state.authToken})
+                body: JSON.stringify({ title, author, format, pages, publisher, language, isbn10, isbn13, numAvailable, numTotal, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((book) => {

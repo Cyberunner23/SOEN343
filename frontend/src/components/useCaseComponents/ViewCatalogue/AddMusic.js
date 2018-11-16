@@ -13,7 +13,8 @@ export default class AddMusic extends Component {
             label: '',
             releaseDate: '',
             asin: '',
-            count: '',
+            numAvailable: '',
+			numTotal: '',
             app: props.app,
             musics: [],
             musicAdded: false,
@@ -87,8 +88,8 @@ export default class AddMusic extends Component {
                         onChange={this.handleChange} />
                     <br/>
                     <TextField
-                        label="Count"
-                        name="count"
+                        label="Copies Available"
+                        name="numAvailable"
                         margin="dense"
                         style={style.page}
                         onChange={this.handleChange} />
@@ -137,12 +138,14 @@ export default class AddMusic extends Component {
         let label = props.label;
         let releaseDate = props.releaseDate;
         let asin = props.asin;
+        let numAvailable = props.numAvailable;
+		let numTotal= props.numTotal;
 
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/addMusic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, type, artist, label, releaseDate, asin, authToken: this.state.authToken})
+                body: JSON.stringify({ title, type, artist, label, releaseDate, asin, numAvailable, numTotal, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((music) => {
