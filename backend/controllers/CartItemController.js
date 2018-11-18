@@ -11,7 +11,6 @@ class CartItemController {
         this.mapper = cartItemMapper;
         this.recordName = 'cartItem';
         this.identifier = 'cartItemId';
-        this.recordType = CartItem;
         this.getCartItems = this.getCartItems.bind(this);
         this.addToCart = this.addToCart.bind(this);
         this.removeFromCart = this.removeFromCart.bind(this);
@@ -55,7 +54,7 @@ class CartItemController {
                 return;
             }
 			
-            this.mapper.add(new this.recordType(req.body))
+            this.mapper.add(new this.CartItem(req.body))
             .then(record => {
                 res.status(200);
                 res.json(record);
@@ -77,8 +76,7 @@ class CartItemController {
                 handleException(res, Exceptions.Unauthorized);
                 return;
             }
-            var filters = {};
-            filters[this.identifier] = req.body[this.identifier];
+            var filters = {this.identifier: req.body[this.identifier]};
             this.mapper.remove(filters)
             .then(removedRecords => {
                 if (removedRecords.length === 0) {
