@@ -204,8 +204,8 @@ exports.GenericMapper = class GenericMapper {
                                     mapper.identityMap.update(record);
                                 }
                                 else if (previousOperation.operationType === OperationType.Delete) {
-                                    mapper.identityMap.add(record);
-                                    mapper.unitOfWork.update(identifierValue);
+                                    console.log('Cannot update a previously deleted record');
+                                    throw Exceptions.InternalServerError;
                                 }
                             }
                         })

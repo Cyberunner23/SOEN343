@@ -58,13 +58,10 @@ exports.GenericUnitOfWork = class GenericUnitOfWork {
         else if (previousOperation.operationType === OperationType.Delete) {
             previousOperation.operationType = OperationType.Update;
         }
-        else if (previousOperation.operationType === OperationType.Update) {
+        else if (previousOperation.operationType === OperationType.Add) {
             console.log('Failed to update identifier in unit of work because identifier is already used for add operation');
             throw Exceptions.InternalServerError;
         }
-        var previousOperation = this.operations.find(operation => {
-            return operation.identifier === identifierValue;
-        })
     }
 
     delete(identifierValue){
