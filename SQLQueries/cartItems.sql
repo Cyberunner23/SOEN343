@@ -25,10 +25,10 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `cart`
+-- Table structure for table `cartItems`
 --
 
-CREATE TABLE `cart` (
+CREATE TABLE `cartItems` (
   `cartItemId` int(11) NOT NULL,
   `userId` int(11) NOT NULL,
   `recordId` varchar(17) NOT NULL,
@@ -40,9 +40,9 @@ CREATE TABLE `cart` (
 --
 
 --
--- Indexes for table `cart`
+-- Indexes for table `cartItems`
 --
-ALTER TABLE `cart`
+ALTER TABLE `cartItems`
   ADD PRIMARY KEY (`cartItemId`);
 COMMIT;
 

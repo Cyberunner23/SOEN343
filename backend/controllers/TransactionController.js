@@ -11,7 +11,7 @@ class TransactionController {
     constructor() {
         this.mapper = transactionMapper;
         this.recordName = 'transaction';
-        this.identifier = 'id';
+        this.identifier = 'transactionId';
         this.recordType = Transaction;
         this.getTransactions = this.getTransactions.bind(this);
         this.borrowRecord = this.borrowRecord.bind(this);
@@ -23,13 +23,20 @@ class TransactionController {
         identifyUser(req.body.authToken)
         .then(async user => 
         {
+			//Admins only
             if (!user.is_admin)
             {
                 handleException(res, Exceptions.Unauthorized);
                 return;
             }
-
-            // req.body.filters
+			this.mapper.get(req.query)
+			.then(records => {
+				res.status(200);
+				res.json(records);
+			})
+			.catch(ex => {
+				handleException(res, ex);
+			})
         })
         .catch(ex => 
         {
