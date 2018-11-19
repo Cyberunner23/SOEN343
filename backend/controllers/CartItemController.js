@@ -5,7 +5,7 @@ const identifyUser = require('./UserController').identifyUser;
 const Exceptions = require('../Exceptions').Exceptions;
 const cartItemMapper = require('../mappers/CartItemMapper').getInstance();
 const CartItem = require('../business_objects/CartItem').CartItem;
-const transactionController = require('../controllers/TransactionController').TransactionController;
+const transactionMapper = require('../mappers/TransactionMapper').TransactionMapper;
 
 class CartItemController {
     constructor() {
@@ -15,7 +15,7 @@ class CartItemController {
         this.getCartItems = this.getCartItems.bind(this);
         this.addToCart = this.addToCart.bind(this);
         this.removeFromCart = this.removeFromCart.bind(this);
-		this.transactionController = transactionController;
+		this.transactionMapper = transactionMapper;
     }
 
     async getCartItems(req, res) 
@@ -71,10 +71,11 @@ class CartItemController {
 				handleException(res, ex);
 			})
 			
+			var filter2 = {userId: user.id, isReturned: 0};
 			var transactLen;
-			await this.mapper.get(filter)
+			await this.transactionMapper.get(filter2).length;
 			.then(values => {
-				cartLen = values.length;
+				transactLen = values.length;
 			})
 			.catch(ex => {
 				handleException(res, ex);
