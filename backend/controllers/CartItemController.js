@@ -5,6 +5,7 @@ const identifyUser = require('./UserController').identifyUser;
 const Exceptions = require('../Exceptions').Exceptions;
 const cartItemMapper = require('../mappers/CartItemMapper').getInstance();
 const CartItem = require('../business_objects/CartItem').CartItem;
+const transactionController = require('../controllers/TransactionController').TransactionController;
 
 class CartItemController {
     constructor() {
@@ -14,6 +15,7 @@ class CartItemController {
         this.getCartItems = this.getCartItems.bind(this);
         this.addToCart = this.addToCart.bind(this);
         this.removeFromCart = this.removeFromCart.bind(this);
+		this.transactionController = transactionController;
     }
 
     async getCartItems(req, res) 
@@ -27,7 +29,8 @@ class CartItemController {
                 handleException(res, Exceptions.Unauthorized);
                 return;
             }
-			this.mapper.get(req.query)
+			var filter = {userId: user.id};
+			this.mapper.get(filter)
 			.then(records => {
 				res.status(200);
 				res.json(records);
@@ -54,11 +57,40 @@ class CartItemController {
                 return;
             }
 			
+			// This defines the maximum borrow limit, finds the current cart item count,
+			//	the current amount of borrowed items, and then figures out if the user can borrow more
+			var maxBorrow = 25;
+			
+			var cartLen;
+			var filter = {userId: user.id};
+			await this.mapper.get(filter)
+			.then(values => {
+				cartLen = values.length;
+			})
+			.catch(ex => {
+				handleException(res, ex);
+			})
+			
+			var transactLen;
+			await this.mapper.get(filter)
+			.then(values => {
+				cartLen = values.length;
+			})
+			.catch(ex => {
+				handleException(res, ex);
+			})
+			
+			var borrowLimit = maxBorrow - cartLen - transactLen;
+			
+			if (borrowLimit > 0){
             this.mapper.add(new this.CartItem(req.body))
             .then(record => {
                 res.status(200);
                 res.json(record);
-            })
+            })}
+			else{
+				//TO DO 
+			}
 
             // req.body.recordId
         })
