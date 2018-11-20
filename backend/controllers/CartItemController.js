@@ -90,10 +90,8 @@ class CartItemController {
                 res.json(record);
             })}
 			else{
-				//TO DO 
+				handleException(res, Exceptions.BadRequest);
 			}
-
-            // req.body.recordId
         })
         .catch(ex => 
         {
