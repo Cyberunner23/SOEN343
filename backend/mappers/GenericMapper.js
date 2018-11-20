@@ -178,8 +178,8 @@ exports.GenericMapper = class GenericMapper {
 
         await lock.async.writeLock(async function (error, release) {
 
-            promise = new Promise(async (resolve, reject) => {
-                this.privateGet(filters)
+            promise = new Promise((resolve, reject) => {
+                mapper.privateGet(filters)
                     .then(recordsToModify => {
                         var arrayOfModifiedRecords = [];
                         recordsToModify.forEach(record => {
