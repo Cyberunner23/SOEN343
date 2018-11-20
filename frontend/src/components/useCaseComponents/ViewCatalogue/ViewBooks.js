@@ -20,7 +20,8 @@ export default class ViewBooks extends Component {
             titleFilter: '', authorFilter: '', formatFilter: '', pagesFilter: '', publisherFilter: '', languageFilter: '', isbn10Filter: '', isbn13Filter: '',
             app: props.app,
             books: [],
-            bookItem: null,
+            bookItemBool: false,
+            bookItem: [],
             modifyBook: false,
             bookModified: false,
             desc: false,
@@ -83,19 +84,10 @@ export default class ViewBooks extends Component {
                         {this.state.books.map((book, i) =>
                             <TableRow key={i}>
                                 <TableCell>
-                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
-                                        name="title"
-                                        margin="dense"
-                                        defaultValue={book.title}
-                                        onClick={this.state.bookItem = book}
-                                        onChange={this.handleChange} />) : (book.title)}
+                                    {(book.title)}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
-                                        name="author"
-                                        margin="dense"
-                                        defaultValue={book.author}
-                                        onChange={this.handleChange} />) : (book.author)}
+                                    {(book.author)}
                                 </TableCell>
                                 <TableCell>
                                     {book.isbn13}
@@ -109,6 +101,7 @@ export default class ViewBooks extends Component {
                                 </TableCell>}
                                 {this.state.is_admin === 0 &&
                                 <TableCell>
+                                    <Button color="primary" onClick={() => { this.detailedBook(book, true) }}>View Details</Button>
                                     <Button variant="contained" color="secondary" onClick={() => { this.addBookToCart(book.isbn13) }} disabled>Add to Cart</Button>
                                 </TableCell>}
                             </TableRow>
@@ -118,10 +111,103 @@ export default class ViewBooks extends Component {
             </div>
         );
 
+        var itemDetails;
+        itemDetails = (
+            <div className="fixed" style={style.body}>
+                <Button color="primary" onClick={() => { this.detailedBook([], false) }}>Back to Books View</Button>
+                <br/>
+                <TextField
+                        label="Title"
+                        name="title"
+                        margin="normal"
+                        defaultValue= {(this.state.bookItem.title)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="Author"
+                        name="author"
+                        margin="normal"
+                        defaultValue= {(this.state.bookItem.author)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="Format"
+                        name="format"
+                        margin="normal"
+                        defaultValue= {(this.state.bookItem.format)}
+                        style={style.format}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="Pages"
+                        name="pages"
+                        margin="normal"
+                        defaultValue= {(this.state.bookItem.pages)}
+                        style={style.page}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="Publisher"
+                        name="publisher"
+                        margin="normal"
+                        defaultValue= {(this.state.bookItem.publisher)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="Language"
+                        name="language"
+                        margin="normal"
+                        defaultValue= {(this.state.bookItem.language)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="ISBN-10"
+                        name="isbn10"
+                        margin="normal"
+                        defaultValue= {(this.state.bookItem.isbn10)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="ISBN-13"
+                        name="isbn13"
+                        margin="normal"
+                        defaultValue= {(this.state.bookItem.isbn13)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ? false : true} />
+                    <br/>
+                    {this.state.is_admin === 0 &&
+                    <p>
+                        <Button variant="contained" color="secondary" onClick={() => { this.sequenceBook(this.state.bookItem, false) }}>Previous</Button>
+                        <Button variant="contained" color="secondary" onClick={() => { this.addBookToCart(this.state.bookItem.isbn13) }} disabled>Add to Cart</Button>
+                        <Button variant="contained" color="secondary" onClick={() => { this.sequenceBook(this.state.bookItem, true) }}>Next</Button>
+                    </p>}
+                    {this.state.is_admin === 1 &&
+                    <p>
+                    {(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ?
+                        (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
+                        (<Button color="primary" onClick={() => { this.modifyBookState(this.state.bookItem) }}>Edit</Button>)}
+                        <Button color="secondary" onClick={() => { this.removeBooks(this.state.bookItem.isbn13) }}>Delete</Button>
+                    </p>}
+            </div>
+        );
+
         return (
             <div className='ViewBooksComponent UseCaseComponent'>
                 <h2>Books</h2>
-                {content}
+                {this.state.bookItemBool ? itemDetails : content}
             </div>
         )
     }
@@ -141,6 +227,8 @@ export default class ViewBooks extends Component {
             isbn10: book.isbn10,
             isbn13: book.isbn13,
             bookModifiedMessage: '',
+            bookItem: book,
+            bookItemBool: true,
             modifyBook: true
         })
     }
@@ -243,6 +331,25 @@ export default class ViewBooks extends Component {
                 }
             });
         })
+    }
+
+    
+    detailedBook(book, bool) {
+        this.setState({
+            bookItem: book,
+            bookItemBool: bool
+        });
+    }
+
+    async sequenceBook(book, bool){
+        var index =  this.state.books.indexOf(book);
+        console.log(index);
+        if(bool) index = (this.state.books.length == index ? index : ++index);
+        else index = (index == 0 ? 0 : --index);
+        console.log(index);
+        this.setState({
+            bookItem: this.state.books[index]
+        });
     }
 
     async addBookToCart(props){

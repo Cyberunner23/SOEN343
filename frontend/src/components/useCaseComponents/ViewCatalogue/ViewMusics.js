@@ -20,6 +20,8 @@ export default class ViewMusics extends Component {
             typeFilter: '', titleFilter: '', artistFilter: '', labelFilter: '', releaseDateFilter: '', asinFilter: '',
             app: props.app,
             musics: [],
+            musicItemBool: false,
+            musicItem: [],
             modifyMusic: false,
             musicModified: false,
             desc: false,
@@ -50,7 +52,7 @@ export default class ViewMusics extends Component {
         var content;
         content = (
             <div>
-                <div style={style.format}>
+                <div style={style.type}>
                     <Typography>Filter By...</Typography>
                     <TextField style={style.field} label="title" name="titleFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="type" name="typeFilter" margin="dense" onChange={this.handleChange} />
@@ -97,13 +99,6 @@ export default class ViewMusics extends Component {
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
-                                        name="type"
-                                        margin="dense"
-                                        defaultValue={music.type}
-                                        onChange={this.handleChange} />) : (music.type)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
                                         name="artist"
                                         margin="dense"
                                         defaultValue={music.artist}
@@ -127,27 +122,103 @@ export default class ViewMusics extends Component {
                                     {music.asin}
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
-                                <TableCell>
-                                    {(this.state.modifyMusic && this.state.asin === music.asin) ?
-                                        (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
-                                        (<Button color="primary" onClick={() => { this.modifyMusicState(music) }}>Edit</Button>)}
-                                    <Button color="secondary" onClick={() => { this.removeMusics(music.asin) }}>Delete</Button>
-                                </TableCell>}
-                                {this.state.is_admin === 0 &&
-                                <TableCell>
-                                    <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(music.asin) }} disabled>Add to Cart</Button>
-                                </TableCell>}
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
-        );
+                            <TableCell>
+                                {(this.state.modifyMusic && this.state.asin === music.asin) ?
+                                (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
+                                (<Button color="primary" onClick={() => { this.modifyMusicState(music) }}>Edit</Button>)}
+                                <Button color="secondary" onClick={() => { this.removeMusics(music.asin) }}>Delete</Button>
+                            </TableCell>}
+                            {this.state.is_admin === 0 &&
+                            <TableCell>
+                                <Button color="primary" onClick={() => { this.detailedMusic(music, true) }}>View Details</Button>
+                                <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(music.asin) }} disabled>Add to Cart</Button>
+                            </TableCell>}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </div>
+    );
+
+    var itemDetails;
+    itemDetails = (
+        <div className="fixed" style={style.body}>
+            <Button color="primary" onClick={() => { this.detailedMusic([], false) }}>Back to musics View</Button>
+            <br/>
+            <TextField
+                    label="Title"
+                    name="title"
+                    margin="normal"
+                    defaultValue= {(this.state.musicItem.title)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                <br/>
+                <TextField
+                    label="Artist"
+                    name="artist"
+                    margin="normal"
+                    defaultValue= {(this.state.musicItem.artist)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                <br/>
+                <TextField
+                    label="Type"
+                    name="type"
+                    margin="normal"
+                    defaultValue= {(this.state.musicItem.type)}
+                    style={style.type}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                <br/>
+                <TextField
+                    label="Label"
+                    name="label"
+                    margin="normal"
+                    defaultValue= {(this.state.musicItem.label)}
+                    style={style.page}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                <br/>
+                <TextField
+                    label="Release Date"
+                    name="releaseDate"
+                    margin="normal"
+                    defaultValue= {(this.state.musicItem.releaseDate)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                <br/>
+                <TextField
+                    label="ASIN"
+                    name="asin"
+                    margin="normal"
+                    defaultValue= {(this.state.musicItem.asin)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                <br/>
+                {this.state.is_admin === 0 &&
+                <p>
+                    <Button variant="contained" color="secondary" onClick={() => { this.sequenceMusic(this.state.musicItem, false) }}>Previous</Button>
+                    <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(this.state.musicItem.asin) }} disabled>Add to Cart</Button>
+                    <Button variant="contained" color="secondary" onClick={() => { this.sequenceMusic(this.state.musicItem, true) }}>Next</Button>
+                </p>}
+                {this.state.is_admin === 1 &&
+                <p>
+                {(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ?
+                    (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
+                    (<Button color="primary" onClick={() => { this.modifyMusicState(this.state.musicItem) }}>Edit</Button>)}
+                    <Button color="secondary" onClick={() => { this.removemusics(this.state.musicItem.asin) }}>Delete</Button>
+                </p>}
+        </div>
+    );
 
         return (
             <div className='ViewMusicComponent UseCaseComponent'>
                 <h2>Music</h2>
-                {content}
+                {this.state.musicItemBool ? itemDetails : content}
             </div>
         )
     }
@@ -282,10 +353,49 @@ export default class ViewMusics extends Component {
             });
         })
     }
+    
+    detailedMusic(music, bool) {
+        this.setState({
+            musicItem: music,
+            musicItemBool: bool
+        });
+    }
+
+    async sequenceMusic(music, bool){
+        var index =  this.state.musics.indexOf(music);
+        console.log(index);
+        if(bool) index = (this.state.musics.length == index ? index : ++index);
+        else index = (index == 0 ? 0 : --index);
+        console.log(index);
+        this.setState({
+            musicItem: this.state.musics[index]
+        });
+    }
+
+    async addMusicToCart(props){
+        let asin = props.asin;
+
+        return new Promise((resolve, reject) => {
+            fetch('/api/catalogue/addToCart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({asin , authToken: this.state.authToken})
+            }).then((response) => {
+                if (response.status === 200) {
+                    response.json().then((music) => {
+                        resolve(music);
+                    })
+                }
+                else {
+                    resolve(null);
+                }
+            });
+        })
+    }
 }
 
 const style = {
-    format: {
+    type: {
         marginTop: 25,
         marginBottom: 25
     },

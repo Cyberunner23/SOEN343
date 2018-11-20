@@ -6,7 +6,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
-import Typography from '@material-ui/core/Typography';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
 const sorter = require('../../../helper_classes/Sorter.js').getInstance();
@@ -16,41 +15,38 @@ export default class ViewCart extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: '', author: '', format: '', pages: '', publisher: '', language: '', isbn10: '', isbn13: '',
-            titleFilter: '', authorFilter: '', formatFilter: '', pagesFilter: '', publisherFilter: '', languageFilter: '', isbn10Filter: '', isbn13Filter: '',
+            title: '', id: '', type: '',
+            titleFilter: '', idFilter: '', typeFilter: '',
             app: props.app,
-            books: [],
-            modifyBook: false,
-            bookModified: false,
+            cart: [],
+            modifyCart: false,
+            cartModified: false,
             desc: false,
             authToken: props.app.state.currentUser.authToken,
             is_admin: props.is_admin
         };
-        this.handleChange = this.handleChange.bind(this);
-        this.handleSubmit = this.handleSubmit.bind(this);
-
     }
 
     componentDidMount() {
-        fetch('/api/catalogue/getBooks')
+        fetch('/api/catalogue/getCart')
             .then(res => {
                 res.json().then(
-                    books => this.setState({ books: books })
+                    cart => this.setState({ cart: cart })
                 )
             });
     }
 
     render() {
-        var bookModifiedMessage;
-        if (this.state.bookModified) {
-            bookModifiedMessage = (
-                <div>{this.state.bookModifiedMessage}</div>
+        var cartModifiedMessage;
+        if (this.state.cartModified) {
+            cartModifiedMessage = (
+                <div>{this.state.cartModifiedMessage}</div>
             )
         }
         var content;
         content = (
             <div>
-                {bookModifiedMessage}
+                {cartModifiedMessage}
                 <Table style={style.format}>
                     <TableHead>
                         <TableRow>
@@ -58,43 +54,34 @@ export default class ViewCart extends Component {
                                 <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('author')} direction={'desc'}>Type</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('type')} direction={'desc'}>Type</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('isbn13')} direction={'desc'}>ID</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('id')} direction={'desc'}>ID</TableSortLabel>
                             </TableCell>
                             <TableCell/>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {this.state.books.map((book, i) =>
+                        {this.state.cart.map((item, i) =>
                             <TableRow key={i}>
                                 <TableCell>
-                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
-                                        name="title"
-                                        margin="dense"
-                                        defaultValue={book.title}
-                                        onChange={this.handleChange} />) : (book.title)}
+                                    {(item.title)}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
-                                        name="author"
-                                        margin="dense"
-                                        defaultValue={book.author}
-                                        onChange={this.handleChange} />) : (book.author)}
+                                    {(item.type)}
                                 </TableCell>
                                 <TableCell>
-                                    {book.isbn13}
+                                    {item.id}
                                 </TableCell>
-                                {this.state.is_admin === 0 &&
                                 <TableCell>
-                                    <Button color="secondary" onClick={() => { this.removeBooks(book.isbn13) }} disabled>Remove</Button>
-                                </TableCell>}
+                                    <Button color="secondary" onClick={() => { this.removeCart(item.id) }} disabled>Remove</Button>
+                                </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
-                <Button color="primary" disabled>Loan Items</Button>
+                <Button color="primary" onClick={() => { this.loanCart() }} disabled>Loan Items</Button>
             </div>
         );
 
@@ -106,50 +93,47 @@ export default class ViewCart extends Component {
         )
     }
 
-    handleChange = (e) => {
-        this.setState({ [e.target.name]: e.target.value, bookModified: false, bookModifiedMessage: '' });
-    }
-
     sort(field) {
         if (field === 'pages') {
-            sorter.intSort(this.state.books, field, this.state.desc);
+            sorter.intSort(this.state.cart, field, this.state.desc);
         }
         else {
-            sorter.stringSort(this.state.books, field, this.state.desc);
+            sorter.stringSort(this.state.cart, field, this.state.desc);
         }
-        this.setState({books: this.state.books, desc: !this.state.desc});
+        this.setState({cart: this.state.cart, desc: !this.state.desc});
     }
 
-    async handleSubmit(event) {
-        event.preventDefault();
-
-        this.modifyBook(this.state)
-            .then((book) => {
-                if (book !== null) {
-                    console.log('Book modified successfully');
-                    this.setState({ modifyBook: false, bookModified: true, bookModifiedMessage: 'Book ' + book.title + ' modified' })
-                } else {
-                    console.log('Modification could not be completed');
-                    this.setState({ bookModified: true, bookModifiedMessage: 'Modification could not be completed' })
-                }
-            }).then(() => {
-                this.componentDidMount();
-            })
-    }
-
-    async removeBooks(isbn) {
+    async removeCart(id) {
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/removeBooks', {
+            fetch('/api/catalogue/removeCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({isbn13: isbn, authToken: this.state.authToken })
+                body: JSON.stringify({itemID: id, authToken: this.state.authToken })
             }).then((res => {
                 if (res.status === 200) {
-                    console.log("deleted book");
-                    this.setState({ modifyBook: false, bookModified: true, bookModifiedMessage: 'Book removed successfully' })
+                    console.log("deleted item");
+                    this.setState({ modifyCart: false, cartModified: true, cartModifiedMessage: 'Cart item removed successfully' })
                 } else {
                     console.log(res)
-                    this.setState({ bookModified: true, bookModifiedMessage: 'Book could not be removed' })
+                    this.setState({ cartModified: true, cartModifiedMessage: 'Loan could not be removed' })
+                }
+            })).then(() => { this.componentDidMount(); });
+        })
+    }
+
+    async loanCart() {
+        return new Promise((resolve, reject) => {
+            fetch('/api/catalogue/loanCart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({cartItems: this.state.cart, authToken: this.state.authToken })
+            }).then((res => {
+                if (res.status === 200) {
+                    console.log("Items Loaned");
+                    this.setState({ modifyCart: true, cartModified: true, cartModifiedMessage: 'Cart items loaned' })
+                } else {
+                    console.log(res)
+                    this.setState({ cartModified: true, cartModifiedMessage: 'Could not be loaned' })
                 }
             })).then(() => { this.componentDidMount(); });
         })
