@@ -8,9 +8,9 @@ class CartItem
         // ID for the user for which this cart item is in their cart.
         this.userId = props.userId;
         // ID of the item in the cart
-        this.recordId = props.recordId;
+        this.mediaId = props.mediaId;
         // Type of item in the cart
-        this.recordType = props.recordType;
+        this.mediaType = props.mediaType;
 
         // continue...
     }

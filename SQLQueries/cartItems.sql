@@ -31,8 +31,8 @@ SET time_zone = "+00:00";
 CREATE TABLE `cartItems` (
   `cartItemId` int(11) NOT NULL,
   `userId` int(11) NOT NULL,
-  `recordId` varchar(17) NOT NULL,
-  `recordType` varchar(13) NOT NULL
+  `mediaId` varchar(17) NOT NULL,
+  `mediaType` varchar(13) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
