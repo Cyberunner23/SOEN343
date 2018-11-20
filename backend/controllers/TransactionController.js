@@ -104,6 +104,22 @@ class TransactionController {
 				handleException(res, Exceptions.BadRequest);
 				//Unsure if this is the best way to handle this error case
 			}
+			
+			//Remove existing cart items after processing borrow requests
+            var filters = {userId: userId, mediaId: mediaId, mediaType: mediaType};
+            this.cartItemMapper.remove(filters)
+            .then(removedRecords => {
+                if (removedRecords.length === 0) {
+                    handleException(res, Exceptions.BadRequest);
+                }
+                else {
+                    res.status(200);
+                    res.json(removedRecords[0]); // There should be only 1 record because the filter is a unique identifier
+                }
+            })
+            .catch(ex => {
+                handleException(res, ex);
+            });
         })
 				
         .catch(ex => 
