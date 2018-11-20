@@ -28,7 +28,7 @@ export default class ViewCart extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/catalogue/getCart')
+        fetch('/api/catalogue/getCartItems')
             .then(res => {
                 res.json().then(
                     cart => this.setState({ cart: cart })
