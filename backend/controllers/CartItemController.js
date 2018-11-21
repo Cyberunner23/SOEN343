@@ -59,7 +59,7 @@ class CartItemController {
 			
 			// This defines the maximum borrow limit, finds the current cart item count,
 			//	the current amount of borrowed items, and then figures out if the user can borrow more
-			var maxBorrow = 25;
+			var maxBorrow = 5;
 			
 			var cartLen;
 			var filter = {userId: user.id};
