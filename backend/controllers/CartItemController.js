@@ -30,7 +30,7 @@ class CartItemController {
                 return;
             }
 			var filter = {userId: user.id};
-			this.mapper.get(filter)
+			await this.mapper.get(filter)
 			.then(records => {
 				res.status(200);
 				res.json(records);
