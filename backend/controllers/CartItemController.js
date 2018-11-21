@@ -108,7 +108,7 @@ class CartItemController {
                 handleException(res, Exceptions.Unauthorized);
                 return;
             }
-            var filters = {this.identifier: req.body[this.identifier]};
+            var filters = {cartItemId: req.body.cartItemId};
             this.mapper.remove(filters)
             .then(removedRecords => {
                 if (removedRecords.length === 0) {
