@@ -142,7 +142,7 @@ export default class ViewMusics extends Component {
 
     var itemDetails;
     itemDetails = (
-        <div className="fixed" style={style.body}>
+        <div className="fixed" style={style.body} key={this.state.musicItem.asin}>
             <Button color="primary" onClick={() => { this.detailedMusic([], false) }}>Back to musics View</Button>
             <br/>
             <TextField
@@ -363,10 +363,8 @@ export default class ViewMusics extends Component {
 
     async sequenceMusic(music, bool){
         var index =  this.state.musics.indexOf(music);
-        console.log(index);
-        if(bool) index = (this.state.musics.length == index ? index : ++index);
+        if(bool) index = ((this.state.musics.length - 1) == index ? index : ++index);
         else index = (index == 0 ? 0 : --index);
-        console.log(index);
         this.setState({
             musicItem: this.state.musics[index]
         });

@@ -113,7 +113,7 @@ export default class ViewBooks extends Component {
 
         var itemDetails;
         itemDetails = (
-            <div className="fixed" style={style.body}>
+            <div className="fixed" style={style.body} key={this.state.bookItem.isbn13}>
                 <Button color="primary" onClick={() => { this.detailedBook([], false) }}>Back to Books View</Button>
                 <br/>
                 <TextField
@@ -343,10 +343,8 @@ export default class ViewBooks extends Component {
 
     async sequenceBook(book, bool){
         var index =  this.state.books.indexOf(book);
-        console.log(index);
-        if(bool) index = (this.state.books.length == index ? index : ++index);
+        if(bool) index = ((this.state.books.length - 1) == index ? index : ++index);
         else index = (index == 0 ? 0 : --index);
-        console.log(index);
         this.setState({
             bookItem: this.state.books[index]
         });

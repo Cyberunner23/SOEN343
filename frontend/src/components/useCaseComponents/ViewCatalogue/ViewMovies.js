@@ -123,7 +123,7 @@ export default class ViewMovies extends Component {
 
     var itemDetails;
     itemDetails = (
-        <div className="fixed" style={style.body}>
+        <div className="fixed" style={style.body} key={this.state.movieItem.eidr}>
             <Button color="primary" onClick={() => { this.detailedMovie([], false) }}>Back to movies View</Button>
             <br/>
             <TextField
@@ -392,10 +392,8 @@ export default class ViewMovies extends Component {
 
     async sequenceMovie(movie, bool){
         var index =  this.state.movies.indexOf(movie);
-        console.log(index);
-        if(bool) index = (this.state.movies.length == index ? index : ++index);
+        if(bool) index = ((this.state.movies.length - 1) == index ? index : ++index);
         else index = (index == 0 ? 0 : --index);
-        console.log(index);
         this.setState({
             movieItem: this.state.movies[index]
         });

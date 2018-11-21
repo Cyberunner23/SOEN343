@@ -109,7 +109,7 @@ export default class ViewMagazines extends Component {
 
         var itemDetails;
         itemDetails = (
-            <div className="fixed" style={style.body}>
+            <div className="fixed" style={style.body} key={this.state.magazineItem.isbn13}>
                 <Button color="primary" onClick={() => { this.detailedMagazine([], false) }}>Back to magazines View</Button>
                 <br/>
                 <TextField
@@ -343,10 +343,8 @@ export default class ViewMagazines extends Component {
 
     async sequenceMagazine(magazine, bool){
         var index =  this.state.magazines.indexOf(magazine);
-        console.log(index);
-        if(bool) index = (this.state.magazines.length == index ? index : ++index);
+        if(bool) index = ((this.state.magazines.length - 1) == index ? index : ++index);
         else index = (index == 0 ? 0 : --index);
-        console.log(index);
         this.setState({
             magazineItem: this.state.magazines[index]
         });
