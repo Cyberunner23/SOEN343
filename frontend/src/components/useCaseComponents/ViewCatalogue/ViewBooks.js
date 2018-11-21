@@ -25,6 +25,7 @@ export default class ViewBooks extends Component {
             modifyBook: false,
             bookModified: false,
             desc: false,
+            lastSortField: '',
             authToken: props.app.state.currentUser.authToken,
             is_admin: props.is_admin
         };
@@ -69,13 +70,13 @@ export default class ViewBooks extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('title')}>Title</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('author')} direction={'desc'}>Author</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('author')}>Author</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('isbn13')} direction={'desc'}>ISBN-13</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('isbn13')}>ISBN-13</TableSortLabel>
                             </TableCell>
                             <TableCell/>
                         </TableRow>
@@ -234,13 +235,16 @@ export default class ViewBooks extends Component {
     }
 
     sort(field) {
-        if (field === 'pages') {
-            sorter.intSort(this.state.books, field, this.state.desc);
+        let currentState = this.state.desc;
+
+        if(this.state.lastSortField !== field) {
+            currentState = false;
         }
         else {
-            sorter.stringSort(this.state.books, field, this.state.desc);
+            currentState = !currentState;
         }
-        this.setState({books: this.state.books, desc: !this.state.desc});
+        sorter.stringSort(this.state.books, field, currentState);
+        this.setState({books: this.state.books, desc: currentState, lastSortField: field});
     }
 
     filter() {

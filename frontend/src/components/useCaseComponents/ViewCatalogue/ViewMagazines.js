@@ -24,6 +24,7 @@ export default class ViewMagazines extends Component {
             modifyMagazine: false,
             magazineModified: false,
             desc: false,
+            lastSortField: '',
             authToken: props.app.state.currentUser.authToken,
             is_admin: props.is_admin
         };
@@ -65,13 +66,13 @@ export default class ViewMagazines extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('title')}>Title</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('author')} direction={'desc'}>Author</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('publisher')}>Publisher</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('isbn13')} direction={'desc'}>ISBN-13</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('isbn13')}>ISBN-13</TableSortLabel>
                             </TableCell>
                             <TableCell/>
                         </TableRow>
@@ -83,7 +84,7 @@ export default class ViewMagazines extends Component {
                                     {(magazine.title)}
                                 </TableCell>
                                 <TableCell>
-                                    {(magazine.author)}
+                                    {(magazine.publisher)}
                                 </TableCell>
                                 <TableCell>
                                     {magazine.isbn13}
@@ -226,8 +227,16 @@ export default class ViewMagazines extends Component {
     }
 
     sort(field) {
-        sorter.stringSort(this.state.magazines, field, this.state.desc);
-        this.setState({magazines: this.state.magazines, desc: !this.state.desc});
+        let currentState = this.state.desc;
+
+        if(this.state.lastSortField !== field) {
+            currentState = false;
+        }
+        else {
+            currentState = !currentState;
+        }
+        sorter.stringSort(this.state.magazines, field, currentState);
+        this.setState({magazines: this.state.magazines, desc: currentState, lastSortField: field});
     }
 
     filter() {

@@ -26,6 +26,7 @@ export default class ViewMovies extends Component {
             modifyMovie: false,
             movieModified: false,
             desc: false,
+            lastSortField: '',
             authToken: props.app.state.currentUser.authToken,
             is_admin: props.is_admin
         };
@@ -72,13 +73,13 @@ export default class ViewMovies extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('title')}>Title</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('director')} direction={'desc'}>Director</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('director')}>Director</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('eidr')} direction={'desc'}>EIDR</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('eidr')}>EIDR</TableSortLabel>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -262,13 +263,22 @@ export default class ViewMovies extends Component {
     }
 
     sort(field) {
-        if (field === ('runtime' || 'eidr')) {
-            sorter.intSort(this.state.movies, field, this.state.desc);
+        let currentState = this.state.desc;
+
+        if(this.state.lastSortField !== field) {
+            currentState = false;
         }
         else {
-            sorter.stringSort(this.state.movies, field, this.state.desc);
+            currentState = !currentState;
         }
-        this.setState({movies: this.state.movies, desc: !this.state.desc});
+
+        if (field === ('eidr')) {
+            sorter.intSort(this.state.movies, field, currentState);
+        }
+        else {
+            sorter.stringSort(this.state.movies, field, currentState);
+        }
+        this.setState({movies: this.state.movies, desc: currentState, lastSortField: field});
     }
 
     filter() {

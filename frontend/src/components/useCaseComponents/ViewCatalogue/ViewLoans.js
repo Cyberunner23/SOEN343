@@ -103,6 +103,7 @@ export default class ViewCart extends Component {
         this.setState({loans: this.state.loans, desc: !this.state.desc});
     }
 
+
     async returnLoan(id) {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/returnLoan', {
@@ -120,7 +121,6 @@ export default class ViewCart extends Component {
             })).then(() => { this.componentDidMount(); });
         })
     }
-
 }
 
 const style = {

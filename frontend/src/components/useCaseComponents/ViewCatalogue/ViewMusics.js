@@ -25,6 +25,7 @@ export default class ViewMusics extends Component {
             modifyMusic: false,
             musicModified: false,
             desc: false,
+            lastSortField: '',
             authToken: props.app.state.currentUser.authToken,
             is_admin: props.is_admin
         };
@@ -67,22 +68,22 @@ export default class ViewMusics extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('title')}>Title</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('type')} direction={'desc'}>Type</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('type')}>Type</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('artist')} direction={'desc'}>Artist</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('artist')}>Artist</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('label')} direction={'desc'}>Label</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('label')}>Label</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('releaseDate')} direction={'desc'}>Release Date</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('releaseDate')}>Release Date</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('asin')} direction={'desc'}>ASIN</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('asin')}>ASIN</TableSortLabel>
                             </TableCell>
                             <TableCell/>
                         </TableRow>
@@ -96,6 +97,13 @@ export default class ViewMusics extends Component {
                                         margin="dense"
                                         defaultValue={music.title}
                                         onChange={this.handleChange} />) : (music.title)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
+                                        name="type"
+                                        margin="dense"
+                                        defaultValue={music.type}
+                                        onChange={this.handleChange} />) : (music.artist)}
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
@@ -241,13 +249,22 @@ export default class ViewMusics extends Component {
     }
 
     sort(field) {
-        if (field === 'asin') {
-            sorter.intSort(this.state.musics, field, this.state.desc);
+        let currentState = this.state.desc;
+
+        if(this.state.lastSortField !== field) {
+            currentState = false;
         }
         else {
-            sorter.stringSort(this.state.musics, field, this.state.desc);
+            currentState = !currentState;
         }
-        this.setState({musics: this.state.musics, desc: !this.state.desc});
+
+        if (field === ('asin')) {
+            sorter.intSort(this.state.musics, field, currentState);
+        }
+        else {
+            sorter.stringSort(this.state.musics, field, currentState);
+        }
+        this.setState({musics: this.state.musics, desc: currentState, lastSortField: field});
     }
 
     filter() {
