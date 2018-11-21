@@ -73,7 +73,7 @@ class CartItemController {
 			
 			var filter2 = {userId: user.id, isReturned: 0};
 			var transactLen;
-			await this.transactionMapper.get(filter2).length;
+			await this.transactionMapper.get(filter2)
 			.then(values => {
 				transactLen = values.length;
 			})
@@ -84,14 +84,15 @@ class CartItemController {
 			var borrowLimit = maxBorrow - cartLen - transactLen;
 			
 			if (borrowLimit > 0){
-            this.mapper.add(new this.CartItem(req.body))
-            .then(record => {
-                res.status(200);
-                res.json(record);
-            })}
-			else{
-				handleException(res, Exceptions.BadRequest);
-			}
+                var props = {userId: user.id, mediaType: req.body.mediaType, mediaId: req.body.mediaId};
+                this.mapper.add(new CartItem(props))
+                .then(record => {
+                    res.status(200);
+                    res.json(record);
+                })}
+                else{
+                    handleException(res, Exceptions.BadRequest);
+                }
         })
         .catch(ex => 
         {
