@@ -20,6 +20,7 @@ export default class ViewCart extends Component {
             app: props.app,
             cart: [],
             modifyCart: false,
+            makeLoan: false,
             cartModified: false,
             desc: false,
             authToken: props.app.state.currentUser.authToken,
@@ -82,7 +83,16 @@ export default class ViewCart extends Component {
                         )}
                     </TableBody>
                 </Table>
-                <Button color="primary" onClick={() => { this.loanCart() }} disabled>Loan Items</Button>
+                {this.state.makeLoan == false && this.state.cart.length > 0 &&
+                <p>
+                    <Button color="primary" onClick={() => { this.setState({makeLoan: true}) }}>Loan Items</Button>
+                </p>}
+
+                {this.state.makeLoan == true &&
+                <p>
+                    Please confirm to make a loan. <br/>
+                    <Button color="primary" onClick={() => { this.loanCart() }}>Confirm</Button>
+                </p>}
             </div>
         );
 

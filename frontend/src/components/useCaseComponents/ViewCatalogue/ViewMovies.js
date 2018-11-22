@@ -87,18 +87,10 @@ export default class ViewMovies extends Component {
                         {this.state.movies.map((movie, i) =>
                             <TableRow key={i}>
                                 <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="title"
-                                        margin="dense"
-                                        defaultValue={movie.title}
-                                        onChange={this.handleChange} />) : (movie.title)}
+                                    {movie.title}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="director"
-                                        margin="dense"
-                                        defaultValue={movie.director}
-                                        onChange={this.handleChange} />) : (movie.director)}
+                                    {movie.director}
                                 </TableCell>
                                 <TableCell>
                                     {movie.eidr}

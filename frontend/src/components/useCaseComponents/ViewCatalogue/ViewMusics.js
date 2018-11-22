@@ -92,39 +92,19 @@ export default class ViewMusics extends Component {
                         {this.state.musics.map((music, i) =>
                             <TableRow key={i}>
                                 <TableCell>
-                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
-                                        name="title"
-                                        margin="dense"
-                                        defaultValue={music.title}
-                                        onChange={this.handleChange} />) : (music.title)}
+                                    {music.title}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
-                                        name="type"
-                                        margin="dense"
-                                        defaultValue={music.type}
-                                        onChange={this.handleChange} />) : (music.artist)}
+                                    {music.type}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
-                                        name="artist"
-                                        margin="dense"
-                                        defaultValue={music.artist}
-                                        onChange={this.handleChange} />) : (music.artist)}
+                                    {music.artist}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
-                                        name="label"
-                                        margin="dense"
-                                        defaultValue={music.label}
-                                        onChange={this.handleChange} />) : (music.label)}
+                                    {music.label}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
-                                        name="releaseDate"
-                                        margin="dense"
-                                        defaultValue={music.releaseDate}
-                                        onChange={this.handleChange} />) : (music.releaseDate)}
+                                    {music.releaseDate}
                                 </TableCell>
                                 <TableCell>
                                     {music.asin}
