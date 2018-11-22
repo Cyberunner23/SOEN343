@@ -121,7 +121,7 @@ export default class ViewMagazines extends Component {
                                 {this.state.is_admin === 0 &&
                                 <TableCell>
                                     <Button color="primary" onClick={() => { this.detailedMagazine(magazine, true) }}>View Details</Button>
-                                    <Button variant="contained" color="secondary" onClick={() => { this.addMagazineToCart(magazine.isbn13) }} disabled>Add to Cart</Button>
+                                    <Button variant="contained" color="secondary" onClick={() => { this.addMagazineToCart(magazine.isbn13) }}>Add to Cart</Button>
                                 </TableCell>}
                             </TableRow>
                         )}
@@ -210,7 +210,7 @@ export default class ViewMagazines extends Component {
                     {this.state.is_admin === 0 &&
                     <p>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceMagazine(this.state.magazineItem, false) }}>Previous</Button>
-                        <Button variant="contained" color="secondary" onClick={() => { this.addMagazineToCart(this.state.magazineItem.isbn13) }} disabled>Add to Cart</Button>
+                        <Button variant="contained" color="secondary" onClick={() => { this.addMagazineToCart(this.state.magazineItem.isbn13) }}>Add to Cart</Button>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceMagazine(this.state.magazineItem, true) }}>Next</Button>
                     </p>}
                     {this.state.is_admin === 1 &&
@@ -326,24 +326,6 @@ export default class ViewMagazines extends Component {
         })
     }
 
-    async addMagazineToCart(isbn) {
-        return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ isbn13: isbn, authToken: this.state.authToken})
-            }).then((res => {
-                if (res.status === 200) {
-                    console.log("deleted magazine");
-                    this.setState({ modifyMagazine: false, magazineModified: true, magazineModifiedMessage: 'Magazine removed successfully' })
-                } else {
-                    console.log(res)
-                    this.setState({ magazineModified: true, magazineModifiedMessage: 'Magazine could not be removed' })
-                }
-            })).then(() => { this.componentDidMount(); });
-        })
-    }
-
     async modifyMagazine(props) {
         let title = props.title;
         let publisher = props.publisher;
@@ -381,8 +363,8 @@ export default class ViewMagazines extends Component {
 
     async sequenceMagazine(magazine, bool){
         var index =  this.state.magazines.indexOf(magazine);
-        if(bool) index = ((this.state.magazines.length - 1) == index ? index : ++index);
-        else index = (index == 0 ? 0 : --index);
+        if(bool) index = ((this.state.magazines.length - 1) === index ? index : ++index);
+        else index = (index === 0 ? 0 : --index);
         this.setState({
             magazineItem: this.state.magazines[index]
         });

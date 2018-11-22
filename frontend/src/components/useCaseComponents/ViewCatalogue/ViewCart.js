@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
@@ -83,12 +82,12 @@ export default class ViewCart extends Component {
                         )}
                     </TableBody>
                 </Table>
-                {this.state.makeLoan == false && this.state.cart.length > 0 &&
+                {this.state.makeLoan === false && this.state.cart.length > 0 &&
                 <p>
                     <Button color="primary" onClick={() => { this.setState({makeLoan: true}) }}>Loan Items</Button>
                 </p>}
 
-                {this.state.makeLoan == true &&
+                {this.state.makeLoan === true &&
                 <p>
                     Please confirm to make a loan. <br/>
                     <Button color="primary" onClick={() => { this.loanCart() }}>Confirm</Button>

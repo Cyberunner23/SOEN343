@@ -141,7 +141,7 @@ export default class ViewMusics extends Component {
                             {this.state.is_admin === 0 &&
                             <TableCell>
                                 <Button color="primary" onClick={() => { this.detailedMusic(music, true) }}>View Details</Button>
-                                <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(music.asin) }} disabled>Add to Cart</Button>
+                                <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(music.asin) }}>Add to Cart</Button>
                             </TableCell>}
                         </TableRow>
                     )}
@@ -212,7 +212,7 @@ export default class ViewMusics extends Component {
                 {this.state.is_admin === 0 &&
                 <p>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMusic(this.state.musicItem, false) }}>Previous</Button>
-                    <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(this.state.musicItem.asin) }} disabled>Add to Cart</Button>
+                    <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(this.state.musicItem.asin) }}>Add to Cart</Button>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMusic(this.state.musicItem, true) }}>Next</Button>
                 </p>}
                 {this.state.is_admin === 1 &&
@@ -334,24 +334,6 @@ export default class ViewMusics extends Component {
         })
     }
 
-    async addMusicToCart(asin) {
-        return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ asin: asin, authToken: this.state.authToken})
-            }).then((res => {
-                if (res.status === 200) {
-                    console.log("deleted music");
-                    this.setState({ modifyMusic: false, musicModified: true, musicModifiedMessage: 'Music removed successfully' })
-                } else {
-                    console.log(res)
-                    this.setState({ musicModified: true, musicModifiedMessage: 'Music could not be removed' })
-                }
-            })).then(() => { this.componentDidMount(); });
-        })
-    }
-
     async modifyMusic(props) {
         let title = props.title;
         let type = props.type;
@@ -389,8 +371,8 @@ export default class ViewMusics extends Component {
 
     async sequenceMusic(music, bool){
         var index =  this.state.musics.indexOf(music);
-        if(bool) index = ((this.state.musics.length - 1) == index ? index : ++index);
-        else index = (index == 0 ? 0 : --index);
+        if(bool) index = ((this.state.musics.length - 1) === index ? index : ++index);
+        else index = (index === 0 ? 0 : --index);
         this.setState({
             musicItem: this.state.musics[index]
         });

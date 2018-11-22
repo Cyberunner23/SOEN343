@@ -125,7 +125,7 @@ export default class ViewBooks extends Component {
                                 {this.state.is_admin === 0 &&
                                 <TableCell>
                                     <Button color="primary" onClick={() => { this.detailedBook(book, true) }}>View Details</Button>
-                                    <Button variant="contained" color="secondary" onClick={() => { this.addBookToCart(book.isbn13) }} disabled>Add to Cart</Button>
+                                    <Button variant="contained" color="secondary" onClick={() => { this.addBookToCart(book.isbn13) }}>Add to Cart</Button>
                                 </TableCell>}
                             </TableRow>
                         )}
@@ -214,7 +214,7 @@ export default class ViewBooks extends Component {
                     {this.state.is_admin === 0 &&
                     <p>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceBook(this.state.bookItem, false) }}>Previous</Button>
-                        <Button variant="contained" color="secondary" onClick={() => { this.addBookToCart(this.state.bookItem.isbn13) }} disabled>Add to Cart</Button>
+                        <Button variant="contained" color="secondary" onClick={() => { this.addBookToCart(this.state.bookItem.isbn13) }}>Add to Cart</Button>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceBook(this.state.bookItem, true) }}>Next</Button>
                     </p>}
                     {this.state.is_admin === 1 &&
@@ -375,8 +375,8 @@ export default class ViewBooks extends Component {
 
     async sequenceBook(book, bool){
         var index =  this.state.books.indexOf(book);
-        if(bool) index = ((this.state.books.length - 1) == index ? index : ++index);
-        else index = (index == 0 ? 0 : --index);
+        if(bool) index = ((this.state.books.length - 1) === index ? index : ++index);
+        else index = (index === 0 ? 0 : --index);
         this.setState({
             bookItem: this.state.books[index]
         });

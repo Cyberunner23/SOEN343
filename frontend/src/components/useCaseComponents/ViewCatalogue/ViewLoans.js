@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
 import TableHead from '@material-ui/core/TableHead';
@@ -31,10 +30,22 @@ export default class ViewCart extends Component {
 
     componentDidMount() {
         //Change to getLoans
-        fetch('/api/catalogue/getBooks') 
+        fetch('/api/transaction/getTransactions', {
+            method: 'POST',
+            headers: {'Content-type': 'application/json'},
+            body: JSON.stringify({authToken: this.state.app.state.currentUser.authToken,
+                                  filters: {
+                                      userId: this.state.app.state.currentUser.authToken,
+                                      transactionType: 0,
+                                      isReturned: 0
+                                  }})
+        }) 
             .then(res => {
                 res.json().then(
-                    loans => this.setState({ loans: loans })
+                    loans => {
+                        console.log('loans: ' + JSON.stringify(loans));
+                        this.setState({ loans: loans })
+                    }
                 )
             });
     }
@@ -54,13 +65,25 @@ export default class ViewCart extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                                <TableSortLabel>TransactionId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('author')} direction={'desc'}>Type</TableSortLabel>
+                                <TableSortLabel>userId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('id')} direction={'desc'}>id</TableSortLabel>
+                                <TableSortLabel>TransactionType</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel>TransactionTime</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel>isReturned</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel>mediaId</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel>mediaType</TableSortLabel>
                             </TableCell>
                             <TableCell>
                             </TableCell>
@@ -70,29 +93,39 @@ export default class ViewCart extends Component {
                         {this.state.loans.map((item, i) =>
                             <TableRow key={i}>
                                 <TableCell>
-                                    {(item.title)}
+                                    {item.transactionId}
                                 </TableCell>
                                 <TableCell>
-                                    {(item.type)}
+                                    {item.userId}
                                 </TableCell>
                                 <TableCell>
-                                    {item.id}
+                                    {item.transactionType}
                                 </TableCell>
                                 <TableCell>
-                                {this.state.modifyLoan == true &&
+                                    {item.transactionTime}
+                                </TableCell>
+                                <TableCell>
+                                    {item.isReturned}
+                                </TableCell>
+                                <TableCell>
+                                    {item.mediaId}
+                                </TableCell>
+                                <TableCell>
+                                    {item.mediaType}
+                                </TableCell>
+                                {this.state.modifyLoan === true &&
                                     <Checkbox color="default" checked={this.state.loanedItemstoReturn.includes(item)} value={item.id} onChange={this.itemToReturn(item)} />
                                 }
-                                </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
-                {this.state.modifyLoan == false &&
+                {this.state.modifyLoan === false &&
                 <p>
                     <Button color="primary" onClick={() => { this.setState({modifyLoan: true}) }}>Return Items</Button>
                 </p>}
                 
-                {this.state.modifyLoan == true &&
+                {this.state.modifyLoan === true &&
                 <p>
                     <Button color="primary" onClick={() => { this.returnLoan() }}>Confirm</Button>
                 </p>}

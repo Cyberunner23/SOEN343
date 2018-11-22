@@ -34,17 +34,12 @@ class TransactionController {
         identifyUser(req.body.authToken)
         .then(async user => 
         {
-			//Admins only
-            if (!user.is_admin)
-            {
-                console.log('Only admins can get transactions');
-                handleException(res, Exceptions.Unauthorized);
-                return;
-            }
+            console.log('filters: ' + JSON.stringify(req.body.filters));
 			await this.mapper.get(req.body.filters)
 			.then(records => {
 				res.status(200);
-				res.json(records);
+                res.json(records);
+                console.log('returning: ' + JSON.stringify(records));
 			})
 			.catch(ex => {
 				handleException(res, ex);
@@ -165,7 +160,7 @@ class TransactionController {
 
             // Update the borrow transaction if it exists
             updatedTransactions;
-            await transactionMapper.update({userId: user.id, transactionId: req.body.transactionId}, {isReturned: 1})
+            await transactionMapper.modify({userId: user.id, transactionId: req.body.transactionId}, {isReturned: 1})
             .then(result => {
                 updatedTransactions = result;
             })

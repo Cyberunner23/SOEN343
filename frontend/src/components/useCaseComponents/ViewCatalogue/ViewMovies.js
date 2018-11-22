@@ -127,7 +127,7 @@ export default class ViewMovies extends Component {
                             {this.state.is_admin === 0 &&
                             <TableCell>
                                 <Button color="primary" onClick={() => { this.detailedMovie(movie, true) }}>View Details</Button>
-                                <Button variant="contained" color="secondary" onClick={() => { this.addMovieToCart(movie.eidr) }} disabled>Add to Cart</Button>
+                                <Button variant="contained" color="secondary" onClick={() => { this.addMovieToCart(movie.eidr) }}>Add to Cart</Button>
                             </TableCell>}
                         </TableRow>
                     )}
@@ -234,7 +234,7 @@ export default class ViewMovies extends Component {
                 {this.state.is_admin === 0 &&
                 <p>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMovie(this.state.movieItem, false) }}>Previous</Button>
-                    <Button variant="contained" color="secondary" onClick={() => { this.addMovieToCart(this.state.movieItem.eidr) }} disabled>Add to Cart</Button>
+                    <Button variant="contained" color="secondary" onClick={() => { this.addMovieToCart(this.state.movieItem.eidr) }}>Add to Cart</Button>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMovie(this.state.movieItem, true) }}>Next</Button>
                 </p>}
                 {this.state.is_admin === 1 &&
@@ -364,24 +364,6 @@ export default class ViewMovies extends Component {
         })
     }
 
-    async addMovieToCart(eidr) {
-        return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ eidr: eidr, authToken: this.state.authToken})
-            }).then((res => {
-                if (res.status === 200) {
-                    console.log("deleted movie");
-                    this.setState({ modifyMovie: false, movieModified: true, movieModifiedMessage: 'Movie removed successfully' })
-                } else {
-                    console.log(res)
-                    this.setState({ movieModified: true, movieModifiedMessage: 'Movie could not be removed' })
-                }
-            })).then(() => { this.componentDidMount(); });
-        })
-    }
-
     async modifyMovie(props) {
         let title = props.title;
         let director = props.director;
@@ -423,8 +405,8 @@ export default class ViewMovies extends Component {
 
     async sequenceMovie(movie, bool){
         var index =  this.state.movies.indexOf(movie);
-        if(bool) index = ((this.state.movies.length - 1) == index ? index : ++index);
-        else index = (index == 0 ? 0 : --index);
+        if(bool) index = ((this.state.movies.length - 1) === index ? index : ++index);
+        else index = (index === 0 ? 0 : --index);
         this.setState({
             movieItem: this.state.movies[index]
         });
