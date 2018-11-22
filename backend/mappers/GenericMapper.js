@@ -181,8 +181,8 @@ exports.GenericMapper = class GenericMapper {
 
         await lock.async.writeLock(async function (error, release) {
 
-            promise = new Promise(async (resolve, reject) => {
-                this.privateGet(filters)
+            promise = new Promise((resolve, reject) => {
+                mapper.privateGet(filters)
                     .then(recordsToModify => {
                         var arrayOfModifiedRecords = [];
                         recordsToModify.forEach(record => {
@@ -207,8 +207,8 @@ exports.GenericMapper = class GenericMapper {
                                     mapper.identityMap.update(record);
                                 }
                                 else if (previousOperation.operationType === OperationType.Delete) {
-                                    mapper.identityMap.add(record);
-                                    mapper.unitOfWork.update(identifierValue);
+                                    console.log('Cannot update a previously deleted record');
+                                    throw Exceptions.InternalServerError;
                                 }
                             }
                         })
