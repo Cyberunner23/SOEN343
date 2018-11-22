@@ -6,6 +6,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
 import TableCell from '@material-ui/core/TableCell';
+import Checkbox from '@material-ui/core/Checkbox';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 
 const sorter = require('../../../helper_classes/Sorter.js').getInstance();
@@ -19,6 +20,7 @@ export default class ViewCart extends Component {
             titleFilter: '', idFilter: '', typeFilter: '',
             app: props.app,
             loans: [],
+            loanedItemstoReturn: [],
             modifyLoan: false,
             loanModified: false,
             desc: false,
@@ -28,7 +30,8 @@ export default class ViewCart extends Component {
     }
 
     componentDidMount() {
-        fetch('/api/catalogue/getLoans')
+        //Change to getLoans
+        fetch('/api/catalogue/getBooks') 
             .then(res => {
                 res.json().then(
                     loans => this.setState({ loans: loans })
@@ -57,7 +60,7 @@ export default class ViewCart extends Component {
                                 <TableSortLabel onClick={() => this.sort('author')} direction={'desc'}>Type</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('id')} direction={'desc'}>ID</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('id')} direction={'desc'}>id</TableSortLabel>
                             </TableCell>
                             <TableCell>
                             </TableCell>
@@ -76,12 +79,23 @@ export default class ViewCart extends Component {
                                     {item.id}
                                 </TableCell>
                                 <TableCell>
-                                    <Button color="secondary" onClick={() => { this.returnLoan(item.id) }} disabled>Return</Button>
+                                {this.state.modifyLoan == true &&
+                                    <Checkbox color="default" checked={this.state.loanedItemstoReturn.includes(item)} value={item.id} onChange={this.itemToReturn(item)} />
+                                }
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                 </Table>
+                {this.state.modifyLoan == false &&
+                <p>
+                    <Button color="primary" onClick={() => { this.setState({modifyLoan: true}) }}>Return Items</Button>
+                </p>}
+                
+                {this.state.modifyLoan == true &&
+                <p>
+                    <Button color="primary" onClick={() => { this.returnLoan() }}>Confirm</Button>
+                </p>}
             </div>
         );
 
@@ -103,20 +117,32 @@ export default class ViewCart extends Component {
         this.setState({loans: this.state.loans, desc: !this.state.desc});
     }
 
+    itemToReturn = item => event =>  {
+        var toReturn = this.state.loanedItemstoReturn;
+        if(event.target.checked) toReturn.push(item);
+        else {
+            var index = toReturn.indexOf(item);
+            if(typeof index !== 'undefined' && index > -1) toReturn.splice(index, 1);
+        }
+        this.setState({
+            loanedItemstoReturn: toReturn
+        });
+        console.log(this.state.loanedItemstoReturn);
+    }
 
-    async returnLoan(id) {
+    async returnLoan() {
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/returnLoan', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({itemID: id, authToken: this.state.authToken })
+                body: JSON.stringify({returnItems: this.state.loanedItemstoReturn, authToken: this.state.authToken })
             }).then((res => {
                 if (res.status === 200) {
                     console.log("returned item");
                     this.setState({ modifyLoan: false, loanModified: true, loanModifiedMessage: 'Loan return successfully' })
                 } else {
                     console.log(res)
-                    this.setState({ loanModified: true, loanModifiedMessage: 'Loan could not be returned' })
+                    this.setState({ modifyLoan: false, loanModified: true, loanModifiedMessage: 'Loan could not be returned' })
                 }
             })).then(() => { this.componentDidMount(); });
         })

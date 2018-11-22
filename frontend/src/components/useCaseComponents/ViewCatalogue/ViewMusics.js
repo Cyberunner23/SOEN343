@@ -160,7 +160,7 @@ export default class ViewMusics extends Component {
                     defaultValue= {(this.state.musicItem.title)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                    disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
                 <br/>
                 <TextField
                     label="Artist"
@@ -169,7 +169,7 @@ export default class ViewMusics extends Component {
                     defaultValue= {(this.state.musicItem.artist)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                    disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
                 <br/>
                 <TextField
                     label="Type"
@@ -178,7 +178,7 @@ export default class ViewMusics extends Component {
                     defaultValue= {(this.state.musicItem.type)}
                     style={style.type}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                    disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
                 <br/>
                 <TextField
                     label="Label"
@@ -187,7 +187,7 @@ export default class ViewMusics extends Component {
                     defaultValue= {(this.state.musicItem.label)}
                     style={style.page}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                    disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
                 <br/>
                 <TextField
                     label="Release Date"
@@ -196,7 +196,7 @@ export default class ViewMusics extends Component {
                     defaultValue= {(this.state.musicItem.releaseDate)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                    disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
                 <br/>
                 <TextField
                     label="ASIN"
@@ -205,7 +205,7 @@ export default class ViewMusics extends Component {
                     defaultValue= {(this.state.musicItem.asin)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                    disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
                 <br/>
                 {this.state.is_admin === 0 &&
                 <p>
@@ -215,7 +215,7 @@ export default class ViewMusics extends Component {
                 </p>}
                 {this.state.is_admin === 1 &&
                 <p>
-                {(this.state.modifymusic && this.state.asin === this.state.musicItem.asin) ?
+                {(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ?
                     (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
                     (<Button color="primary" onClick={() => { this.modifyMusicState(this.state.musicItem) }}>Edit</Button>)}
                     <Button color="secondary" onClick={() => { this.removemusics(this.state.musicItem.asin) }}>Delete</Button>
@@ -244,6 +244,8 @@ export default class ViewMusics extends Component {
             releaseDate: music.releaseDate,
             asin: music.asin,
             musicModifiedMessage: '',
+            musicItem: music,
+            musicItemBool: true,
             modifyMusic: true
         });
     }

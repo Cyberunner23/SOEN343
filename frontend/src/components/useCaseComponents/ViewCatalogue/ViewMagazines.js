@@ -120,7 +120,7 @@ export default class ViewMagazines extends Component {
                         defaultValue= {(this.state.magazineItem.title)}
                         style={style.textField}
                         onChange={this.handleChange}
-                        disabled={(this.state.modifymagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
                     <br/>
                     <TextField
                         label="Author"
@@ -129,7 +129,7 @@ export default class ViewMagazines extends Component {
                         defaultValue= {(this.state.magazineItem.author)}
                         style={style.textField}
                         onChange={this.handleChange}
-                        disabled={(this.state.modifymagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
                     <br/>
                     <TextField
                         label="Format"
@@ -138,7 +138,7 @@ export default class ViewMagazines extends Component {
                         defaultValue= {(this.state.magazineItem.format)}
                         style={style.format}
                         onChange={this.handleChange}
-                        disabled={(this.state.modifymagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
                     <br/>
                     <TextField
                         label="Pages"
@@ -147,7 +147,7 @@ export default class ViewMagazines extends Component {
                         defaultValue= {(this.state.magazineItem.pages)}
                         style={style.page}
                         onChange={this.handleChange}
-                        disabled={(this.state.modifymagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
                     <br/>
                     <TextField
                         label="Publisher"
@@ -156,7 +156,7 @@ export default class ViewMagazines extends Component {
                         defaultValue= {(this.state.magazineItem.publisher)}
                         style={style.textField}
                         onChange={this.handleChange}
-                        disabled={(this.state.modifymagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
                     <br/>
                     <TextField
                         label="Language"
@@ -165,7 +165,7 @@ export default class ViewMagazines extends Component {
                         defaultValue= {(this.state.magazineItem.language)}
                         style={style.textField}
                         onChange={this.handleChange}
-                        disabled={(this.state.modifymagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
                     <br/>
                     <TextField
                         label="ISBN-10"
@@ -174,7 +174,7 @@ export default class ViewMagazines extends Component {
                         defaultValue= {(this.state.magazineItem.isbn10)}
                         style={style.textField}
                         onChange={this.handleChange}
-                        disabled={(this.state.modifymagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
                     <br/>
                     <TextField
                         label="ISBN-13"
@@ -183,7 +183,7 @@ export default class ViewMagazines extends Component {
                         defaultValue= {(this.state.magazineItem.isbn13)}
                         style={style.textField}
                         onChange={this.handleChange}
-                        disabled={(this.state.modifymagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
                     <br/>
                     {this.state.is_admin === 0 &&
                     <p>
@@ -193,9 +193,9 @@ export default class ViewMagazines extends Component {
                     </p>}
                     {this.state.is_admin === 1 &&
                     <p>
-                    {(this.state.modifymagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ?
+                    {(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ?
                         (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
-                        (<Button color="primary" onClick={() => { this.modifymagazineState(this.state.magazineItem) }}>Edit</Button>)}
+                        (<Button color="primary" onClick={() => { this.modifyMagazineState(this.state.magazineItem) }}>Edit</Button>)}
                         <Button color="secondary" onClick={() => { this.removemagazines(this.state.magazineItem.isbn13) }}>Delete</Button>
                     </p>}
             </div>
@@ -222,6 +222,8 @@ export default class ViewMagazines extends Component {
             isbn10: magazine.isbn10,
             isbn13: magazine.isbn13,
             magazineModifiedMessage: '',
+            magazineItem: magazine,
+            magazineItemBool:true,
             modifyMagazine: true
         })
     }

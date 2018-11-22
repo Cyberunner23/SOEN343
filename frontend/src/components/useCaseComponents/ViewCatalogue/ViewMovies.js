@@ -134,7 +134,7 @@ export default class ViewMovies extends Component {
                     defaultValue= {(this.state.movieItem.title)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
                 <br/>
                 <TextField
                     label="Director"
@@ -143,7 +143,7 @@ export default class ViewMovies extends Component {
                     defaultValue= {(this.state.movieItem.director)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
                 <br/>
                 <TextField
                     label="Producers"
@@ -152,7 +152,7 @@ export default class ViewMovies extends Component {
                     defaultValue= {(this.state.movieItem.producers)}
                     style={style.producers}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
                 <br/>
                 <TextField
                     label="Actors"
@@ -161,7 +161,7 @@ export default class ViewMovies extends Component {
                     defaultValue= {(this.state.movieItem.actors)}
                     style={style.page}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
                 <br/>
                 <TextField
                     label="Language"
@@ -170,7 +170,7 @@ export default class ViewMovies extends Component {
                     defaultValue= {(this.state.movieItem.language)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
                 <br/>
                 <TextField
                     label="Subtitles"
@@ -179,7 +179,7 @@ export default class ViewMovies extends Component {
                     defaultValue= {(this.state.movieItem.subtitles)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
                 <br/>
                 <TextField
                     label="Dubbed"
@@ -188,7 +188,7 @@ export default class ViewMovies extends Component {
                     defaultValue= {(this.state.movieItem.dubbed)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
                 <br/>
                 <TextField
                     label="Release Date"
@@ -197,7 +197,7 @@ export default class ViewMovies extends Component {
                     defaultValue= {(this.state.movieItem.releaseDate)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
                 <br/>
                 <TextField
                     label="Run Time"
@@ -206,7 +206,7 @@ export default class ViewMovies extends Component {
                     defaultValue= {(this.state.movieItem.runTime)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
                 <br/>
                 <TextField
                     label="EIDR"
@@ -215,7 +215,7 @@ export default class ViewMovies extends Component {
                     defaultValue= {(this.state.movieItem.eidr)}
                     style={style.textField}
                     onChange={this.handleChange}
-                    disabled={(this.state.modifymovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
                 <br/>
                 {this.state.is_admin === 0 &&
                 <p>
@@ -225,7 +225,7 @@ export default class ViewMovies extends Component {
                 </p>}
                 {this.state.is_admin === 1 &&
                 <p>
-                {(this.state.modifymovie && this.state.eidr === this.state.movieItem.eidr) ?
+                {(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ?
                     (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
                     (<Button color="primary" onClick={() => { this.modifyMovieState(this.state.movieItem) }}>Edit</Button>)}
                     <Button color="secondary" onClick={() => { this.removemovies(this.state.movieItem.eidr) }}>Delete</Button>
@@ -258,6 +258,8 @@ export default class ViewMovies extends Component {
             runTime: movie.runTime,
             eidr: movie.eidr,
             movieModifiedMessage: '',
+            movieItem: movie,
+            movieItemBool: true,
             modifyMovie: true
         });
     }

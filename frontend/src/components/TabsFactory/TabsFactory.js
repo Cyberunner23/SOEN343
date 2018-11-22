@@ -109,6 +109,8 @@ class TabsFactory {
                     <Tabs>
                         <TabList>
                             <Tab>Browse Catalogue</Tab>
+                            <Tab>My Cart</Tab>
+                            <Tab>My Loans</Tab>
                             <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
@@ -118,8 +120,6 @@ class TabsFactory {
                                     <Tab>Magazines</Tab>
                                     <Tab>Movies</Tab>
                                     <Tab>Music</Tab>
-                                    <Tab>My Cart</Tab>
-                                    <Tab>My Loans</Tab>
                                 </TabList>
                                 <TabPanel>
                                     <ViewBooks app={app} is_admin={0} />
@@ -133,13 +133,13 @@ class TabsFactory {
                                 <TabPanel>
                                     <ViewMusics app={app} is_admin={0} />
                                 </TabPanel>
-                                <TabPanel>
-                                    <ViewCart app={app} is_admin={0} />
-                                </TabPanel>
-                                <TabPanel>
-                                    <ViewLoans app={app} is_admin={0} />
-                                </TabPanel>
                             </Tabs>
+                        </TabPanel>
+                        <TabPanel>
+                            <ViewCart app={app} is_admin={0} />
+                        </TabPanel>
+                        <TabPanel>
+                            <ViewLoans app={app} is_admin={0} />
                         </TabPanel>
                         <TabPanel>
                             <Logout app={app} />
