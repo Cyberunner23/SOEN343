@@ -54,6 +54,9 @@ exports.GenericMapper = class GenericMapper {
     }
 
     async privateGet(filters) {
+        if (filters === undefined) {
+            filters = {};
+        }
         var mapper = this;
         return new Promise(async (resolve, reject) => {
             var identities = mapper.identityMap.get(record => {

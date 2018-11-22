@@ -21,9 +21,12 @@ export default class ViewMovies extends Component {
             releaseDateFilter: '', runTimeFilter: '', eidrFilter: '', numAvailableFilter: '', numTotalFilter: '',
             app: props.app,
             movies: [],
+            movieItemBool: false,
+            movieItem: [],
             modifyMovie: false,
             movieModified: false,
             desc: false,
+            lastSortField: '',
             authToken: props.app.state.currentUser.authToken,
             is_admin: props.is_admin
         };
@@ -51,7 +54,7 @@ export default class ViewMovies extends Component {
         var content;
         content = (
             <div>
-                <div style={style.format}>
+                <div style={style.producers}>
                     <Typography>Filter By...</Typography>
                     <TextField style={style.field} label="title" name="titleFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="director" name="directorFilter" margin="dense" onChange={this.handleChange} />
@@ -72,34 +75,13 @@ export default class ViewMovies extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('title')}>Title</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('director')} direction={'desc'}>Director</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('director')}>Director</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('producers')} direction={'desc'}>Producers</TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel onClick={() => this.sort('actors')} direction={'desc'}>Actors</TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel onClick={() => this.sort('language')} direction={'desc'}>Language</TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel onClick={() => this.sort('subtitles')} direction={'desc'}>Subtitles</TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel onClick={() => this.sort('dubbed')} direction={'desc'}>Dubbed</TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel onClick={() => this.sort('releaseDate')} direction={'desc'}>Release Date</TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel onClick={() => this.sort('runTime')} direction={'desc'}>Run Time</TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel onClick={() => this.sort('eidr')} direction={'desc'}>EIDR</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('eidr')}>EIDR</TableSortLabel>
                             </TableCell>
                             <TableCell>
                                 <TableSortLabel onClick={() => this.sort('numAvailable')} direction={'desc'}>Copies Available</TableSortLabel>
@@ -113,67 +95,10 @@ export default class ViewMovies extends Component {
                         {this.state.movies.map((movie, i) =>
                             <TableRow key={i}>
                                 <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="title"
-                                        margin="dense"
-                                        defaultValue={movie.title}
-                                        onChange={this.handleChange} />) : (movie.title)}
+                                    {movie.title}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="director"
-                                        margin="dense"
-                                        defaultValue={movie.director}
-                                        onChange={this.handleChange} />) : (movie.director)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="producers"
-                                        margin="dense"
-                                        defaultValue={movie.producers}
-                                        onChange={this.handleChange} />) : (movie.producers)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="actors"
-                                        margin="dense"
-                                        defaultValue={movie.actors}
-                                        onChange={this.handleChange} />) : (movie.actors)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="language"
-                                        margin="dense"
-                                        defaultValue={movie.language}
-                                        onChange={this.handleChange} />) : (movie.language)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="subtitles"
-                                        margin="dense"
-                                        defaultValue={movie.subtitles}
-                                        onChange={this.handleChange} />) : (movie.subtitles)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="dubbed"
-                                        margin="dense"
-                                        defaultValue={movie.dubbed}
-                                        onChange={this.handleChange} />) : (movie.dubbed)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="releaseDate"
-                                        margin="dense"
-                                        defaultValue={movie.releaseDate}
-                                        onChange={this.handleChange} />) : (movie.releaseDate)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="runTime"
-                                        margin="dense"
-                                        defaultValue={movie.runTime}
-                                        onChange={this.handleChange} />) : (movie.runTime)}
+                                    {movie.director}
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
@@ -194,26 +119,138 @@ export default class ViewMovies extends Component {
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
                                 <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ?
-                                        (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
-                                        (<Button color="primary" onClick={() => { this.modifyMovieState(movie) }}>Edit</Button>)}
-                                    <Button color="secondary" onClick={() => { this.removeMovies(movie.eidr) }}> Delete</Button>
-                                </TableCell>}
-                                {this.state.is_admin === 0 &&
-                                <TableCell>
-                                    <Button variant="contained" color="secondary" disabled>Add to Cart</Button>
-                                </TableCell>}
-                            </TableRow>
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
-        );
+                                {(this.state.modifyMovie && this.state.eidr === movie.eidr) ?
+                                (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
+                                (<Button color="primary" onClick={() => { this.modifyMovieState(movie) }}>Edit</Button>)}
+                                <Button color="secondary" onClick={() => { this.removeMovies(movie.eidr) }}>Delete</Button>
+                            </TableCell>}
+                            {this.state.is_admin === 0 &&
+                            <TableCell>
+                                <Button color="primary" onClick={() => { this.detailedMovie(movie, true) }}>View Details</Button>
+                                <Button variant="contained" color="secondary" onClick={() => { this.addMovieToCart(movie.eidr) }} disabled>Add to Cart</Button>
+                            </TableCell>}
+                        </TableRow>
+                    )}
+                </TableBody>
+            </Table>
+        </div>
+    );
+
+    var itemDetails;
+    itemDetails = (
+        <div className="fixed" style={style.body} key={this.state.movieItem.eidr}>
+            <Button color="primary" onClick={() => { this.detailedMovie([], false) }}>Back to movies View</Button>
+            <br/>
+            <TextField
+                    label="Title"
+                    name="title"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.title)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="Director"
+                    name="director"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.director)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="Producers"
+                    name="producers"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.producers)}
+                    style={style.producers}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="Actors"
+                    name="actors"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.actors)}
+                    style={style.page}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="Language"
+                    name="language"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.language)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="Subtitles"
+                    name="subtitles"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.subtitles)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="Dubbed"
+                    name="dubbed"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.dubbed)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="Release Date"
+                    name="releaseDate"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.releaseDate)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="Run Time"
+                    name="runTime"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.runTime)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="EIDR"
+                    name="eidr"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.eidr)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                {this.state.is_admin === 0 &&
+                <p>
+                    <Button variant="contained" color="secondary" onClick={() => { this.sequenceMovie(this.state.movieItem, false) }}>Previous</Button>
+                    <Button variant="contained" color="secondary" onClick={() => { this.addMovieToCart(this.state.movieItem.eidr) }} disabled>Add to Cart</Button>
+                    <Button variant="contained" color="secondary" onClick={() => { this.sequenceMovie(this.state.movieItem, true) }}>Next</Button>
+                </p>}
+                {this.state.is_admin === 1 &&
+                <p>
+                {(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ?
+                    (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
+                    (<Button color="primary" onClick={() => { this.modifyMovieState(this.state.movieItem) }}>Edit</Button>)}
+                    <Button color="secondary" onClick={() => { this.removemovies(this.state.movieItem.eidr) }}>Delete</Button>
+                </p>}
+        </div>
+    );
 
         return (
             <div className='ViewMoviesComponent UseCaseComponent'>
                 <h2>Movies</h2>
-                {content}
+                {this.state.movieItemBool ? itemDetails : content}
             </div>
         )
     }
@@ -236,18 +273,29 @@ export default class ViewMovies extends Component {
             eidr: movie.eidr,
             numAvailable: movie.numAvailable,
             movieModifiedMessage: '',
+            movieItem: movie,
+            movieItemBool: true,
             modifyMovie: true
         });
     }
 
     sort(field) {
-        if (field === ('runtime' || 'eidr')) {
-            sorter.intSort(this.state.movies, field, this.state.desc);
+        let currentState = this.state.desc;
+
+        if(this.state.lastSortField !== field) {
+            currentState = false;
         }
         else {
-            sorter.stringSort(this.state.movies, field, this.state.desc);
+            currentState = !currentState;
         }
-        this.setState({movies: this.state.movies, desc: !this.state.desc});
+
+        if (field === ('eidr')) {
+            sorter.intSort(this.state.movies, field, currentState);
+        }
+        else {
+            sorter.stringSort(this.state.movies, field, currentState);
+        }
+        this.setState({movies: this.state.movies, desc: currentState, lastSortField: field});
     }
 
     filter() {
@@ -316,6 +364,24 @@ export default class ViewMovies extends Component {
         })
     }
 
+    async addMovieToCart(eidr) {
+        return new Promise((resolve, reject) => {
+            fetch('/api/catalogue/addToCart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ eidr: eidr, authToken: this.state.authToken})
+            }).then((res => {
+                if (res.status === 200) {
+                    console.log("deleted movie");
+                    this.setState({ modifyMovie: false, movieModified: true, movieModifiedMessage: 'Movie removed successfully' })
+                } else {
+                    console.log(res)
+                    this.setState({ movieModified: true, movieModifiedMessage: 'Movie could not be removed' })
+                }
+            })).then(() => { this.componentDidMount(); });
+        })
+    }
+
     async modifyMovie(props) {
         let title = props.title;
         let director = props.director;
@@ -347,10 +413,47 @@ export default class ViewMovies extends Component {
             });
         })
     }
+    
+    detailedMovie(movie, bool) {
+        this.setState({
+            movieItem: movie,
+            movieItemBool: bool
+        });
+    }
+
+    async sequenceMovie(movie, bool){
+        var index =  this.state.movies.indexOf(movie);
+        if(bool) index = ((this.state.movies.length - 1) == index ? index : ++index);
+        else index = (index == 0 ? 0 : --index);
+        this.setState({
+            movieItem: this.state.movies[index]
+        });
+    }
+
+    async addMovieToCart(props){
+        let eidr = props.eidr;
+
+        return new Promise((resolve, reject) => {
+            fetch('/api/catalogue/addToCart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({eidr , authToken: this.state.authToken})
+            }).then((response) => {
+                if (response.status === 200) {
+                    response.json().then((movie) => {
+                        resolve(movie);
+                    })
+                }
+                else {
+                    resolve(null);
+                }
+            });
+        })
+    }
 }
 
 const style = {
-    format: {
+    producers: {
         marginTop: 25,
         marginBottom: 25
     },
