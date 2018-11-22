@@ -32,7 +32,7 @@ CREATE TABLE `transactions` (
   `transactionId` int(11) NOT NULL,
   `userId` int(11) NOT NULL,
   `transactionType` tinyint(1) NOT NULL, 
-  `transactionTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `transactionTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `isReturned` tinyint(1) NOT NULL,
   `mediaId` varchar(17) NOT NULL,
   `mediaType` varchar(13) NOT NULL
