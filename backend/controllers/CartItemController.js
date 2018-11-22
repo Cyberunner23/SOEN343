@@ -6,6 +6,7 @@ const Exceptions = require('../Exceptions').Exceptions;
 const cartItemMapper = require('../mappers/CartItemMapper').getInstance();
 const CartItem = require('../business_objects/CartItem').CartItem;
 const transactionMapper = require('../mappers/TransactionMapper').TransactionMapper;
+const maxBorrows = require('../controllers/TransactionController').maxBorrows;
 
 class CartItemController {
     constructor() {
@@ -57,31 +58,7 @@ class CartItemController {
                 return;
             }
 			
-			// This defines the maximum borrow limit, finds the current cart item count,
-			//	the current amount of borrowed items, and then figures out if the user can borrow more
-			var maxBorrow = 5;
-			
-			var cartLen;
-			var filter = {userId: user.id};
-			await this.mapper.get(filter)
-			.then(values => {
-				cartLen = values.length;
-			})
-			.catch(ex => {
-				handleException(res, ex);
-			})
-			
-			var filter2 = {userId: user.id, isReturned: 0};
-			var transactLen;
-			await this.transactionMapper.get(filter2)
-			.then(values => {
-				transactLen = values.length;
-			})
-			.catch(ex => {
-				handleException(res, ex);
-			})
-			
-			var borrowLimit = maxBorrow - cartLen - transactLen;
+			var borrowLimit = await getNumBorrowsRemaining(user);
 			
 			if (borrowLimit > 0){
                 var props = {userId: user.id, mediaType: req.body.mediaType, mediaId: req.body.mediaId};
@@ -153,3 +130,28 @@ handleException = function(res, exception) {
     }
     res.json({err: message});
 }
+
+getNumBorrowsRemaining = async user => {
+    var cartLen;
+    var filter = {userId: user.id};
+    await cartItemMapper.get(filter)
+    .then(values => {
+        cartLen = values.length;
+    })
+    .catch(ex => {
+        handleException(res, ex);
+    })
+    
+    var filter2 = {userId: user.id, isReturned: 0};
+    var transactLen;
+    await transactionMapper.get(filter2)
+    .then(values => {
+        transactLen = values.length;
+    })
+    .catch(ex => {
+        handleException(res, ex);
+    })
+
+    return maxBorrows - cartLen - transactLen;
+}
+exports.getNumBorrowsRemaining = getNumBorrowsRemaining;
