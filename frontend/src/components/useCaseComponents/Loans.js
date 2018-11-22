@@ -27,15 +27,17 @@ export default class Loans extends Component {
     }
     
     componentDidMount() {
-        fetch('/api/catalogue/getBooks', { // TODO : fill in api fetch
+        fetch('/api/transaction/getTransactions', {
             method: 'POST',
             headers: {'Content-type': 'application/json'},
-            body: JSON.stringify({authToken: this.state.app.state.currentUser.authToken})
+            body: JSON.stringify({authToken: this.state.app.state.currentUser.authToken}),
         })
         .then(res => {
             if(res.status === 200) {
                 res.json().then(
-                    items => this.setState({items: items})
+                    items => {
+                        this.setState({items: items})
+                    }
                 )
             }
             else {
@@ -62,39 +64,51 @@ export default class Loans extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('user')} direction={'desc'}>User</TableSortLabel>
+                                <TableSortLabel >TransactionId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                                <TableSortLabel >UserId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('type')} direction={'desc'}>Type</TableSortLabel>
+                                <TableSortLabel >TransactionType</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('dateLoaned')} direction={'desc'}>Date Loaned</TableSortLabel>
+                                <TableSortLabel >TransactionTime</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('dateDue')} direction={'desc'}>Date Due</TableSortLabel>
+                                <TableSortLabel >IsReturned</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel >MediaId</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel >MediaType</TableSortLabel>
                             </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {this.state.items.map((item, i) =>
-                            <TableRow key={i}>
+                                <TableRow key={i}>
                                 <TableCell>
-                                    {item.user}
+                                    {item.transactionId}
                                 </TableCell>
                                 <TableCell>
-                                    {item.title}
+                                    {item.userId}
                                 </TableCell>
                                 <TableCell>
-                                    {item.type}
+                                    {item.transactionType}
                                 </TableCell>
                                 <TableCell>
-                                    {item.dateLoaned}
+                                    {item.transactionTime}
                                 </TableCell>
                                 <TableCell>
-                                    {item.dateDue}
+                                    {item.isReturned}
+                                </TableCell>
+                                <TableCell>
+                                    {item.mediaId}
+                                </TableCell>
+                                <TableCell>
+                                    {item.mediaType}
                                 </TableCell>
                             </TableRow>
                             )}
@@ -126,7 +140,7 @@ export default class Loans extends Component {
             return encodeURIComponent(k) + '=' + encodeURIComponent(jsonObject[k])
         }).join('&');
 
-        fetch('/api/catalogue/getBooks?' + url, { // TODO: update api fetch
+        fetch('/api/transaction/getTransactions?' + url, {
             method: 'GET'
         }).then(res => {
             res.json().then(
