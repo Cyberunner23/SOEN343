@@ -3,7 +3,7 @@ const GenericIdentityMap = require('./GenericIdentityMap').GenericIdentityMap;
 class CartItemIdentityMap extends GenericIdentityMap {
     constructor () {
         super();
-        this.identifier = 'id';
+        this.identifier = 'cartItemId';
     }
 }
 

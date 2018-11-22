@@ -16,9 +16,9 @@ export default class ViewMovies extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: '', director: '', producers: '', actors: '', language: '', subtitles: '', dubbed: '', releaseDate: '', runTime: '', eidr: '',
+            title: '', director: '', producers: '', actors: '', language: '', subtitles: '', dubbed: '', releaseDate: '', runTime: '', eidr: '', numAvailable: '', numTotal: '',
             titleFilter: '', directorFilter: '', producersFilter: '', actorsFilter: '', languageFilter: '', subtitlesFilter: '', dubbedFilter: '',
-            releaseDateFilter: '', runTimeFilter: '', eidrFilter: '',
+            releaseDateFilter: '', runTimeFilter: '', eidrFilter: '', numAvailableFilter: '', numTotalFilter: '',
             app: props.app,
             movies: [],
             modifyMovie: false,
@@ -63,6 +63,8 @@ export default class ViewMovies extends Component {
                     <TextField style={style.field} label="release date" name="releaseDateFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="run time" name="runTimeFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="EIDR" name="eidrFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="numAvailable" name="numAvailableFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="numTotal" name="numTotalFilter" margin="dense" onChange={this.handleChange} /><br/>
                     <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
                 </div>
                 {movieModifiedMessage}
@@ -98,6 +100,12 @@ export default class ViewMovies extends Component {
                             </TableCell>
                             <TableCell>
                                 <TableSortLabel onClick={() => this.sort('eidr')} direction={'desc'}>EIDR</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('numAvailable')} direction={'desc'}>Copies Available</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('numTotal')} direction={'desc'}>Total Available</TableSortLabel>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -168,6 +176,20 @@ export default class ViewMovies extends Component {
                                         onChange={this.handleChange} />) : (movie.runTime)}
                                 </TableCell>
                                 <TableCell>
+                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
+                                        name="numAvailable"
+                                        margin="dense"
+                                        defaultValue={movie.numAvailable}
+                                        onChange={this.handleChange} />) : (movie.numAvailable)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyBook && this.state.eidr === movie.eidr) ? (<TextField
+                                        name="numTotal"
+                                        margin="dense"
+                                        defaultValue={movie.numTotal}
+                                        onChange={this.handleChange} />) : (movie.numTotal)}
+                                </TableCell>
+                                <TableCell>
                                     {movie.eidr}
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
@@ -212,6 +234,7 @@ export default class ViewMovies extends Component {
             releaseDate: movie.releaseDate,
             runTime: movie.runTime,
             eidr: movie.eidr,
+            numAvailable: movie.numAvailable,
             movieModifiedMessage: '',
             modifyMovie: true
         });
@@ -238,7 +261,9 @@ export default class ViewMovies extends Component {
         let releaseDate = this.state.releaseDateFilter;
         let runTime = this.state.runTimeFilter;
         let eidr = this.state.eidrFilter;
-        let jsonObject = {title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr};
+        let numAvailable = this.state.numAvailableFilter;
+		let numTotal = this.state.numTotalFilter;
+        let jsonObject = {title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr, numAvailable, numTotal};
 
         Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
 
@@ -302,12 +327,14 @@ export default class ViewMovies extends Component {
         let releaseDate = props.releaseDate;
         let runTime = props.runTime;
         let eidr = props.eidr;
+        let numAvailable = props.numAvailable;
+		let numTotal = props.numTotal;
 
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/modifyMovie', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr, authToken: this.state.authToken})
+                body: JSON.stringify({ title, director, producers, actors, language, subtitles, dubbed, releaseDate, runTime, eidr, numAvailable, numTotal, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((movie) => {

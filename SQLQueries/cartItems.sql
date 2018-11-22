@@ -25,18 +25,14 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Table structure for table `musics`
+-- Table structure for table `cartItems`
 --
 
-CREATE TABLE `musics` (
-  `type` varchar(255) NOT NULL,
-  `title` varchar(255) NOT NULL,
-  `artist` varchar(255) NOT NULL,
-  `label` varchar(255) NOT NULL,
-  `releaseDate` varchar(255) NOT NULL,
-  `asin` varchar(10) NOT NULL,
-  `numAvailable` int(11) NOT NULL,
-  `numTotal` int(11) NOT NULL
+CREATE TABLE `cartItems` (
+  `cartItemId` int(11) NOT NULL,
+  `userId` int(11) NOT NULL,
+  `mediaId` varchar(17) NOT NULL,
+  `mediaType` varchar(13) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
@@ -44,10 +40,10 @@ CREATE TABLE `musics` (
 --
 
 --
--- Indexes for table `musics`
+-- Indexes for table `cartItems`
 --
-ALTER TABLE `musics`
-  ADD PRIMARY KEY (`asin`);
+ALTER TABLE `cartItems`
+  ADD PRIMARY KEY (`cartItemId`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

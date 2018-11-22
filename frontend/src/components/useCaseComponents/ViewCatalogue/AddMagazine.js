@@ -12,6 +12,8 @@ export default class AddMagazine extends Component {
             language: '',
             isbn10: '',
             isbn13: '',
+            numAvailable: '',
+			numTotal: '',
             app: props.app,
             magazines: [],
             magazineAdded: false,
@@ -83,6 +85,13 @@ export default class AddMagazine extends Component {
                         style={style.textField}
                         onChange={this.handleChange} />
                     <br/>
+                    <TextField
+                        label="Copies Available"
+                        name="numAvailable"
+                        margin="dense"
+                        style={style.page}
+                        onChange={this.handleChange} />
+                    <br/>
                     <Input type="submit" style={style.label}>
                         Add
                     </Input>
@@ -127,12 +136,14 @@ export default class AddMagazine extends Component {
         let language= props.language;
         let isbn10=props.isbn10;
         let isbn13=props.isbn13;
+        let numAvailable = props.numAvailable;
+		let numTotal= props.numTotal;
 
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/addMagazine', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({title, publisher, date, language, isbn10, isbn13, authToken: this.state.authToken})
+                body: JSON.stringify({title, publisher, date, language, isbn10, isbn13, numAvailable, numTotal, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((magazine) => {
@@ -153,5 +164,9 @@ const style = {
     },
     textField: {
         width: 300
+    },
+    page: {
+        marginLeft: 10,
+        width: 90
     },
 };

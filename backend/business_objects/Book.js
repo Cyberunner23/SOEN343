@@ -8,6 +8,8 @@ class Book {
         this.language = props.language;
         this.isbn10 = props.isbn10;
         this.isbn13 = props.isbn13;
+        this.numAvailable= props.numAvailable;
+		this.numTotal= props.numTotal;
     }
 }
 

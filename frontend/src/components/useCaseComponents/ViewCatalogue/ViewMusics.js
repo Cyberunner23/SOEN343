@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+6import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import Table from '@material-ui/core/Table';
@@ -16,8 +16,8 @@ export default class ViewMusics extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            type: '', title: '', artist: '', label: '', releaseDate: '', asin: '',
-            typeFilter: '', titleFilter: '', artistFilter: '', labelFilter: '', releaseDateFilter: '', asinFilter: '',
+            type: '', title: '', artist: '', label: '', releaseDate: '', asin: '', numAvailable: '', numTotal: '',
+            typeFilter: '', titleFilter: '', artistFilter: '', labelFilter: '', releaseDateFilter: '', asinFilter: '', numAvailableFilter: '', numTotalFilter: '',
             app: props.app,
             musics: [],
             modifyMusic: false,
@@ -58,6 +58,8 @@ export default class ViewMusics extends Component {
                     <TextField style={style.field} label="label" name="labelFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="release date" name="releaseDateFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="ASIN" name="asinFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="numAvailable" name="numAvailableFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="numTotal" name="numTotalFilter" margin="dense" onChange={this.handleChange} /><br/>
                     <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
                 </div>
                 {musicModifiedMessage}
@@ -81,6 +83,12 @@ export default class ViewMusics extends Component {
                             </TableCell>
                             <TableCell>
                                 <TableSortLabel onClick={() => this.sort('asin')} direction={'desc'}>ASIN</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('numAvailable')} direction={'desc'}>Copies Available</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('numTotal')} direction={'desc'}>Total Available</TableSortLabel>
                             </TableCell>
                             <TableCell/>
                         </TableRow>
@@ -124,6 +132,20 @@ export default class ViewMusics extends Component {
                                         onChange={this.handleChange} />) : (music.releaseDate)}
                                 </TableCell>
                                 <TableCell>
+                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
+                                        name="numAvailable"
+                                        margin="dense"
+                                        defaultValue={music.numAvailable}
+                                        onChange={this.handleChange} />) : (music.numAvailable)}
+                                </TableCell>
+                                <TableCell>
+                                    {(this.state.modifyBook && this.state.asin === music.asin) ? (<TextField
+                                        name="numTotal"
+                                        margin="dense"
+                                        defaultValue={music.numTotal}
+                                        onChange={this.handleChange} />) : (music.numTotal)}
+                                </TableCell>
+                                <TableCell>
                                     {music.asin}
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
@@ -164,6 +186,7 @@ export default class ViewMusics extends Component {
             label: music.label,
             releaseDate: music.releaseDate,
             asin: music.asin,
+            numAvailable: music.numAvailable,
             musicModifiedMessage: '',
             modifyMusic: true
         });
@@ -186,7 +209,9 @@ export default class ViewMusics extends Component {
         let label = this.state.labelFilter;
         let releaseDate = this.state.releaseDateFilter;
         let asin = this.state.asinFilter;
-        let jsonObject = {title, type, artist, label, releaseDate, asin};
+        let numAvailable = this.state.numAvailableFilter;
+		let numTotal = this.state.numTotalFilter;
+        let jsonObject = {title, type, artist, label, releaseDate, asin, numAvailable, numTotal};
 
         Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
 
@@ -246,12 +271,14 @@ export default class ViewMusics extends Component {
         let label = props.label;
         let releaseDate = props.releaseDate;
         let asin = props.asin;
+        let numAvailable = props.numAvailable;
+		let numTotal = props.numTotal;
 
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/modifyMusic', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ title, type, artist, label, releaseDate, asin, authToken: this.state.authToken})
+                body: JSON.stringify({ title, type, artist, label, releaseDate, asin, numAvailable, numTotal, authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((music) => {

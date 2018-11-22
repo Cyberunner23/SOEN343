@@ -38,7 +38,9 @@ CREATE TABLE `movies` (
   `dubbed` varchar(255) NOT NULL,
   `releaseDate` varchar(255) NOT NULL,
   `runTime` varchar(255) NOT NULL,
-  `eidr` varchar(34) NOT NULL
+  `eidr` varchar(34) NOT NULL,
+  `numAvailable` int(11) NOT NULL,
+  `numTotal` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
