@@ -100,22 +100,15 @@ export default class ViewMovies extends Component {
                                 <TableCell>
                                     {movie.director}
                                 </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="numAvailable"
-                                        margin="dense"
-                                        defaultValue={movie.numAvailable}
-                                        onChange={this.handleChange} />) : (movie.numAvailable)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyBook && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="numTotal"
-                                        margin="dense"
-                                        defaultValue={movie.numTotal}
-                                        onChange={this.handleChange} />) : (movie.numTotal)}
-                                </TableCell>
+
                                 <TableCell>
                                     {movie.eidr}
+                                </TableCell>
+                                <TableCell>
+                                    {(movie.numAvailable)}
+                                </TableCell>
+                                <TableCell>
+                                    {(movie.numTotal)}
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
                                 <TableCell>
@@ -227,6 +220,24 @@ export default class ViewMovies extends Component {
                     name="eidr"
                     margin="normal"
                     defaultValue= {(this.state.movieItem.eidr)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="Copies Available"
+                    name="numAvailable"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.numAvailable)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="Copies Total"
+                    name="numTotal"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.numTotal)}
                     style={style.textField}
                     onChange={this.handleChange}
                     disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
