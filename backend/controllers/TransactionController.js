@@ -6,7 +6,7 @@ const identifyUser = require('./UserController').identifyUser;
 const Exceptions = require('../Exceptions').Exceptions;
 const transactionMapper = require('../mappers/TransactionMapper').getInstance();
 const Transaction = require('../business_objects/Transaction').Transaction;
-const cartItemMapper = require('../mappers/CartItemMapper').CartItemMapper;
+const cartItemMapper = require('../mappers/CartItemMapper').getInstance();
 const bookMapper = require('../mappers/BookMapper').getInstance();
 const magazineMapper = require('../mappers/MagazineMapper').getInstance();
 const musicMapper = require('../mappers/MusicMapper').getInstance();
@@ -34,17 +34,10 @@ class TransactionController {
         identifyUser(req.body.authToken)
         .then(async user => 
         {
-			//Admins only
-            if (!user.is_admin)
-            {
-                console.log('Only admins can get transactions');
-                handleException(res, Exceptions.Unauthorized);
-                return;
-            }
 			await this.mapper.get(req.body.filters)
 			.then(records => {
 				res.status(200);
-				res.json(records);
+                res.json(records);
 			})
 			.catch(ex => {
 				handleException(res, ex);
@@ -65,7 +58,6 @@ class TransactionController {
             // Users only
             if (user.is_admin)
             {
-                console.log('Only users can borrow catalogue items');
                 handleException(res, Exceptions.Unauthorized);
                 return;
             }
@@ -73,7 +65,6 @@ class TransactionController {
             // Make sure user hasn't reached max borrows
             var numBorrowsRemaining = await getNumBorrowsRemaining(user);
             if (numBorrowsRemaining <= 0) {
-                console.log('Cannot borrow because user has reached borrow limit');
                 handleException(res, Exceptions.BadRequest);
                 return;
             }
@@ -81,58 +72,62 @@ class TransactionController {
             // check for item availability
             var available = 0;
             var catalogueMapper = selectCatalogueMapper(req.body.mediaType);
-			await catalogueMapper.get({identifier: req.body.mediaId})
+
+            var mediaTypeKey = getMediaTypeKey(req.body.mediaType);
+
+            var filter = {};
+            filter[mediaTypeKey] = req.body.mediaId;
+			await catalogueMapper.get(filter)
 			.then(records => {
                 if (records != undefined && records.length != undefined &&  records.length > 0) {
                     available = records[0].numAvailable; // there should be at most 1 record because req.body.mediaId is a unique identifier
                 }
 			})
 			.catch(ex => {
-				handleException(res, ex);
+                handleException(res, ex);
+                return;
             })
             
 			if (available <= 0) {
-                console.log('Cannot borrow because item is out of stock');
                 handleException(res, Exceptions.BadRequest);
                 return;
             }
 
+
             // Given that there are copies that can be loaned,
             // the transaction is done and added to the system
 
-            var props = {userId: user.id, transactionType: 'borrow', isReturned: 0, mediaId: req.body.mediaId, mediaType: req.body.mediaType};
+            var props = {userId: user.id, transactionType: 0, isReturned: 0, mediaId: req.body.mediaId, mediaType: req.body.mediaType};
             await transactionMapper.add(new Transaction(props))
             .then(record => {
                 
             })
             .catch(ex => {
-                console.log('Failed to add borrow transaction');
                 handleException(res, ex);
             })
 
             var updatedRecord;
-            await catalogueMapper.update({identifier: req.body.mediaId}, {numAvailable: available - 1})
+            await catalogueMapper.modify(filter, {numAvailable: available - 1})
             .then(records => {
                 updatedRecord = records[0]; // There should be exactly 1 updated record because transactionId i
             })
             .catch(ex => {
-                console.log('Failed to update catalogue item');
                 handleException(res, ex);
                 return;
             })
 
+
             if (updatedRecord === undefined) {
-                console.log('updatedRecord is undefined');
                 handleException(res, Exceptions.InternalServerError);
                 return;
             }
+
 			
 			//Remove existing cart items after processing borrow requests
-            var filters = {mediaType: req.body.mediaType, mediaId: req.body.mediaType};
-            await this.cartItemMapper.remove(filters)
+            var filters = {userId: user.id, mediaType: req.body.mediaType, mediaId: req.body.mediaId};
+            await cartItemMapper.remove(filters)
             .then(removedRecords => {
                 if (removedRecords.length === 0) {
-                    console.log('No cartItems were removed');
                     handleException(res, Exceptions.BadRequest);
                 }
             })
@@ -158,22 +153,31 @@ class TransactionController {
             // Users only
             if (user.is_admin)
             {
-                console.log('Only clients can return library items');
                 handleException(res, Exceptions.Unauthorized);
                 return;
             }
 
             // Update the borrow transaction if it exists
-            updatedTransactions;
-            await transactionMapper.update({userId: user.id, transactionId: req.body.transactionId}, {isReturned: 1})
-            .then(result => {
-                updatedTransactions = result;
-            })
-            .catch(ex => 
-            {
-                handleException(res, ex);
-                return;
-            });
+            var updatedTransactions;
+
+
+            var transactionId = req.body.returnItems[0].transactionId;
+
+
+            var filters = {userId: user.id, transactionId};
+            try {
+                await transactionMapper.modify(filters, {isReturned: 1})
+                .then(result => {
+                    updatedTransactions = result;
+                })
+                .catch(ex => {
+                    handleException(res, ex);
+                    return;
+                });
+            }
+            catch (e) {
+                console.log('exception: ' + e);
+            }
             if (updatedTransactions === undefined || updatedTransactions.length !== 1) {
                 console.log('updatedTranction is undefined or does not have length 1');
                 handleException(res, Exceptions.BadRequest);
@@ -181,10 +185,14 @@ class TransactionController {
             }
             var updatedTransaction = updatedTransactions[0];
 
+            var mediaTypeKey = getMediaTypeKey(updatedTransaction.mediaType);
+
             // get corresponding catalogueItem
             var catalogueMapper = selectCatalogueMapper(updatedTransaction.mediaType);
             var catalogueItems;
-            await catalogueMapper.get({identifier: updatedTransaction.mediaId})
+            var filter = {};
+            filter[mediaTypeKey] = updatedTransaction.mediaId;
+            await catalogueMapper.get(filter)
             .then(result => {
                 catalogueItems = result;
             })
@@ -193,6 +201,7 @@ class TransactionController {
                 handleException(res, ex);
                 return;
             });
+
             if (catalogueItems === undefined || catalogueItems.length !== 1) {
                 console.log('catalogueItems is undefined or does not have length 1');
                 handleException(res, Exceptions.InternalServerError);
@@ -202,7 +211,7 @@ class TransactionController {
 
             // update numAvailable of catalogueItem
             var updatedCatalogueItems;
-            await catalogueMapper.update({identifier: catalogueItem.identifier}, {numAvailable: catalogueItem.numAvailable + 1})
+            await catalogueMapper.modify(filter, {numAvailable: catalogueItem.numAvailable + 1})
             .then(result => {
                 updatedCatalogueItems = result;
             })
@@ -218,8 +227,11 @@ class TransactionController {
             }
             
             // add return transaction
-            var props = {userId: user.id, transactionType: 'return', isReturned: 1, mediaId: req.body.mediaId, mediaType: req.body.mediaType};
-            await transactionMapper.add(new Transaction(props));
+            var props = {userId: user.id, transactionType: 1, isReturned: 1, mediaId: updatedTransaction.mediaId, mediaType: updatedTransaction.mediaType};
+            await transactionMapper.add(new Transaction(props))
+            .then(record => {
+                
+            })
             
             res.status(200);
             res.send();
@@ -258,7 +270,7 @@ handleException = function(res, exception) {
 }
 
 selectCatalogueMapper = (mediaType) => {
-    mediaType = mediaType.toLower();
+    var mediaType = mediaType.toLowerCase();
     switch(mediaType) {
         case 'book':
             return bookMapper;
@@ -270,5 +282,17 @@ selectCatalogueMapper = (mediaType) => {
             return movieMapper;
         default:
             throw 'Invalid media type';
+    }
+}
+
+getMediaTypeKey = (mediaType) => {
+    switch(mediaType) {
+        case 'book':
+        case 'magazine':
+            return 'isbn13';
+        case 'music':
+            return 'asin';
+        case 'movie':
+            return 'eidr';
     }
 }

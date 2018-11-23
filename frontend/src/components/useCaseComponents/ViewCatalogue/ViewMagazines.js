@@ -95,21 +95,13 @@ export default class ViewMagazines extends Component {
                                     {(magazine.publisher)}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ? (<TextField
-                                        name="numAvailable"
-                                        margin="dense"
-                                        defaultValue={magazine.numAvailable}
-                                        onChange={this.handleChange} />) : (magazine.numAvailable)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyBook && this.state.isbn13 === magazine.isbn13) ? (<TextField
-                                        name="numTotal"
-                                        margin="dense"
-                                        defaultValue={magazine.numTotal}
-                                        onChange={this.handleChange} />) : (magazine.numTotal)}
-                                </TableCell>
-                                <TableCell>
                                     {magazine.isbn13}
+                                </TableCell>
+                                <TableCell>
+                                    {(magazine.numAvailable)}
+                                </TableCell>
+                                <TableCell>
+                                    {(magazine.numTotal)}
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
                                 <TableCell>
@@ -121,7 +113,7 @@ export default class ViewMagazines extends Component {
                                 {this.state.is_admin === 0 &&
                                 <TableCell>
                                     <Button color="primary" onClick={() => { this.detailedMagazine(magazine, true) }}>View Details</Button>
-                                    <Button variant="contained" color="secondary" onClick={() => { this.addMagazineToCart(magazine.isbn13) }} disabled>Add to Cart</Button>
+                                    <Button variant="contained" color="secondary" disabled={magazine.numAvailable === 0} onClick={() => { this.addMagazineToCart(magazine.isbn13) }}>Add to Cart</Button>
                                 </TableCell>}
                             </TableRow>
                         )}
@@ -145,33 +137,6 @@ export default class ViewMagazines extends Component {
                         disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
                     <br/>
                     <TextField
-                        label="Author"
-                        name="author"
-                        margin="normal"
-                        defaultValue= {(this.state.magazineItem.author)}
-                        style={style.textField}
-                        onChange={this.handleChange}
-                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
-                    <br/>
-                    <TextField
-                        label="Format"
-                        name="format"
-                        margin="normal"
-                        defaultValue= {(this.state.magazineItem.format)}
-                        style={style.format}
-                        onChange={this.handleChange}
-                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
-                    <br/>
-                    <TextField
-                        label="Pages"
-                        name="pages"
-                        margin="normal"
-                        defaultValue= {(this.state.magazineItem.pages)}
-                        style={style.page}
-                        onChange={this.handleChange}
-                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
-                    <br/>
-                    <TextField
                         label="Publisher"
                         name="publisher"
                         margin="normal"
@@ -180,6 +145,15 @@ export default class ViewMagazines extends Component {
                         onChange={this.handleChange}
                         disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
                     <br/>
+                <TextField
+                    label="Date"
+                    name="date"
+                    margin="normal"
+                    defaultValue= {(this.state.magazineItem.date)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                <br/>
                     <TextField
                         label="Language"
                         name="language"
@@ -207,10 +181,28 @@ export default class ViewMagazines extends Component {
                         onChange={this.handleChange}
                         disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
                     <br/>
+                <TextField
+                    label="Copies Available"
+                    name="numAvailable"
+                    margin="normal"
+                    defaultValue= {(this.state.magazineItem.numAvailable)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                <br/>
+                <TextField
+                    label="Copies Total"
+                    name="isbn13"
+                    margin="normal"
+                    defaultValue= {(this.state.magazineItem.numTotal)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                <br/>
                     {this.state.is_admin === 0 &&
                     <p>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceMagazine(this.state.magazineItem, false) }}>Previous</Button>
-                        <Button variant="contained" color="secondary" onClick={() => { this.addMagazineToCart(this.state.magazineItem.isbn13) }} disabled>Add to Cart</Button>
+                        <Button variant="contained" color="primary" disabled={this.state.magazineItem.numAvailable === 0} onClick={() => { this.addMagazineToCart(this.state.magazineItem.isbn13) }}>Add to Cart</Button>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceMagazine(this.state.magazineItem, true) }}>Next</Button>
                     </p>}
                     {this.state.is_admin === 1 &&
@@ -326,24 +318,6 @@ export default class ViewMagazines extends Component {
         })
     }
 
-    async addMagazineToCart(isbn) {
-        return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ isbn13: isbn, authToken: this.state.authToken})
-            }).then((res => {
-                if (res.status === 200) {
-                    console.log("deleted magazine");
-                    this.setState({ modifyMagazine: false, magazineModified: true, magazineModifiedMessage: 'Magazine removed successfully' })
-                } else {
-                    console.log(res)
-                    this.setState({ magazineModified: true, magazineModifiedMessage: 'Magazine could not be removed' })
-                }
-            })).then(() => { this.componentDidMount(); });
-        })
-    }
-
     async modifyMagazine(props) {
         let title = props.title;
         let publisher = props.publisher;
@@ -381,21 +355,19 @@ export default class ViewMagazines extends Component {
 
     async sequenceMagazine(magazine, bool){
         var index =  this.state.magazines.indexOf(magazine);
-        if(bool) index = ((this.state.magazines.length - 1) == index ? index : ++index);
-        else index = (index == 0 ? 0 : --index);
+        if(bool) index = ((this.state.magazines.length - 1) === index ? index : ++index);
+        else index = (index === 0 ? 0 : --index);
         this.setState({
             magazineItem: this.state.magazines[index]
         });
     }
 
-    async addMagazineToCart(props){
-        let isbn13 = props.isbn13;
-
+    async addMagazineToCart(isbn13){
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
+            fetch('/api/cartItem/addToCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({isbn13 , authToken: this.state.authToken})
+                body: JSON.stringify({mediaId: isbn13, mediaType: 'magazine', authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((magazine) => {

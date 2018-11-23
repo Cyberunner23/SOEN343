@@ -5,8 +5,8 @@ const identifyUser = require('./UserController').identifyUser;
 const Exceptions = require('../Exceptions').Exceptions;
 const cartItemMapper = require('../mappers/CartItemMapper').getInstance();
 const CartItem = require('../business_objects/CartItem').CartItem;
-const transactionMapper = require('../mappers/TransactionMapper').TransactionMapper;
-const maxBorrows = require('../controllers/TransactionController').maxBorrows;
+const transactionMapper = require('../mappers/TransactionMapper').getInstance();
+const maxBorrows = 5;
 
 class CartItemController {
     constructor() {
@@ -58,7 +58,7 @@ class CartItemController {
                 return;
             }
 			
-			var borrowLimit = await getNumBorrowsRemaining(user);
+            var borrowLimit = await getNumBorrowsRemaining(user);
 			
 			if (borrowLimit > 0){
                 var props = {userId: user.id, mediaType: req.body.mediaType, mediaId: req.body.mediaId};
@@ -141,7 +141,7 @@ getNumBorrowsRemaining = async user => {
     .catch(ex => {
         handleException(res, ex);
     })
-    
+
     var filter2 = {userId: user.id, isReturned: 0};
     var transactLen;
     await transactionMapper.get(filter2)
@@ -149,9 +149,10 @@ getNumBorrowsRemaining = async user => {
         transactLen = values.length;
     })
     .catch(ex => {
+        console.log('failed to get transactions');
         handleException(res, ex);
     })
-
+    
     return maxBorrows - cartLen - transactLen;
 }
 exports.getNumBorrowsRemaining = getNumBorrowsRemaining;

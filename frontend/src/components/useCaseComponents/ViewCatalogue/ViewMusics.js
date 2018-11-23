@@ -115,21 +115,13 @@ export default class ViewMusics extends Component {
                                     {music.releaseDate}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
-                                        name="numAvailable"
-                                        margin="dense"
-                                        defaultValue={music.numAvailable}
-                                        onChange={this.handleChange} />) : (music.numAvailable)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyBook && this.state.asin === music.asin) ? (<TextField
-                                        name="numTotal"
-                                        margin="dense"
-                                        defaultValue={music.numTotal}
-                                        onChange={this.handleChange} />) : (music.numTotal)}
-                                </TableCell>
-                                <TableCell>
                                     {music.asin}
+                                </TableCell>
+                                <TableCell>
+                                    {(music.numAvailable)}
+                                </TableCell>
+                                <TableCell>
+                                    {(music.numTotal)}
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
                             <TableCell>
@@ -141,7 +133,7 @@ export default class ViewMusics extends Component {
                             {this.state.is_admin === 0 &&
                             <TableCell>
                                 <Button color="primary" onClick={() => { this.detailedMusic(music, true) }}>View Details</Button>
-                                <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(music.asin) }} disabled>Add to Cart</Button>
+                                <Button variant="contained" color="secondary" disabled={music.numAvailable === 0} onClick={() => { this.addMusicToCart(music.asin) }}>Add to Cart</Button>
                             </TableCell>}
                         </TableRow>
                     )}
@@ -209,10 +201,28 @@ export default class ViewMusics extends Component {
                     onChange={this.handleChange}
                     disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
                 <br/>
+                <TextField
+                    label="Copies Available"
+                    name="numAvailable"
+                    margin="normal"
+                    defaultValue= {(this.state.musicItem.numAvailable)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                <br/>
+                <TextField
+                    label="Copies Total"
+                    name="numTotal"
+                    margin="normal"
+                    defaultValue= {(this.state.musicItem.numTotal)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                <br/>
                 {this.state.is_admin === 0 &&
                 <p>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMusic(this.state.musicItem, false) }}>Previous</Button>
-                    <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(this.state.musicItem.asin) }} disabled>Add to Cart</Button>
+                    <Button variant="contained" color="primary" disabled={this.state.musicItem.numAvailable === 0} onClick={() => { this.addMusicToCart(this.state.musicItem.asin) }}>Add to Cart</Button>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMusic(this.state.musicItem, true) }}>Next</Button>
                 </p>}
                 {this.state.is_admin === 1 &&
@@ -334,24 +344,6 @@ export default class ViewMusics extends Component {
         })
     }
 
-    async addMusicToCart(asin) {
-        return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ asin: asin, authToken: this.state.authToken})
-            }).then((res => {
-                if (res.status === 200) {
-                    console.log("deleted music");
-                    this.setState({ modifyMusic: false, musicModified: true, musicModifiedMessage: 'Music removed successfully' })
-                } else {
-                    console.log(res)
-                    this.setState({ musicModified: true, musicModifiedMessage: 'Music could not be removed' })
-                }
-            })).then(() => { this.componentDidMount(); });
-        })
-    }
-
     async modifyMusic(props) {
         let title = props.title;
         let type = props.type;
@@ -389,21 +381,19 @@ export default class ViewMusics extends Component {
 
     async sequenceMusic(music, bool){
         var index =  this.state.musics.indexOf(music);
-        if(bool) index = ((this.state.musics.length - 1) == index ? index : ++index);
-        else index = (index == 0 ? 0 : --index);
+        if(bool) index = ((this.state.musics.length - 1) === index ? index : ++index);
+        else index = (index === 0 ? 0 : --index);
         this.setState({
             musicItem: this.state.musics[index]
         });
     }
 
-    async addMusicToCart(props){
-        let asin = props.asin;
-
+    async addMusicToCart(asin){
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
+            fetch('/api/cartItem/addToCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({asin , authToken: this.state.authToken})
+                body: JSON.stringify({mediaId: asin, mediaType: 'music', authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((music) => {
