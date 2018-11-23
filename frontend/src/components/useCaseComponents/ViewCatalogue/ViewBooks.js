@@ -116,7 +116,7 @@ export default class ViewBooks extends Component {
                                 {this.state.is_admin === 0 &&
                                 <TableCell>
                                     <Button color="primary" onClick={() => { this.detailedBook(book, true) }}>View Details</Button>
-                                    <Button variant="contained" color="secondary" onClick={() => { this.addBookToCart(book.isbn13) }}>Add to Cart</Button>
+                                    <Button variant="contained" color="secondary" disabled={book.numAvailable === 0} onClick={() => { this.addBookToCart(book.isbn13) }}>Add to Cart</Button>
                                 </TableCell>}
                             </TableRow>
                         )}
@@ -223,7 +223,7 @@ export default class ViewBooks extends Component {
                     {this.state.is_admin === 0 &&
                     <p>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceBook(this.state.bookItem, false) }}>Previous</Button>
-                        <Button variant="contained" color="secondary" onClick={() => { this.addBookToCart(this.state.bookItem.isbn13) }}>Add to Cart</Button>
+                        <Button variant="contained" color="primary" disabled={this.state.bookItem.numAvailable === 0} onClick={() => { this.addBookToCart(this.state.bookItem.isbn13) }}>Add to Cart</Button>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceBook(this.state.bookItem, true) }}>Next</Button>
                     </p>}
                     {this.state.is_admin === 1 &&

@@ -113,7 +113,7 @@ export default class ViewMagazines extends Component {
                                 {this.state.is_admin === 0 &&
                                 <TableCell>
                                     <Button color="primary" onClick={() => { this.detailedMagazine(magazine, true) }}>View Details</Button>
-                                    <Button variant="contained" color="secondary" onClick={() => { this.addMagazineToCart(magazine.isbn13) }}>Add to Cart</Button>
+                                    <Button variant="contained" color="secondary" disabled={magazine.numAvailable === 0} onClick={() => { this.addMagazineToCart(magazine.isbn13) }}>Add to Cart</Button>
                                 </TableCell>}
                             </TableRow>
                         )}
@@ -202,7 +202,7 @@ export default class ViewMagazines extends Component {
                     {this.state.is_admin === 0 &&
                     <p>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceMagazine(this.state.magazineItem, false) }}>Previous</Button>
-                        <Button variant="contained" color="secondary" onClick={() => { this.addMagazineToCart(this.state.magazineItem.isbn13) }}>Add to Cart</Button>
+                        <Button variant="contained" color="primary" disabled={this.state.magazineItem.numAvailable === 0} onClick={() => { this.addMagazineToCart(this.state.magazineItem.isbn13) }}>Add to Cart</Button>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceMagazine(this.state.magazineItem, true) }}>Next</Button>
                     </p>}
                     {this.state.is_admin === 1 &&
@@ -362,14 +362,12 @@ export default class ViewMagazines extends Component {
         });
     }
 
-    async addMagazineToCart(props){
-        let isbn13 = props.isbn13;
-
+    async addMagazineToCart(isbn13){
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
+            fetch('/api/cartItem/addToCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({isbn13 , authToken: this.state.authToken})
+                body: JSON.stringify({mediaId: isbn13, mediaType: 'magazine', authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((magazine) => {
