@@ -120,7 +120,7 @@ export default class ViewMovies extends Component {
                             {this.state.is_admin === 0 &&
                             <TableCell>
                                 <Button color="primary" onClick={() => { this.detailedMovie(movie, true) }}>View Details</Button>
-                                <Button variant="contained" color="secondary" onClick={() => { this.addMovieToCart(movie.eidr) }}>Add to Cart</Button>
+                                <Button variant="contained" color="secondary" disabled={movie.numAvailable === 0} onClick={() => { this.addMovieToCart(movie.eidr) }}>Add to Cart</Button>
                             </TableCell>}
                         </TableRow>
                     )}
@@ -245,7 +245,7 @@ export default class ViewMovies extends Component {
                 {this.state.is_admin === 0 &&
                 <p>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMovie(this.state.movieItem, false) }}>Previous</Button>
-                    <Button variant="contained" color="secondary" onClick={() => { this.addMovieToCart(this.state.movieItem.eidr) }}>Add to Cart</Button>
+                    <Button variant="contained" color="primary" disabled={this.state.movieItem.numAvailable === 0} onClick={() => { this.addMovieToCart(this.state.movieItem.eidr) }}>Add to Cart</Button>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMovie(this.state.movieItem, true) }}>Next</Button>
                 </p>}
                 {this.state.is_admin === 1 &&
@@ -423,14 +423,13 @@ export default class ViewMovies extends Component {
         });
     }
 
-    async addMovieToCart(props){
-        let eidr = props.eidr;
+    async addMovieToCart(eidr){
 
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
+            fetch('/api/cartItem/addToCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({eidr , authToken: this.state.authToken})
+                body: JSON.stringify({mediaId: eidr, mediaType: 'movie', authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((movie) => {

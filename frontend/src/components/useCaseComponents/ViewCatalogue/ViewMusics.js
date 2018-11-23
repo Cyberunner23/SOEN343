@@ -133,7 +133,7 @@ export default class ViewMusics extends Component {
                             {this.state.is_admin === 0 &&
                             <TableCell>
                                 <Button color="primary" onClick={() => { this.detailedMusic(music, true) }}>View Details</Button>
-                                <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(music.asin) }}>Add to Cart</Button>
+                                <Button variant="contained" color="secondary" disabled={music.numAvailable === 0} onClick={() => { this.addMusicToCart(music.asin) }}>Add to Cart</Button>
                             </TableCell>}
                         </TableRow>
                     )}
@@ -222,7 +222,7 @@ export default class ViewMusics extends Component {
                 {this.state.is_admin === 0 &&
                 <p>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMusic(this.state.musicItem, false) }}>Previous</Button>
-                    <Button variant="contained" color="secondary" onClick={() => { this.addMusicToCart(this.state.musicItem.asin) }}>Add to Cart</Button>
+                    <Button variant="contained" color="primary" disabled={this.state.musicItem.numAvailable === 0} onClick={() => { this.addMusicToCart(this.state.musicItem.asin) }}>Add to Cart</Button>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMusic(this.state.musicItem, true) }}>Next</Button>
                 </p>}
                 {this.state.is_admin === 1 &&
@@ -388,14 +388,12 @@ export default class ViewMusics extends Component {
         });
     }
 
-    async addMusicToCart(props){
-        let asin = props.asin;
-
+    async addMusicToCart(asin){
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
+            fetch('/api/cartItem/addToCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({asin , authToken: this.state.authToken})
+                body: JSON.stringify({mediaId: asin, mediaType: 'music', authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((music) => {
