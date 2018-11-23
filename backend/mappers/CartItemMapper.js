@@ -6,7 +6,7 @@ class CartItemMapper extends GenericMapper {
     
     constructor () {
         super()
-        this.identifier = 'id';
+        this.identifier = 'cartItemId';
         this.identityMap = cartItemIdentityMap;
         this.gateway = cartItemGateway;
     }

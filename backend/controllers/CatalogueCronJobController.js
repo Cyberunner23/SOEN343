@@ -4,6 +4,8 @@ const bookMapper = require('../mappers/BookMapper').getInstance();
 const magazineMapper = require('../mappers/MagazineMapper').getInstance();
 const musicMapper = require('../mappers/MusicMapper').getInstance();
 const movieMapper = require('../mappers/MovieMapper').getInstance();
+const transactionMapper = require('../mappers/TransactionMapper').getInstance();
+const cartItemMapper = require('../mappers/CartItemMapper').getInstance();
 
 persistChangesToDatabase = () => {
     setInterval(() => {
@@ -13,6 +15,8 @@ persistChangesToDatabase = () => {
         magazineMapper.sendChangesToGateway();
         musicMapper.sendChangesToGateway();
         movieMapper.sendChangesToGateway();
+        transactionMapper.sendChangesToGateway();
+        cartItemMapper.sendChangesToGateway();
 
         masterGateway.executeTransaction()
         .catch(exception => {

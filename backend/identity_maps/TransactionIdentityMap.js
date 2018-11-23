@@ -3,7 +3,7 @@ const GenericIdentityMap = require('./GenericIdentityMap').GenericIdentityMap;
 class TransactionIdentityMap extends GenericIdentityMap {
     constructor () {
         super();
-        this.identifier = 'id';
+        this.identifier = 'transactionId';
     }
 }
 

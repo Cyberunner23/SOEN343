@@ -3,8 +3,6 @@ const OperationType = require('../unitsOfWork/GenericUnitOfWork').OperationType;
 const Exceptions = require('../Exceptions').Exceptions;
 const ReadWriteLock = require('rwlock')
 
-var lock = new ReadWriteLock();
-
 exports.GenericMapper = class GenericMapper {
 
     constructor() {
@@ -12,6 +10,7 @@ exports.GenericMapper = class GenericMapper {
         this.identityMap = null;
         this.gateway = null;
         this.unitOfWork = new GenericUnitOfWork();
+        this.lock = new ReadWriteLock();
     }
 
     sendChangesToGateway() {
@@ -44,7 +43,7 @@ exports.GenericMapper = class GenericMapper {
     async get(filters) {
         var mapper = this;
         var promise;
-        await lock.async.readLock(async function (error, release) 
+        await this.lock.async.readLock(async function (error, release) 
         {
             promise = mapper.privateGet(filters);
             release();
@@ -54,6 +53,9 @@ exports.GenericMapper = class GenericMapper {
     }
 
     async privateGet(filters) {
+        if (filters === undefined) {
+            filters = {};
+        }
         var mapper = this;
         return new Promise(async (resolve, reject) => {
             var identities = mapper.identityMap.get(record => {
@@ -84,12 +86,15 @@ exports.GenericMapper = class GenericMapper {
     async add(record) {
         var mapper = this;
         var promise;
-        await lock.async.writeLock(async function (error, release) {
+        await this.lock.async.writeLock(async function (error, release) {
             promise = new Promise((resolve, reject) => {
                 var filters = {};
                 filters[mapper.identifier] = record[mapper.identifier];
                 mapper.privateGet(filters)
                     .then(records => {
+                        if (record[mapper.identifier] === undefined) {
+                            records = [];
+                        }
                         if (records.length === 0) {
                             var identifierValue = record[mapper.identifier];
                             var previousOperations = mapper.unitOfWork.get(operation => {
@@ -131,7 +136,7 @@ exports.GenericMapper = class GenericMapper {
     async remove(filters) {
         var mapper = this;
         var promise;
-        await lock.async.writeLock(async function (error, release) {
+        await this.lock.async.writeLock(async function (error, release) {
             promise = new Promise((resolve, reject) => {
                 mapper.privateGet(filters)
                     .then(recordsToRemove => {
@@ -176,7 +181,7 @@ exports.GenericMapper = class GenericMapper {
         var mapper = this;
         var promise;
 
-        await lock.async.writeLock(async function (error, release) {
+        await this.lock.async.writeLock(async function (error, release) {
 
             promise = new Promise((resolve, reject) => {
                 mapper.privateGet(filters)
@@ -235,9 +240,11 @@ exports.GenericMapper = class GenericMapper {
 }
 
 filter = (record, filters) => {
+    var json = JSON.parse(JSON.stringify(filters));
+
     var toReturn = true;
-    for (var field in filters) {
-        toReturn = toReturn && record[field].toString().toLowerCase().includes(filters[field].toString().toLowerCase());
+    for (var field in json) {
+        toReturn = toReturn && record[field].toString().toLowerCase().includes(json[field].toString().toLowerCase());
     }
     return toReturn;
 }

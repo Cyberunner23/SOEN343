@@ -5,31 +5,104 @@ const identifyUser = require('./UserController').identifyUser;
 const Exceptions = require('../Exceptions').Exceptions;
 const cartItemMapper = require('../mappers/CartItemMapper').getInstance();
 const CartItem = require('../business_objects/CartItem').CartItem;
+const transactionMapper = require('../mappers/TransactionMapper').getInstance();
+const maxBorrows = 5;
 
 class CartItemController {
     constructor() {
         this.mapper = cartItemMapper;
         this.recordName = 'cartItem';
-        this.identifier = 'id';
-        this.recordType = CartItem;
+        this.identifier = 'cartItemId';
         this.getCartItems = this.getCartItems.bind(this);
         this.addToCart = this.addToCart.bind(this);
         this.removeFromCart = this.removeFromCart.bind(this);
+		this.transactionMapper = transactionMapper;
     }
 
-    async getCartItems(req, res) {
-        // req.body.authToken
-        // req.body.filters
+    async getCartItems(req, res) 
+    {
+        identifyUser(req.body.authToken)
+        .then(async user => 
+        {
+            // Users only
+            if (user.is_admin)
+            {
+                handleException(res, Exceptions.Unauthorized);
+                return;
+            }
+			var filter = {userId: user.id};
+			await this.mapper.get(filter)
+			.then(records => {
+				res.status(200);
+				res.json(records);
+			})
+			.catch(ex => {
+				handleException(res, ex);
+			})
+        })
+        .catch(ex => 
+        {
+            handleException(res, ex);
+        });
     }
     
-    async addToCart (req, res) {
-        // req.body.authToken
-        // req.body.recordId
+    async addToCart (req, res) 
+    {
+        identifyUser(req.body.authToken)
+        .then(async user => 
+        {
+            // Users only
+            if (user.is_admin)
+            {
+                handleException(res, Exceptions.Unauthorized);
+                return;
+            }
+			
+            var borrowLimit = await getNumBorrowsRemaining(user);
+			
+			if (borrowLimit > 0){
+                var props = {userId: user.id, mediaType: req.body.mediaType, mediaId: req.body.mediaId};
+                this.mapper.add(new CartItem(props))
+                .then(record => {
+                    res.status(200);
+                    res.json(record);
+                })}
+                else{
+                    handleException(res, Exceptions.BadRequest);
+                }
+        })
+        .catch(ex => 
+        {
+            handleException(res, ex);
+        });
     }
     
-    async removeFromCart (req, res) {
-        // req.body.authToken
-        // req.body.recordId
+    async removeFromCart (req, res) 
+    {
+        identifyUser(req.body.authToken)
+        .then(user => {
+            if(user.is_admin){
+                handleException(res, Exceptions.Unauthorized);
+                return;
+            }
+            var filters = {cartItemId: req.body.cartItemId};
+            this.mapper.remove(filters)
+            .then(removedRecords => {
+                if (removedRecords.length === 0) {
+                    handleException(res, Exceptions.BadRequest);
+                }
+                else {
+                    res.status(200);
+                    res.json(removedRecords[0]); // There should be only 1 record because the filter is a unique identifier
+                }
+            })
+            .catch(ex => {
+                handleException(res, ex);
+            });
+        })
+        .catch((ex) => {
+            handleException(res, ex);
+        });
     }
 }
 
@@ -57,3 +130,29 @@ handleException = function(res, exception) {
     }
     res.json({err: message});
 }
+
+getNumBorrowsRemaining = async user => {
+    var cartLen;
+    var filter = {userId: user.id};
+    await cartItemMapper.get(filter)
+    .then(values => {
+        cartLen = values.length;
+    })
+    .catch(ex => {
+        handleException(res, ex);
+    })
+
+    var filter2 = {userId: user.id, isReturned: 0};
+    var transactLen;
+    await transactionMapper.get(filter2)
+    .then(values => {
+        transactLen = values.length;
+    })
+    .catch(ex => {
+        console.log('failed to get transactions');
+        handleException(res, ex);
+    })
+    
+    return maxBorrows - cartLen - transactLen;
+}
+exports.getNumBorrowsRemaining = getNumBorrowsRemaining;

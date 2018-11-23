@@ -15,13 +15,16 @@ export default class ViewMagazines extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: '', publisher: '', date: '', language: '', isbn10: '', isbn13: '',
-            titleFilter: '', publisherFilter: '', dateFilter: '', languageFilter: '', isbn10Filter: '', isbn13Filter: '',
+            title: '', publisher: '', date: '', language: '', isbn10: '', isbn13: '', numAvailable: '', numTotal: '',
+            titleFilter: '', publisherFilter: '', dateFilter: '', languageFilter: '', isbn10Filter: '', isbn13Filter: '', numAvailableFilter: '', numTotalFilter: '',
             app: props.app,
             magazines: [],
+            magazineItemBool: false,
+            magazineItem: [],
             modifyMagazine: false,
             magazineModified: false,
             desc: false,
+            lastSortField: '',
             authToken: props.app.state.currentUser.authToken,
             is_admin: props.is_admin
         };
@@ -56,70 +59,54 @@ export default class ViewMagazines extends Component {
                     <TextField style={style.field} label="language" name="languageFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="ISBN-10" name="isbn10Filter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="ISBN-13" name="isbn13Filter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="numAvailable" name="numAvailableFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="numTotal" name="numTotalFilter" margin="dense" onChange={this.handleChange} /><br/>
                     <Button color="primary" onClick={() => { this.filter() }}>Search</Button>
                 </div>
                 {magazineModifiedMessage}
-                <Table>
+                <Table style={style.format}>
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('title')}>Title</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('publisher')} direction={'desc'}>Publisher</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('publisher')}>Publisher</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('date')} direction={'desc'}>Date</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('isbn13')}>ISBN-13</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('language')} direction={'desc'}>Language</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('numAvailable')} direction={'desc'}>Copies Available</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('isbn10')} direction={'desc'}>ISBN-10</TableSortLabel>
-                            </TableCell>
-                            <TableCell>
-                                <TableSortLabel onClick={() => this.sort('isbn13')} direction={'desc'}>ISBN-13</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('numTotal')} direction={'desc'}>Total Available</TableSortLabel>
                             </TableCell>
                             <TableCell/>
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {this.state.magazines.map(magazine =>
-                            <TableRow key={magazine.title}>
+                        {this.state.magazines.map((magazine, i) =>
+                            <TableRow key={i}>
                                 <TableCell>
-                                    {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ? (<TextField
-                                        name="title"
-                                        margin="dense"
-                                        defaultValue={magazine.title}
-                                        onChange={this.handleChange} />) : (magazine.title)}
+                                    {(magazine.title)}
+                                </TableCell>
+                                <TableCell>
+                                    {(magazine.publisher)}
                                 </TableCell>
                                 <TableCell>
                                     {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ? (<TextField
-                                        name="publisher"
+                                        name="numAvailable"
                                         margin="dense"
-                                        defaultValue={magazine.publisher}
-                                        onChange={this.handleChange} />) : (magazine.publisher)}
+                                        defaultValue={magazine.numAvailable}
+                                        onChange={this.handleChange} />) : (magazine.numAvailable)}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ? (<TextField
-                                        name="date"
+                                    {(this.state.modifyBook && this.state.isbn13 === magazine.isbn13) ? (<TextField
+                                        name="numTotal"
                                         margin="dense"
-                                        defaultValue={magazine.date}
-                                        onChange={this.handleChange} />) : (magazine.date)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ? (<TextField
-                                        name="language"
-                                        margin="dense"
-                                        defaultValue={magazine.language}
-                                        onChange={this.handleChange} />) : (magazine.language)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ? (<TextField
-                                        name="isbn10"
-                                        margin="dense"
-                                        defaultValue={magazine.isbn10}
-                                        onChange={this.handleChange} />) : (magazine.isbn10)}
+                                        defaultValue={magazine.numTotal}
+                                        onChange={this.handleChange} />) : (magazine.numTotal)}
                                 </TableCell>
                                 <TableCell>
                                     {magazine.isbn13}
@@ -127,13 +114,14 @@ export default class ViewMagazines extends Component {
                                 {this.state.is_admin === 1 &&
                                 <TableCell>
                                     {(this.state.modifyMagazine && this.state.isbn13 === magazine.isbn13) ?
-                                        (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
-                                        (<Button color="primary" onClick={() => { this.modifyMagazineState(magazine) }}>Edit</Button>)}
-                                    <Button color="secondary" onClick={() => { this.removeMagazines(magazine.isbn13) }}> Delete</Button>
+                                    (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
+                                    (<Button color="primary" onClick={() => { this.modifyMagazineState(magazine) }}>Edit</Button>)}
+                                    <Button color="secondary" onClick={() => { this.removeMagazines(magazine.isbn13) }}>Delete</Button>
                                 </TableCell>}
                                 {this.state.is_admin === 0 &&
                                 <TableCell>
-                                    <Button variant="contained" color="secondary" disabled>Add to Cart</Button>
+                                    <Button color="primary" onClick={() => { this.detailedMagazine(magazine, true) }}>View Details</Button>
+                                    <Button variant="contained" color="secondary" onClick={() => { this.addMagazineToCart(magazine.isbn13) }}>Add to Cart</Button>
                                 </TableCell>}
                             </TableRow>
                         )}
@@ -142,10 +130,103 @@ export default class ViewMagazines extends Component {
             </div>
         );
 
+        var itemDetails;
+        itemDetails = (
+            <div className="fixed" style={style.body} key={this.state.magazineItem.isbn13}>
+                <Button color="primary" onClick={() => { this.detailedMagazine([], false) }}>Back to magazines View</Button>
+                <br/>
+                <TextField
+                        label="Title"
+                        name="title"
+                        margin="normal"
+                        defaultValue= {(this.state.magazineItem.title)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="Author"
+                        name="author"
+                        margin="normal"
+                        defaultValue= {(this.state.magazineItem.author)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="Format"
+                        name="format"
+                        margin="normal"
+                        defaultValue= {(this.state.magazineItem.format)}
+                        style={style.format}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="Pages"
+                        name="pages"
+                        margin="normal"
+                        defaultValue= {(this.state.magazineItem.pages)}
+                        style={style.page}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="Publisher"
+                        name="publisher"
+                        margin="normal"
+                        defaultValue= {(this.state.magazineItem.publisher)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="Language"
+                        name="language"
+                        margin="normal"
+                        defaultValue= {(this.state.magazineItem.language)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="ISBN-10"
+                        name="isbn10"
+                        margin="normal"
+                        defaultValue= {(this.state.magazineItem.isbn10)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="ISBN-13"
+                        name="isbn13"
+                        margin="normal"
+                        defaultValue= {(this.state.magazineItem.isbn13)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ? false : true} />
+                    <br/>
+                    {this.state.is_admin === 0 &&
+                    <p>
+                        <Button variant="contained" color="secondary" onClick={() => { this.sequenceMagazine(this.state.magazineItem, false) }}>Previous</Button>
+                        <Button variant="contained" color="secondary" onClick={() => { this.addMagazineToCart(this.state.magazineItem.isbn13) }}>Add to Cart</Button>
+                        <Button variant="contained" color="secondary" onClick={() => { this.sequenceMagazine(this.state.magazineItem, true) }}>Next</Button>
+                    </p>}
+                    {this.state.is_admin === 1 &&
+                    <p>
+                    {(this.state.modifyMagazine && this.state.isbn13 === this.state.magazineItem.isbn13) ?
+                        (<Button color="primary" onClick={(e) => { this.handleSubmit(e) }}>Confirm</Button>) :
+                        (<Button color="primary" onClick={() => { this.modifyMagazineState(this.state.magazineItem) }}>Edit</Button>)}
+                        <Button color="secondary" onClick={() => { this.removemagazines(this.state.magazineItem.isbn13) }}>Delete</Button>
+                    </p>}
+            </div>
+        );
+
         return (
-            <div className='ViewBooksComponent UseCaseComponent'>
+            <div className='ViewmagazinesComponent UseCaseComponent'>
                 <h2>Magazines</h2>
-                {content}
+                {this.state.magazineItemBool ? itemDetails : content}
             </div>
         )
     }
@@ -162,14 +243,25 @@ export default class ViewMagazines extends Component {
             language: magazine.language,
             isbn10: magazine.isbn10,
             isbn13: magazine.isbn13,
+            numAvailable: magazine.numAvailable,
             magazineModifiedMessage: '',
+            magazineItem: magazine,
+            magazineItemBool:true,
             modifyMagazine: true
         })
     }
 
     sort(field) {
-        sorter.stringSort(this.state.magazines, field, this.state.desc);
-        this.setState({magazines: this.state.magazines, desc: !this.state.desc});
+        let currentState = this.state.desc;
+
+        if(this.state.lastSortField !== field) {
+            currentState = false;
+        }
+        else {
+            currentState = !currentState;
+        }
+        sorter.stringSort(this.state.magazines, field, currentState);
+        this.setState({magazines: this.state.magazines, desc: currentState, lastSortField: field});
     }
 
     filter() {
@@ -179,7 +271,9 @@ export default class ViewMagazines extends Component {
         let language = this.state.languageFilter;
         let isbn10 = this.state.isbn10Filter;
         let isbn13 = this.state.isbn13Filter;
-        let jsonObject = {title, publisher, date, language, isbn10, isbn13};
+        let numAvailable = this.state.numAvailableFilter;
+		let numTotal = this.state.numTotalFilter;
+        let jsonObject = {title, publisher, date, language, isbn10, isbn13, numAvailable, numTotal};
 
         Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
 
@@ -239,12 +333,51 @@ export default class ViewMagazines extends Component {
         let language = props.language;
         let isbn10 = props.isbn10;
         let isbn13 = props.isbn13;
+        let numAvailable = props.numAvailable;
+		let numTotal = props.numTotal;
 
         return new Promise((resolve, reject) => {
             fetch('/api/catalogue/modifyMagazine', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({title, publisher, date, language, isbn10, isbn13, authToken: this.state.authToken})
+                body: JSON.stringify({title, publisher, date, language, isbn10, isbn13, numAvailable, numTotal, authToken: this.state.authToken})
+            }).then((response) => {
+                if (response.status === 200) {
+                    response.json().then((magazine) => {
+                        resolve(magazine);
+                    })
+                }
+                else {
+                    resolve(null);
+                }
+            });
+        })
+    }
+
+    detailedMagazine(magazine, bool) {
+        this.setState({
+            magazineItem: magazine,
+            magazineItemBool: bool
+        });
+    }
+
+    async sequenceMagazine(magazine, bool){
+        var index =  this.state.magazines.indexOf(magazine);
+        if(bool) index = ((this.state.magazines.length - 1) === index ? index : ++index);
+        else index = (index === 0 ? 0 : --index);
+        this.setState({
+            magazineItem: this.state.magazines[index]
+        });
+    }
+
+    async addMagazineToCart(props){
+        let isbn13 = props.isbn13;
+
+        return new Promise((resolve, reject) => {
+            fetch('/api/catalogue/addToCart', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({isbn13 , authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((magazine) => {

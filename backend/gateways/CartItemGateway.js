@@ -12,11 +12,11 @@ class CartItemGateway {
     }
 
     update(jsonCartItem){
-        masterGateway.update('cartItems', new CartItem(jsonCartItem), 'id');
+        masterGateway.update('cartItems', new CartItem(jsonCartItem), 'cartItemId');
     }
 
     delete(idsToDelete){
-        masterGateway.delete('cartItems', 'id', idsToDelete);
+        masterGateway.delete('cartItems', 'cartItemId', idsToDelete);
     }
 }
 

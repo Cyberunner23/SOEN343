@@ -12,11 +12,11 @@ class TransactionGateway {
     }
 
     update(jsonTransaction){
-        masterGateway.update('transactions', new Transaction(jsonTransaction), 'id');
+        masterGateway.update('transactions', new Transaction(jsonTransaction), 'transactionId');
     }
 
     delete(idsToDelete){
-        masterGateway.delete('transactions', 'id', idsToDelete);
+        masterGateway.delete('transactions', 'transactionId', idsToDelete);
     }
 }
 

@@ -6,7 +6,7 @@ class TransactionMapper extends GenericMapper {
     
     constructor () {
         super()
-        this.identifier = 'id';
+        this.identifier = 'transactionId';
         this.identityMap = transactionIdentityMap;
         this.gateway = transactionGateway;
     }

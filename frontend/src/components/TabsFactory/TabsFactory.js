@@ -10,10 +10,13 @@ import ViewBooks from '../useCaseComponents/ViewCatalogue/ViewBooks.js';
 import ViewMagazines from '../useCaseComponents/ViewCatalogue/ViewMagazines.js';
 import ViewMovies from '../useCaseComponents/ViewCatalogue/ViewMovies.js';
 import ViewMusics from '../useCaseComponents/ViewCatalogue/ViewMusics.js';
+import ViewCart from '../useCaseComponents/ViewCatalogue/ViewCart.js';
+import ViewLoans from '../useCaseComponents/ViewCatalogue/ViewLoans.js';
 import AddBook from "../useCaseComponents/ViewCatalogue/AddBook";
 import AddMagazine from "../useCaseComponents/ViewCatalogue/AddMagazine";
 import AddMovie from "../useCaseComponents/ViewCatalogue/AddMovie";
 import AddMusic from "../useCaseComponents/ViewCatalogue/AddMusic";
+import Loans from "../useCaseComponents/Loans.js";
 
 var TabsState = Object.freeze({ 'Welcome': 0, 'Admin': 1, 'Client': 2 });
 
@@ -39,6 +42,7 @@ class TabsFactory {
                             <Tab>Register Admin</Tab>
                             <Tab>Register User</Tab>
                             <Tab>View Active Users</Tab>
+                            <Tab>View Loans</Tab>
                             <Tab>View Library Items</Tab>
                             <Tab>Add Library Items</Tab>
                             <Tab>Logout</Tab>
@@ -51,6 +55,9 @@ class TabsFactory {
                         </TabPanel>
                         <TabPanel>
                             <ActiveUsers app={app} />
+                        </TabPanel>
+                        <TabPanel>
+                            <Loans app={app} is_admin={1} />
                         </TabPanel>
                         <TabPanel>
                             <Tabs>
@@ -107,6 +114,8 @@ class TabsFactory {
                     <Tabs>
                         <TabList>
                             <Tab>Browse Catalogue</Tab>
+                            <Tab>My Cart</Tab>
+                            <Tab>My Loans</Tab>
                             <Tab>Logout</Tab>
                         </TabList>
                         <TabPanel>
@@ -130,6 +139,12 @@ class TabsFactory {
                                     <ViewMusics app={app} is_admin={0} />
                                 </TabPanel>
                             </Tabs>
+                        </TabPanel>
+                        <TabPanel>
+                            <ViewCart app={app} is_admin={0} />
+                        </TabPanel>
+                        <TabPanel>
+                            <ViewLoans app={app} is_admin={0} />
                         </TabPanel>
                         <TabPanel>
                             <Logout app={app} />

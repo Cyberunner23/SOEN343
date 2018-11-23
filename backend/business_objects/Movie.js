@@ -10,6 +10,8 @@ class Movie {
         this.releaseDate= props.releaseDate;
         this.runTime= props.runTime;
         this.eidr = props.eidr;
+        this.numAvailable= props.numAvailable;
+		this.numTotal= props.numTotal;
     }
 }
 exports.Movie = Movie; 
