@@ -132,19 +132,9 @@ handleException = function(res, exception) {
 }
 
 getNumBorrowsRemaining = async user => {
-    var cartLen;
-    var filter = {userId: user.id};
-    await cartItemMapper.get(filter)
-    .then(values => {
-        cartLen = values.length;
-    })
-    .catch(ex => {
-        handleException(res, ex);
-    })
-
-    var filter2 = {userId: user.id, isReturned: 0};
+    var filter = {userId: user.id, isReturned: 0};
     var transactLen;
-    await transactionMapper.get(filter2)
+    await transactionMapper.get(filter)
     .then(values => {
         transactLen = values.length;
     })
@@ -153,7 +143,7 @@ getNumBorrowsRemaining = async user => {
         handleException(res, ex);
     })
     
-    return maxBorrows - cartLen - transactLen;
+    return maxBorrows - transactLen;
 }
 exports.getNumBorrowsRemaining = getNumBorrowsRemaining;
 

@@ -50,7 +50,22 @@ class TransactionController {
 
     }
     
-    async borrowRecord (req, res) 
+    // Contract Programming:
+    // pre(...) indicates the value in the precondition
+    // Declarations:
+    //    let user = this.UserController.identifyUser(req.authToken);
+    //    let transactionId = req.body.transactionId;
+    //    let transactions = this.get({user.id, transactionId});
+    //    let mediaItem = this.catalogueMaper.get(transactions[0].mediaId);
+    // Pre: 
+    //    (user.is_admin === false) &&
+    //    (transactions.length === 1);
+    //    
+    // Post:
+    //    (transactions[0].isReturned === 1) &&
+    //    (mediaItem.numAvailable === pre(mediaItem.numAvailable) + 1) &&
+    //    (this.getNumBorrowsRemaining(user) === pre(this.getNumBorrowsRemaining(user)) + 1);
+    async borrowRecord (req, res)
     {
         console.log('borrow record');
         identifyUser(req.body.authToken)
@@ -65,8 +80,6 @@ class TransactionController {
 
             for (var index in req.body.cart) {
                 var cartItem = req.body.cart[index];
-
-                console.log('cart item: ' + JSON.stringify(cartItem));
     
                 // Make sure user hasn't reached max borrows
                 var numBorrowsRemaining = await getNumBorrowsRemaining(user);
@@ -75,7 +88,6 @@ class TransactionController {
                     return;
                 }
                
-                console.log('made it here');
                 // check for item availability
                 var available = 0;
                 var catalogueMapper = selectCatalogueMapper(cartItem.mediaType);
@@ -104,8 +116,22 @@ class TransactionController {
     
                 // Given that there are copies that can be loaned,
                 // the transaction is done and added to the system
+
+                var localTransactionTime = new Date();
+                var localDueDate = new Date();
+
+                switch(cartItem.mediaType) {
+                    case 'book':
+                    case 'magazine':
+                        localDueDate.setDate(localTransactionTime.getDate() + 7);
+                        break;
+                    case 'music':
+                    case 'movie':
+                        localDueDate.setDate(localTransactionTime.getDate() + 2);
+                        break;
+                }
     
-                var props = {transactionId: guid(), userId: user.id, transactionType: 0, isReturned: 0, mediaId: cartItem.mediaId, mediaType: cartItem.mediaType};
+                var props = {transactionId: guid(), userId: user.id, transactionType: 0, isReturned: 0, mediaId: cartItem.mediaId, mediaType: cartItem.mediaType, transactionTime: localTransactionTime, dueDate: localDueDate};
                 await transactionMapper.add(new Transaction(props))
                 .then(record => {
                     
@@ -132,22 +158,20 @@ class TransactionController {
     
                 
                 //Remove existing cart items after processing borrow requests
-                var filters = {userId: user.id, mediaType: cartItem.mediaType, mediaId: cartItem.mediaId};
+                var filters = {userId: user.id, cartItemId: cartItem.cartItemId};
                 await cartItemMapper.remove(filters)
                 .then(removedRecords => {
                     if (removedRecords.length === 0) {
+                        console.log('could not remove item from cart because it does not exist');
                         handleException(res, Exceptions.BadRequest);
                     }
                 })
                 .catch(ex => {
                     handleException(res, ex);
                 });
-
-                res.status(200);
-                res.send();
             }
 
-            res.status(400);
+            res.status(200);
             res.send();
         })
 				
@@ -157,6 +181,18 @@ class TransactionController {
         });
     }
     
+    // Contract Programming:
+    // pre(...) indicates the value in the precondition
+    // Declaration:
+    //    let user = this.UserController.identifyUser(req.authToken);
+    //    let mediaItem = this.catalogueMapper.get({identifier: req.body.mediaId});
+    // Pre:
+    //    (user.is_admin === false) &&
+    //    (mediaItem.numAvailable > 0) &&
+    //    (this.getNumBorrowsRemaining(user) > 0);
+    // Post:
+    //    (this.getNumBorrowsRemaining(user) === pre(this.getNumBorrowsRemaining(user)) - 1) &&
+    //    (this.get({userId: user.id}).length === pre(this.get({userId: user.id}).length) + 1);
     async returnRecord (req, res)
     {
         identifyUser(req.body.authToken)
@@ -242,7 +278,7 @@ class TransactionController {
                 }
                 
                 // add return transaction
-                var props = {transactionId: guid(), userId: user.id, transactionType: 1, isReturned: 1, mediaId: updatedTransaction.mediaId, mediaType: updatedTransaction.mediaType};
+                var props = {transactionId: guid(), userId: user.id, transactionType: 1, isReturned: 1, mediaId: updatedTransaction.mediaId, mediaType: updatedTransaction.mediaType, transactionTime: new Date(), dueDate: updatedTransaction.dueDate};
                 await transactionMapper.add(new Transaction(props))
                 .then(record => {
                     
