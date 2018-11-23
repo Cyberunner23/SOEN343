@@ -86,6 +86,9 @@ export default class ViewCart extends Component {
                                 <TableSortLabel>mediaType</TableSortLabel>
                             </TableCell>
                             <TableCell>
+                                <TableSortLabel>dueDate</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -112,6 +115,9 @@ export default class ViewCart extends Component {
                                 </TableCell>
                                 <TableCell>
                                     {item.mediaType}
+                                </TableCell>
+                                <TableCell>
+                                    {item.dueDate}
                                 </TableCell>
                                 {this.state.modifyLoan === true &&
                                     <Checkbox color="default" checked={this.state.loanedItemstoReturn.includes(item)} value={item.id} onChange={this.itemToReturn(item)} />

@@ -141,31 +141,35 @@ export default class Loans extends Component {
                     <TextField style={style.field} label="returned state" name="isReturnedFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="media id" name="mediaIdFilter" margin="dense" onChange={this.handleChange} />
                     <TextField style={style.field} label="media type" name="mediaTypeFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="due date" name="dueDateFilter" margin="dense" onChange={this.handleChange} />
                     <br /><Button color="primary" onClick={() => { this.filter() }}>Search</Button>
                 </div>
                 <Table style={style.format}>
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel>TransactionId</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('transactionId')}>TransactionId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel>UserId</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('userId')}>UserId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel>TransactionType</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('transactionType')}>TransactionType</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel>TransactionTime</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('transactionTime')}>TransactionTime</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel>IsReturned</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('isReturned')}>IsReturned</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel>MediaId</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('mediaId')}>MediaId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel>MediaType</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('mediaType')}>MediaType</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
+                                <TableSortLabel onClick={() => this.sort('dueDate')}>DueDate</TableSortLabel>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -192,6 +196,9 @@ export default class Loans extends Component {
                                 </TableCell>
                                 <TableCell>
                                     {item.mediaType}
+                                </TableCell>
+                                <TableCell>
+                                    {item.dueDate}
                                 </TableCell>
                             </TableRow>
                             )}
@@ -224,7 +231,8 @@ export default class Loans extends Component {
         let isReturned = this.state.isReturnedFilter;
         let mediaId = this.state.mediaIdFilter;
         let mediaType = this.state.mediaTypeFilter;
-        let jsonObject = {transactionId, userId, transactionType, transactionTime, isReturned, mediaId, mediaType};
+        let dueDate = this.state.dueDate;
+        let jsonObject = {transactionId, userId, transactionType, transactionTime, isReturned, mediaId, mediaType, dueDate};
 
         Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
 
