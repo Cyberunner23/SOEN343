@@ -61,7 +61,7 @@ class CartItemController {
             var borrowLimit = await getNumBorrowsRemaining(user);
 			
 			if (borrowLimit > 0){
-                var props = {userId: user.id, mediaType: req.body.mediaType, mediaId: req.body.mediaId};
+                var props = {cartItemId: guid(), userId: user.id, mediaType: req.body.mediaType, mediaId: req.body.mediaId};
                 this.mapper.add(new CartItem(props))
                 .then(record => {
                     res.status(200);
@@ -156,3 +156,13 @@ getNumBorrowsRemaining = async user => {
     return maxBorrows - cartLen - transactLen;
 }
 exports.getNumBorrowsRemaining = getNumBorrowsRemaining;
+
+s4 = () => {
+    return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+}
+
+guid = () => {
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}
