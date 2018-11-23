@@ -91,7 +91,14 @@ export default class AddMusic extends Component {
                         label="Copies Available"
                         name="numAvailable"
                         margin="dense"
-                        style={style.page}
+                        style={style.textField}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="Copies Total"
+                        name="numTotal"
+                        margin="dense"
+                        style={style.textField}
                         onChange={this.handleChange} />
                     <br/>
                     <Input type="submit" style={style.label}>

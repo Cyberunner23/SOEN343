@@ -16,8 +16,7 @@ export default class Loans extends Component {
     constructor(props) {
         super();
         this.state = {
-                user: '', title: '', type: '', dateLoaned: '', dateDue: '',
-                userFilter: '', titleFilter: '', typeFilter: '', dateLoanedFilter: '', dateDueFilter: '',
+                transactionIdFilter: '', userIdFilter: '', transactionTypeFilter: '', transactionTimeFilter: '', isReturnedFilter: '', mediaIdFilter: '', mediaTypeFilter: '',
                 app: props.app,
                 desc: false,
                 items: [],
@@ -53,36 +52,38 @@ export default class Loans extends Component {
             <div>
                 <div style={style.format}>
                     <Typography>Filter By...</Typography>
-                    <TextField style={style.field} label="user" name="userFilter" margin="dense" onChange={this.handleChange} />
-                    <TextField style={style.field} label="title" name="titleFilter" margin="dense" onChange={this.handleChange} />
-                    <TextField style={style.field} label="type" name="typeFilter" margin="dense" onChange={this.handleChange} />
-                    <TextField style={style.field} label="date loaned" name="dateLoanedFilter" margin="dense" onChange={this.handleChange} />
-                    <TextField style={style.field} label="date due" name="dateDueFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="transaction id" name="transactionIdFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="user id" name="userIdFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="transaction type" name="transactionTypeFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="transaction time" name="transactionTimeFilter" margin="dense" onChange={this.handleChange} /><br/>
+                    <TextField style={style.field} label="returned state" name="isReturnedFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="media id" name="mediaIdFilter" margin="dense" onChange={this.handleChange} />
+                    <TextField style={style.field} label="media type" name="mediaTypeFilter" margin="dense" onChange={this.handleChange} />
                     <br /><Button color="primary" onClick={() => { this.filter() }}>Search</Button>
                 </div>
                 <Table style={style.format}>
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel >TransactionId</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('TransactionId')}>TransactionId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel >UserId</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('UserId')}>UserId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel >TransactionType</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('TransactionType')}>TransactionType</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel >TransactionTime</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('TransactionTime')}>TransactionTime</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel >IsReturned</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('IsReturned')}>IsReturned</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel >MediaId</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('MediaId')}>MediaId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel >MediaType</TableSortLabel>
+                                <TableSortLabel onClick={() => this.sort('MediaType')}>MediaType</TableSortLabel>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -119,34 +120,49 @@ export default class Loans extends Component {
 
         return (<div className='ViewLoansComponent UseCaseComponent'><h2>Loans</h2>{content}</div>);
     }
-    
+
     sort(field) {
-        sorter.stringSort(this.state.items, field, this.state.desc);
-        this.setState({books: this.state.items, desc: !this.state.desc});
+        let currentState = this.state.desc;
+
+        if(this.state.lastSortField !== field) {
+            currentState = false;
+        }
+        else {
+            currentState = !currentState;
+        }
+        sorter.stringSort(this.state.items, field, currentState);
+        this.setState({items: this.state.items, desc: currentState, lastSortField: field});
     }
     
     filter() {
-        let user = this.state.userFilter;
-        let title = this.state.titleFilter;
-        let type = this.state.typeFilter;
-        let dateLoaned = this.state.dateLoanedFilter;
-        let dateDue = this.state.dateDueFilter;
-        let jsonObject = {user, title, type, dateLoaned, dateDue};
+        let transactionId = this.state.transactionIdFilter;
+        let userId = this.state.userIdFilter;
+        let transactionType = this.state.transactionTypeFilter;
+        let transactionTime = this.state.transactionTimeFilter;
+        let isReturned = this.state.isReturnedFilter;
+        let mediaId = this.state.mediaIdFilter;
+        let mediaType = this.state.mediaTypeFilter;
+        let jsonObject = {transactionId, userId, transactionType, transactionTime, isReturned, mediaId, mediaType};
 
         Object.keys(jsonObject).forEach((key) => (jsonObject[key] === "") && delete jsonObject[key]);
 
-        // convert json to url params
-        let url = Object.keys(jsonObject).map(function(k) {
-            return encodeURIComponent(k) + '=' + encodeURIComponent(jsonObject[k])
-        }).join('&');
-
-        fetch('/api/transaction/getTransactions?' + url, {
-            method: 'GET'
-        }).then(res => {
-            res.json().then(
-                items => this.setState({ items: items })
-            )
-        });
+        fetch('/api/transaction/getTransactions', {
+            method: 'POST',
+            headers: {'Content-type': 'application/json'},
+            body: JSON.stringify({filters: jsonObject, authToken: this.state.app.state.currentUser.authToken}),
+        })
+            .then(res => {
+                if(res.status === 200) {
+                    res.json().then(
+                        items => {
+                            this.setState({items: items})
+                        }
+                    )
+                }
+                else {
+                    this.setState({items: []})
+                }
+            })
     }
     
     handleChange = (e) => {

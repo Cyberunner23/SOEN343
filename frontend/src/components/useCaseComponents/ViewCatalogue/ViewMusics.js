@@ -115,21 +115,13 @@ export default class ViewMusics extends Component {
                                     {music.releaseDate}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyMusic && this.state.asin === music.asin) ? (<TextField
-                                        name="numAvailable"
-                                        margin="dense"
-                                        defaultValue={music.numAvailable}
-                                        onChange={this.handleChange} />) : (music.numAvailable)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyBook && this.state.asin === music.asin) ? (<TextField
-                                        name="numTotal"
-                                        margin="dense"
-                                        defaultValue={music.numTotal}
-                                        onChange={this.handleChange} />) : (music.numTotal)}
-                                </TableCell>
-                                <TableCell>
                                     {music.asin}
+                                </TableCell>
+                                <TableCell>
+                                    {(music.numAvailable)}
+                                </TableCell>
+                                <TableCell>
+                                    {(music.numTotal)}
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
                             <TableCell>
@@ -205,6 +197,24 @@ export default class ViewMusics extends Component {
                     name="asin"
                     margin="normal"
                     defaultValue= {(this.state.musicItem.asin)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                <br/>
+                <TextField
+                    label="Copies Available"
+                    name="numAvailable"
+                    margin="normal"
+                    defaultValue= {(this.state.musicItem.numAvailable)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
+                <br/>
+                <TextField
+                    label="Copies Total"
+                    name="numTotal"
+                    margin="normal"
+                    defaultValue= {(this.state.musicItem.numTotal)}
                     style={style.textField}
                     onChange={this.handleChange}
                     disabled={(this.state.modifyMusic && this.state.asin === this.state.musicItem.asin) ? false : true} />
