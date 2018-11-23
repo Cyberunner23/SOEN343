@@ -50,7 +50,22 @@ class TransactionController {
 
     }
     
-    async borrowRecord (req, res) 
+    // Contract Programming:
+    // pre(...) indicates the value in the precondition
+    // Declarations:
+    //    let user = this.UserController.identifyUser(req.authToken);
+    //    let transactionId = req.body.transactionId;
+    //    let transactions = this.get({user.id, transactionId});
+    //    let mediaItem = this.catalogueMaper.get(transactions[0].mediaId);
+    // Pre: 
+    //    (user.is_admin === false) &&
+    //    (transactions.length === 1);
+    //    
+    // Post:
+    //    (transactions[0].isReturned === 1) &&
+    //    (mediaItem.numAvailable === pre(mediaItem.numAvailable) + 1) &&
+    //    (this.getNumBorrowsRemaining(user) === pre(this.getNumBorrowsRemaining(user)) + 1);
+    async borrowRecord (req, res)
     {
         console.log('borrow record');
         identifyUser(req.body.authToken)
@@ -166,6 +181,18 @@ class TransactionController {
         });
     }
     
+    // Contract Programming:
+    // pre(...) indicates the value in the precondition
+    // Declaration:
+    //    let user = this.UserController.identifyUser(req.authToken);
+    //    let mediaItem = this.catalogueMapper.get({identifier: req.body.mediaId});
+    // Pre:
+    //    (user.is_admin === false) &&
+    //    (mediaItem.numAvailable > 0) &&
+    //    (this.getNumBorrowsRemaining(user) > 0);
+    // Post:
+    //    (this.getNumBorrowsRemaining(user) === pre(this.getNumBorrowsRemaining(user)) - 1) &&
+    //    (this.get({userId: user.id}).length === pre(this.get({userId: user.id}).length) + 1);
     async returnRecord (req, res)
     {
         identifyUser(req.body.authToken)
