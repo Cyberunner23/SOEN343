@@ -170,7 +170,7 @@ export default class ViewCart extends Component {
             fetch('/api/transaction/returnRecord', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({returnItems: this.state.loanedItemstoReturn, authToken: this.state.authToken })
+                body: JSON.stringify({returns: this.state.loanedItemstoReturn, authToken: this.state.authToken })
             }).then((res => {
                 if (res.status === 200) {
                     console.log("returned item");
