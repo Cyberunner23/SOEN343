@@ -61,7 +61,7 @@ class CartItemController {
             var borrowLimit = await getNumBorrowsRemaining(user);
 			
 			if (borrowLimit > 0){
-                var props = {userId: user.id, mediaType: req.body.mediaType, mediaId: req.body.mediaId};
+                var props = {cartItemId: guid(), userId: user.id, mediaType: req.body.mediaType, mediaId: req.body.mediaId};
                 this.mapper.add(new CartItem(props))
                 .then(record => {
                     res.status(200);
@@ -132,19 +132,9 @@ handleException = function(res, exception) {
 }
 
 getNumBorrowsRemaining = async user => {
-    var cartLen;
-    var filter = {userId: user.id};
-    await cartItemMapper.get(filter)
-    .then(values => {
-        cartLen = values.length;
-    })
-    .catch(ex => {
-        handleException(res, ex);
-    })
-
-    var filter2 = {userId: user.id, isReturned: 0};
+    var filter = {userId: user.id, isReturned: 0};
     var transactLen;
-    await transactionMapper.get(filter2)
+    await transactionMapper.get(filter)
     .then(values => {
         transactLen = values.length;
     })
@@ -153,6 +143,16 @@ getNumBorrowsRemaining = async user => {
         handleException(res, ex);
     })
     
-    return maxBorrows - cartLen - transactLen;
+    return maxBorrows - transactLen;
 }
 exports.getNumBorrowsRemaining = getNumBorrowsRemaining;
+
+s4 = () => {
+    return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+}
+
+guid = () => {
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
+}

@@ -16,6 +16,8 @@ class Transaction
         this.mediaId = props.mediaId;
 		// Type of item that was loaned
         this.mediaType = props.mediaType;
+        // Due date
+        this.dueDate = props.dueDate;
     }
 }
 

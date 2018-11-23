@@ -86,6 +86,9 @@ export default class ViewCart extends Component {
                                 <TableSortLabel>mediaType</TableSortLabel>
                             </TableCell>
                             <TableCell>
+                                <TableSortLabel>dueDate</TableSortLabel>
+                            </TableCell>
+                            <TableCell>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -112,6 +115,9 @@ export default class ViewCart extends Component {
                                 </TableCell>
                                 <TableCell>
                                     {item.mediaType}
+                                </TableCell>
+                                <TableCell>
+                                    {item.dueDate}
                                 </TableCell>
                                 {this.state.modifyLoan === true &&
                                     <Checkbox color="default" checked={this.state.loanedItemstoReturn.includes(item)} value={item.id} onChange={this.itemToReturn(item)} />
@@ -170,7 +176,7 @@ export default class ViewCart extends Component {
             fetch('/api/transaction/returnRecord', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({returnItems: this.state.loanedItemstoReturn, authToken: this.state.authToken })
+                body: JSON.stringify({returns: this.state.loanedItemstoReturn, authToken: this.state.authToken })
             }).then((res => {
                 if (res.status === 200) {
                     console.log("returned item");

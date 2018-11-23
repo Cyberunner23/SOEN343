@@ -98,21 +98,13 @@ export default class ViewBooks extends Component {
                                     {(book.author)}
                                 </TableCell>
                                 <TableCell>
-                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
-                                        name="numAvailable"
-                                        margin="dense"
-                                        defaultValue={book.numAvailable}
-                                        onChange={this.handleChange} />) : (book.numAvailable)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyBook && this.state.isbn13 === book.isbn13) ? (<TextField
-                                        name="numTotal"
-                                        margin="dense"
-                                        defaultValue={book.numTotal}
-                                        onChange={this.handleChange} />) : (book.numTotal)}
-                                </TableCell>
-                                <TableCell>
                                     {book.isbn13}
+                                </TableCell>
+                                <TableCell>
+                                    {(book.numAvailable)}
+                                </TableCell>
+                                <TableCell>
+                                    {(book.numTotal)}
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
                                 <TableCell>
@@ -124,7 +116,7 @@ export default class ViewBooks extends Component {
                                 {this.state.is_admin === 0 &&
                                 <TableCell>
                                     <Button color="primary" onClick={() => { this.detailedBook(book, true) }}>View Details</Button>
-                                    <Button variant="contained" color="secondary" onClick={() => { this.addBookToCart(book.isbn13) }}>Add to Cart</Button>
+                                    <Button variant="contained" color="secondary" disabled={book.numAvailable === 0} onClick={() => { this.addBookToCart(book.isbn13) }}>Add to Cart</Button>
                                 </TableCell>}
                             </TableRow>
                         )}
@@ -210,10 +202,28 @@ export default class ViewBooks extends Component {
                         onChange={this.handleChange}
                         disabled={(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ? false : true} />
                     <br/>
+                    <TextField
+                        label="Copies Available"
+                        name="numAvailable"
+                        margin="normal"
+                        defaultValue= {(this.state.bookItem.numAvailable)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ? false : true} />
+                    <br/>
+                    <TextField
+                        label="Copies Total"
+                        name="numTotal"
+                        margin="normal"
+                        defaultValue= {(this.state.bookItem.numTotal)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled={(this.state.modifyBook && this.state.isbn13 === this.state.bookItem.isbn13) ? false : true} />
+                    <br/>
                     {this.state.is_admin === 0 &&
                     <p>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceBook(this.state.bookItem, false) }}>Previous</Button>
-                        <Button variant="contained" color="secondary" onClick={() => { this.addBookToCart(this.state.bookItem.isbn13) }}>Add to Cart</Button>
+                        <Button variant="contained" color="primary" disabled={this.state.bookItem.numAvailable === 0} onClick={() => { this.addBookToCart(this.state.bookItem.isbn13) }}>Add to Cart</Button>
                         <Button variant="contained" color="secondary" onClick={() => { this.sequenceBook(this.state.bookItem, true) }}>Next</Button>
                     </p>}
                     {this.state.is_admin === 1 &&

@@ -100,22 +100,15 @@ export default class ViewMovies extends Component {
                                 <TableCell>
                                     {movie.director}
                                 </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyMovie && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="numAvailable"
-                                        margin="dense"
-                                        defaultValue={movie.numAvailable}
-                                        onChange={this.handleChange} />) : (movie.numAvailable)}
-                                </TableCell>
-                                <TableCell>
-                                    {(this.state.modifyBook && this.state.eidr === movie.eidr) ? (<TextField
-                                        name="numTotal"
-                                        margin="dense"
-                                        defaultValue={movie.numTotal}
-                                        onChange={this.handleChange} />) : (movie.numTotal)}
-                                </TableCell>
+
                                 <TableCell>
                                     {movie.eidr}
+                                </TableCell>
+                                <TableCell>
+                                    {(movie.numAvailable)}
+                                </TableCell>
+                                <TableCell>
+                                    {(movie.numTotal)}
                                 </TableCell>
                                 {this.state.is_admin === 1 &&
                                 <TableCell>
@@ -127,7 +120,7 @@ export default class ViewMovies extends Component {
                             {this.state.is_admin === 0 &&
                             <TableCell>
                                 <Button color="primary" onClick={() => { this.detailedMovie(movie, true) }}>View Details</Button>
-                                <Button variant="contained" color="secondary" onClick={() => { this.addMovieToCart(movie.eidr) }}>Add to Cart</Button>
+                                <Button variant="contained" color="secondary" disabled={movie.numAvailable === 0} onClick={() => { this.addMovieToCart(movie.eidr) }}>Add to Cart</Button>
                             </TableCell>}
                         </TableRow>
                     )}
@@ -231,10 +224,28 @@ export default class ViewMovies extends Component {
                     onChange={this.handleChange}
                     disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
                 <br/>
+                <TextField
+                    label="Copies Available"
+                    name="numAvailable"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.numAvailable)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
+                <TextField
+                    label="Copies Total"
+                    name="numTotal"
+                    margin="normal"
+                    defaultValue= {(this.state.movieItem.numTotal)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled={(this.state.modifyMovie && this.state.eidr === this.state.movieItem.eidr) ? false : true} />
+                <br/>
                 {this.state.is_admin === 0 &&
                 <p>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMovie(this.state.movieItem, false) }}>Previous</Button>
-                    <Button variant="contained" color="secondary" onClick={() => { this.addMovieToCart(this.state.movieItem.eidr) }}>Add to Cart</Button>
+                    <Button variant="contained" color="primary" disabled={this.state.movieItem.numAvailable === 0} onClick={() => { this.addMovieToCart(this.state.movieItem.eidr) }}>Add to Cart</Button>
                     <Button variant="contained" color="secondary" onClick={() => { this.sequenceMovie(this.state.movieItem, true) }}>Next</Button>
                 </p>}
                 {this.state.is_admin === 1 &&
@@ -412,14 +423,13 @@ export default class ViewMovies extends Component {
         });
     }
 
-    async addMovieToCart(props){
-        let eidr = props.eidr;
+    async addMovieToCart(eidr){
 
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
+            fetch('/api/cartItem/addToCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({eidr , authToken: this.state.authToken})
+                body: JSON.stringify({mediaId: eidr, mediaType: 'movie', authToken: this.state.authToken})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((movie) => {
