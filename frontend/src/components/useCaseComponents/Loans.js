@@ -18,14 +18,15 @@ export default class Loans extends Component {
         this.state = {
                 transactionIdFilter: '', userIdFilter: '', transactionTypeFilter: '', transactionTimeFilter: '', isReturnedFilter: '', mediaIdFilter: '', mediaTypeFilter: '',
                 app: props.app,
-                prevState: false,
                 desc: false,
                 items: [],
                 catalogueItems:[],
-                currentItem:[],
+                detailedItem: [],
+                detailedItemBool: false,
+                update: false
         }
         this.componentDidMount = this.componentDidMount.bind(this);
-        this.componentDidUpdate = this.componentDidUpdate.bind(this);
+        // this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
     
@@ -39,7 +40,66 @@ export default class Loans extends Component {
             if(res.status === 200) {
                 res.json().then(
                     items => {
-                        this.setState({items: items})
+                        this.setState({items: items});
+                        // var catalogueItems = [];
+                        // for(var i = 0; i < this.state.items.length; i++){
+                        //     switch(this.state.items[i].mediaType){
+                        //         case "book":
+                        //             var isbn13 = this.state.items[i].mediaId;
+                        //             fetch('/api/catalogue/getBooks?' + "isbn13=" + isbn13, {
+                        //                 method: 'GET'
+                        //             }).then(res => {
+                        //                 res.json().then(
+                        //                     book => {
+                        //                         console.log("componentDidUpdate" + isbn13);
+                        //                         catalogueItems[isbn13] = book;
+                        //                     }
+                        //                 )
+                        //             });
+                        //             break;
+                        //         case "music":
+                        //             var asin = this.state.items[i].mediaId;
+                        //             fetch('/api/catalogue/getMusics?' + "asin=" + asin, {
+                        //                 method: 'GET'
+                        //             }).then(res => {
+                        //                 res.json().then(
+                        //                     music => {
+                        //                         catalogueItems[asin] = music;
+                        //                     }
+                        //                 )
+                        //             });
+                        //             break;
+                        //         case "magazine":
+                        //             var isbn13 = this.state.items[i].mediaId;
+                        //             fetch('/api/catalogue/getMagazines?' + "isbn13=" + isbn13, {
+                        //                 method: 'GET'
+                        //             }).then(res => {
+                        //                 res.json().then(
+                        //                     magazine => {
+                        //                         console.log("componentDidUpdate" + isbn13);
+                        //                         catalogueItems[isbn13] = magazine;
+                        //                     }
+                        //                 )
+                        //             });
+                        //             break;
+                        //         case "movie":
+                        //             var eidr = this.state.items[i].mediaId;
+                        //             fetch('/api/catalogue/getMovies?' + "eidr=" + eidr, {
+                        //                 method: 'GET'
+                        //             }).then(res => {
+                        //                 res.json().then(
+                        //                     movie => {
+                        //                         console.log("componentDidUpdate" + eidr);
+                        //                         catalogueItems[eidr] = movie;
+                        //                     }
+                        //                 )
+                        //             });
+                        //             break;
+                        //         default:
+                        //             break;
+                        //     }
+                        // }
+                        // this.setState({ catalogueItems: catalogueItems });
                     }
                 )
             }
@@ -49,24 +109,23 @@ export default class Loans extends Component {
         })
     }
 
-    componentDidUpdate() {
-        if(!this.state.prevState){   
+    componentDidUpdate(prevProps, prevState) {
+        console.log("componentDidUpdate" + this.state.catalogueItems);
+        if(prevState.items !== this.state.items){   
             var item = [];
             item = this.state.catalogueItems; 
             for(var i = 0; i < this.state.items.length; i++){
-                console.log(i);
                 switch(this.state.items[i].mediaType){
                     case "book":
                         var isbn13 = this.state.items[i].mediaId;
                         fetch('/api/catalogue/getBooks?' + "isbn13=" + isbn13, {
                             method: 'GET'
                         }).then(res => {
-                            console.log(res);
+                            console.log("componentDidUpdate" + res);
                             res.json().then(
                                 book => {
-                                    console.log(isbn13);
+                                    console.log("componentDidUpdate" + isbn13);
                                     item[isbn13] = book;
-                                    console.log(item);
                                 }
                             )
                         });
@@ -76,12 +135,11 @@ export default class Loans extends Component {
                         fetch('/api/catalogue/getMusics?' + "asin=" + asin, {
                             method: 'GET'
                         }).then(res => {
-                            console.log(res);
+                            console.log("componentDidUpdate" + res);
                             res.json().then(
                                 music => {
-                                    console.log(asin);
+                                    console.log("componentDidUpdate" + asin);
                                     item[asin] = music;
-                                    console.log(item);
                                 }
                             )
                         });
@@ -91,12 +149,11 @@ export default class Loans extends Component {
                         fetch('/api/catalogue/getMagazines?' + "isbn13=" + isbn13, {
                             method: 'GET'
                         }).then(res => {
-                            console.log(res);
+                            console.log("componentDidUpdate" + res);
                             res.json().then(
                                 magazine => {
-                                    console.log(isbn13);
+                                    console.log("componentDidUpdate" + isbn13);
                                     item[isbn13] = magazine;
-                                    console.log(item);
                                 }
                             )
                         });
@@ -106,12 +163,11 @@ export default class Loans extends Component {
                         fetch('/api/catalogue/getMovies?' + "eidr=" + eidr, {
                             method: 'GET'
                         }).then(res => {
-                            console.log(res);
+                            console.log("componentDidUpdate" + res);
                             res.json().then(
                                 movie => {
-                                    console.log(eidr);
+                                    console.log("componentDidUpdate" + eidr);
                                     item[eidr] = movie;
-                                    console.log(item);
                                 }
                             )
                         });
@@ -120,15 +176,21 @@ export default class Loans extends Component {
                         break;
                 }
             }
-            this.setState({ catalogueItems: item });
-            this.setState({ prevState: true });
+            this.setState({ 
+                catalogueItems: item,
+                update: true, 
+            });
+            this.forceUpdate()
         }
         console.log(this.state.catalogueItems);
-        //console.log(this.state.catalogueItems);
     }
     
     render() {
-        
+
+        var itemDetail;
+
+        itemDetail = this.state.detailedItem;
+
         var content;
         content = (
             <div>
@@ -171,13 +233,14 @@ export default class Loans extends Component {
                             <TableCell>
                                 <TableSortLabel onClick={() => this.sort('dueDate')}>DueDate</TableSortLabel>
                             </TableCell>
+                            <TableCell></TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {this.state.items.map((item, i) =>
                                 <TableRow key={i}>
                                 <TableCell>
-                                    { this.getItem(item.mediaId) }
+                                    {item.transactionId}
                                 </TableCell>
                                 <TableCell>
                                     {item.userId}
@@ -200,6 +263,10 @@ export default class Loans extends Component {
                                 <TableCell>
                                     {item.dueDate}
                                 </TableCell>
+                                <TableCell>
+                                    {item.dueDate}
+                                </TableCell>
+                                <TableCell><Button variant="contained" color="secondary" onClick={() => { this.getItem(item.mediaId, item.mediaType) }}>View Details</Button></TableCell>
                             </TableRow>
                             )}
                     </TableBody>
@@ -207,7 +274,11 @@ export default class Loans extends Component {
             </div>
         );
 
-        return (<div className='ViewLoansComponent UseCaseComponent'><h2>Loans</h2>{content}</div>);
+        return (
+        <div className='ViewLoansComponent UseCaseComponent'>
+            <h2>Loans</h2>
+            {this.state.detailedItemBool ? itemDetail : content}
+        </div>);
     }
 
     sort(field) {
@@ -260,18 +331,403 @@ export default class Loans extends Component {
     }
 
     getTitle(id) {
-        return this.state.catalogueItems[id][0].title;
-        // this.getItem(id, type);
-        // var item = JSON.parse(JSON.stringify(this.state.currentItem));
-        // if(!(item === undefined || item.length == 0)) console.log("Title:" + this.state.currentItem[0].title);
-        // console.log(this.state.currentItem);
+        const items = this.state.catalogueItems;
+        console.log(items[id][0].title);
+        return items;
+        // console.log(this.state.catalogueItems);
+        // console.log(this.state.catalogueItems[id][0].title);
+        // // this.getItem(id, type);
+        // // var item = JSON.parse(JSON.stringify(this.state.currentItem));
+        // // if(!(item === undefined || item.length == 0)) console.log("Title:" + this.state.currentItem[0].title);
+        // // console.log(this.state.currentItem);
     }
 
     getItem(id, type) {
-        var item = this.state.catalogueItems;
-        console.log('ID ' + id + ' and type ' + type);
-        console.log(this.state.catalogueItems[id][0].title);
-        return this.state.catalogueItems[id][0].title;
+        var itemDetail;
+        switch(type) {
+            case 'book':
+            itemDetail = (
+                <div className="fixed" style={style.body} key={this.state.catalogueItems[id][0].isbn13}>
+                    <Button color="primary" onClick={() => { this.setState({detailedItemBool: false}) }}>Back to Books View</Button>
+                    <br/>
+                    <TextField
+                            label="Title"
+                            name="title"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].title)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Author"
+                            name="author"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].author)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Format"
+                            name="format"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].format)}
+                            style={style.format}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Pages"
+                            name="pages"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].pages)}
+                            style={style.page}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Publisher"
+                            name="publisher"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].publisher)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Language"
+                            name="language"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].language)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="ISBN-10"
+                            name="isbn10"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].isbn10)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="ISBN-13"
+                            name="isbn13"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].isbn13)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Copies Available"
+                            name="numAvailable"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].numAvailable)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Copies Total"
+                            name="numTotal"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].numTotal)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                </div>
+            );
+            break;
+            case 'music':
+            itemDetail = (
+                <div className="fixed" style={style.body} key={this.state.catalogueItems[id][0].asin}>
+                    <Button color="primary" onClick={() => { this.setState({detailedItemBool: false}) }}>Back to musics View</Button>
+                    <br/>
+                    <TextField
+                            label="Title"
+                            name="title"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].title)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Artist"
+                            name="artist"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].artist)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Type"
+                            name="type"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].type)}
+                            style={style.type}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Label"
+                            name="label"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].label)}
+                            style={style.page}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Release Date"
+                            name="releaseDate"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].releaseDate)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="ASIN"
+                            name="asin"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].asin)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Copies Available"
+                            name="numAvailable"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].numAvailable)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                        <TextField
+                            label="Copies Total"
+                            name="numTotal"
+                            margin="normal"
+                            defaultValue= {(this.state.catalogueItems[id][0].numTotal)}
+                            style={style.textField}
+                            onChange={this.handleChange}
+                            disabled />
+                        <br/>
+                </div>
+            );
+            break;
+        case 'movie':
+        itemDetail = (
+            <div className="fixed" style={style.body} key={this.state.catalogueItems[id][0].eidr}>
+                <Button color="primary" onClick={() => { this.setState({detailedItemBool: false}) }}>Back to movies View</Button>
+                <br/>
+                <TextField
+                        label="Title"
+                        name="title"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].title)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="Director"
+                        name="director"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].director)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="Producers"
+                        name="producers"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].producers)}
+                        style={style.producers}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="Actors"
+                        name="actors"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].actors)}
+                        style={style.page}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="Language"
+                        name="language"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].language)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="Subtitles"
+                        name="subtitles"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].subtitles)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="Dubbed"
+                        name="dubbed"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].dubbed)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="Release Date"
+                        name="releaseDate"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].releaseDate)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="Run Time"
+                        name="runTime"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].runTime)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="EIDR"
+                        name="eidr"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].eidr)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="Copies Available"
+                        name="numAvailable"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].numAvailable)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="Copies Total"
+                        name="numTotal"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].numTotal)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+            </div>
+        );
+        break;
+        case 'magazine':
+        itemDetail = (
+            <div className="fixed" style={style.body} key={this.state.catalogueItems[id][0].isbn13}>
+                <Button color="primary" onClick={() => { this.setState({detailedItemBool: false}) }}>Back to magazines View</Button>
+                <br/>
+                <TextField
+                        label="Title"
+                        name="title"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].title)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="Publisher"
+                        name="publisher"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].publisher)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                <TextField
+                    label="Date"
+                    name="date"
+                    margin="normal"
+                    defaultValue= {(this.state.catalogueItems[id][0].date)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled />
+                <br/>
+                    <TextField
+                        label="Language"
+                        name="language"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].language)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="ISBN-10"
+                        name="isbn10"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].isbn10)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                    <TextField
+                        label="ISBN-13"
+                        name="isbn13"
+                        margin="normal"
+                        defaultValue= {(this.state.catalogueItems[id][0].isbn13)}
+                        style={style.textField}
+                        onChange={this.handleChange}
+                        disabled />
+                    <br/>
+                <TextField
+                    label="Copies Available"
+                    name="numAvailable"
+                    margin="normal"
+                    defaultValue= {(this.state.catalogueItems[id][0].numAvailable)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled />
+                <br/>
+                <TextField
+                    label="Copies Total"
+                    name="isbn13"
+                    margin="normal"
+                    defaultValue= {(this.state.catalogueItems[id][0].numTotal)}
+                    style={style.textField}
+                    onChange={this.handleChange}
+                    disabled />
+                <br/>
+            </div>
+        );
+        break;
+    default: itemDetail = (<div></div>);
+    
+    }
+    this.setState({
+        detailedItemBool: true,
+        detailedItem: itemDetail,
+    });
+    console.log(this.state.catalogueItems[id][0].title);
+    return itemDetail;
     }
     
 }
