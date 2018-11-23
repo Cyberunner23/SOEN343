@@ -18,10 +18,14 @@ export default class Loans extends Component {
         this.state = {
                 transactionIdFilter: '', userIdFilter: '', transactionTypeFilter: '', transactionTimeFilter: '', isReturnedFilter: '', mediaIdFilter: '', mediaTypeFilter: '',
                 app: props.app,
+                prevState: false,
                 desc: false,
                 items: [],
+                catalogueItems:[],
+                currentItem:[],
         }
         this.componentDidMount = this.componentDidMount.bind(this);
+        this.componentDidUpdate = this.componentDidUpdate.bind(this);
         this.handleChange = this.handleChange.bind(this);
     }
     
@@ -44,6 +48,84 @@ export default class Loans extends Component {
             }
         })
     }
+
+    componentDidUpdate() {
+        if(!this.state.prevState){   
+            var item = [];
+            item = this.state.catalogueItems; 
+            for(var i = 0; i < this.state.items.length; i++){
+                console.log(i);
+                switch(this.state.items[i].mediaType){
+                    case "book":
+                        var isbn13 = this.state.items[i].mediaId;
+                        fetch('/api/catalogue/getBooks?' + "isbn13=" + isbn13, {
+                            method: 'GET'
+                        }).then(res => {
+                            console.log(res);
+                            res.json().then(
+                                book => {
+                                    console.log(isbn13);
+                                    item[isbn13] = book;
+                                    console.log(item);
+                                }
+                            )
+                        });
+                        break;
+                    case "music":
+                        var asin = this.state.items[i].mediaId;
+                        fetch('/api/catalogue/getMusics?' + "asin=" + asin, {
+                            method: 'GET'
+                        }).then(res => {
+                            console.log(res);
+                            res.json().then(
+                                music => {
+                                    console.log(asin);
+                                    item[asin] = music;
+                                    console.log(item);
+                                }
+                            )
+                        });
+                        break;
+                    case "magazine":
+                        var isbn13 = this.state.items[i].mediaId;
+                        fetch('/api/catalogue/getMagazines?' + "isbn13=" + isbn13, {
+                            method: 'GET'
+                        }).then(res => {
+                            console.log(res);
+                            res.json().then(
+                                magazine => {
+                                    console.log(isbn13);
+                                    item[isbn13] = magazine;
+                                    console.log(item);
+                                }
+                            )
+                        });
+                        break;
+                    case "movie":
+                        var eidr = this.state.items[i].mediaId;
+                        fetch('/api/catalogue/getMovies?' + "eidr=" + eidr, {
+                            method: 'GET'
+                        }).then(res => {
+                            console.log(res);
+                            res.json().then(
+                                movie => {
+                                    console.log(eidr);
+                                    item[eidr] = movie;
+                                    console.log(item);
+                                }
+                            )
+                        });
+                        break;
+                    default:
+                        break;
+                }
+            }
+            this.setState({ catalogueItems: item });
+            this.setState({ prevState: true });
+        }
+        console.log(this.state.catalogueItems);
+        //console.log(this.state.catalogueItems);
+    }
     
     render() {
         
@@ -65,25 +147,25 @@ export default class Loans extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('TransactionId')}>TransactionId</TableSortLabel>
+                                <TableSortLabel>TransactionId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('UserId')}>UserId</TableSortLabel>
+                                <TableSortLabel>UserId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('TransactionType')}>TransactionType</TableSortLabel>
+                                <TableSortLabel>TransactionType</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('TransactionTime')}>TransactionTime</TableSortLabel>
+                                <TableSortLabel>TransactionTime</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('IsReturned')}>IsReturned</TableSortLabel>
+                                <TableSortLabel>IsReturned</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('MediaId')}>MediaId</TableSortLabel>
+                                <TableSortLabel>MediaId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('MediaType')}>MediaType</TableSortLabel>
+                                <TableSortLabel>MediaType</TableSortLabel>
                             </TableCell>
                         </TableRow>
                     </TableHead>
@@ -91,7 +173,7 @@ export default class Loans extends Component {
                         {this.state.items.map((item, i) =>
                                 <TableRow key={i}>
                                 <TableCell>
-                                    {item.transactionId}
+                                    { this.getItem(item.mediaId) }
                                 </TableCell>
                                 <TableCell>
                                     {item.userId}
@@ -167,6 +249,21 @@ export default class Loans extends Component {
     
     handleChange = (e) => {
         this.setState({ [e.target.name]: e.target.value});
+    }
+
+    getTitle(id) {
+        return this.state.catalogueItems[id][0].title;
+        // this.getItem(id, type);
+        // var item = JSON.parse(JSON.stringify(this.state.currentItem));
+        // if(!(item === undefined || item.length == 0)) console.log("Title:" + this.state.currentItem[0].title);
+        // console.log(this.state.currentItem);
+    }
+
+    getItem(id, type) {
+        var item = this.state.catalogueItems;
+        console.log('ID ' + id + ' and type ' + type);
+        console.log(this.state.catalogueItems[id][0].title);
+        return this.state.catalogueItems[id][0].title;
     }
     
 }
