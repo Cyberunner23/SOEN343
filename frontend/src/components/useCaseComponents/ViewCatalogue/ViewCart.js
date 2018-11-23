@@ -146,7 +146,7 @@ export default class ViewCart extends Component {
             fetch('/api/transaction/borrowRecord', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({mediaType: this.state.cart[0].mediaType, mediaId: this.state.cart[0].mediaId, authToken: this.state.authToken })
+                body: JSON.stringify({cart: this.state.cart, authToken: this.state.authToken })
             }).then((res => {
                 if (res.status === 200) {
                     console.log("Items Loaned");

@@ -52,90 +52,101 @@ class TransactionController {
     
     async borrowRecord (req, res) 
     {
+        console.log('borrow record');
         identifyUser(req.body.authToken)
         .then(async user => 
         {
-            // Users only
-            if (user.is_admin)
-            {
-                handleException(res, Exceptions.Unauthorized);
-                return;
-            }
+            for (var index in req.body.cart) {
+                var cartItem = req.body.cart[index];
 
-            // Make sure user hasn't reached max borrows
-            var numBorrowsRemaining = await getNumBorrowsRemaining(user);
-            if (numBorrowsRemaining <= 0) {
-                handleException(res, Exceptions.BadRequest);
-                return;
-            }
-           
-            // check for item availability
-            var available = 0;
-            var catalogueMapper = selectCatalogueMapper(req.body.mediaType);
-
-            var mediaTypeKey = getMediaTypeKey(req.body.mediaType);
-
-            var filter = {};
-            filter[mediaTypeKey] = req.body.mediaId;
-			await catalogueMapper.get(filter)
-			.then(records => {
-                if (records != undefined && records.length != undefined &&  records.length > 0) {
-                    available = records[0].numAvailable; // there should be at most 1 record because req.body.mediaId is a unique identifier
+                console.log('cart item: ' + JSON.stringify(cartItem));
+                // Users only
+                if (user.is_admin)
+                {
+                    handleException(res, Exceptions.Unauthorized);
+                    return;
                 }
-			})
-			.catch(ex => {
-                handleException(res, ex);
-                return;
-            })
-            
-			if (available <= 0) {
-                handleException(res, Exceptions.BadRequest);
-                return;
-            }
-
-
-            // Given that there are copies that can be loaned,
-            // the transaction is done and added to the system
-
-            var props = {userId: user.id, transactionType: 0, isReturned: 0, mediaId: req.body.mediaId, mediaType: req.body.mediaType};
-            await transactionMapper.add(new Transaction(props))
-            .then(record => {
-                
-            })
-            .catch(ex => {
-                handleException(res, ex);
-            })
-
-            var updatedRecord;
-            await catalogueMapper.modify(filter, {numAvailable: available - 1})
-            .then(records => {
-                updatedRecord = records[0]; // There should be exactly 1 updated record because transactionId i
-            })
-            .catch(ex => {
-                handleException(res, ex);
-                return;
-            })
-
-
-            if (updatedRecord === undefined) {
-                handleException(res, Exceptions.InternalServerError);
-                return;
-            }
-
-			
-			//Remove existing cart items after processing borrow requests
-            var filters = {userId: user.id, mediaType: req.body.mediaType, mediaId: req.body.mediaId};
-            await cartItemMapper.remove(filters)
-            .then(removedRecords => {
-                if (removedRecords.length === 0) {
+    
+                // Make sure user hasn't reached max borrows
+                var numBorrowsRemaining = await getNumBorrowsRemaining(user);
+                if (numBorrowsRemaining <= 0) {
                     handleException(res, Exceptions.BadRequest);
+                    return;
                 }
-            })
-            .catch(ex => {
-                handleException(res, ex);
-            });
-            
-            res.status(200);
+               
+                console.log('made it here');
+                // check for item availability
+                var available = 0;
+                var catalogueMapper = selectCatalogueMapper(cartItem.mediaType);
+    
+                var mediaTypeKey = getMediaTypeKey(cartItem.mediaType);
+                
+    
+                var filter = {};
+                filter[mediaTypeKey] = cartItem.mediaId;
+                await catalogueMapper.get(filter)
+                .then(records => {
+                    if (records != undefined && records.length != undefined &&  records.length > 0) {
+                        available = records[0].numAvailable; // there should be at most 1 record because cartItem.mediaId is a unique identifier
+                    }
+                })
+                .catch(ex => {
+                    handleException(res, ex);
+                    return;
+                })
+                
+                if (available <= 0) {
+                    handleException(res, Exceptions.BadRequest);
+                    return;
+                }
+    
+    
+                // Given that there are copies that can be loaned,
+                // the transaction is done and added to the system
+    
+                var props = {transactionId: guid(), userId: user.id, transactionType: 0, isReturned: 0, mediaId: cartItem.mediaId, mediaType: cartItem.mediaType};
+                await transactionMapper.add(new Transaction(props))
+                .then(record => {
+                    
+                })
+                .catch(ex => {
+                    handleException(res, ex);
+                })
+    
+                var updatedRecord;
+                await catalogueMapper.modify(filter, {numAvailable: available - 1})
+                .then(records => {
+                    updatedRecord = records[0]; // There should be exactly 1 updated record because transactionId i
+                })
+                .catch(ex => {
+                    handleException(res, ex);
+                    return;
+                })
+    
+    
+                if (updatedRecord === undefined) {
+                    handleException(res, Exceptions.InternalServerError);
+                    return;
+                }
+    
+                
+                //Remove existing cart items after processing borrow requests
+                var filters = {userId: user.id, mediaType: cartItem.mediaType, mediaId: cartItem.mediaId};
+                await cartItemMapper.remove(filters)
+                .then(removedRecords => {
+                    if (removedRecords.length === 0) {
+                        handleException(res, Exceptions.BadRequest);
+                    }
+                })
+                .catch(ex => {
+                    handleException(res, ex);
+                });
+
+                res.status(200);
+                res.send();
+            }
+
+            res.status(400);
             res.send();
         })
 				
@@ -227,7 +238,7 @@ class TransactionController {
             }
             
             // add return transaction
-            var props = {userId: user.id, transactionType: 1, isReturned: 1, mediaId: updatedTransaction.mediaId, mediaType: updatedTransaction.mediaType};
+            var props = {transactionId: guid(), userId: user.id, transactionType: 1, isReturned: 1, mediaId: updatedTransaction.mediaId, mediaType: updatedTransaction.mediaType};
             await transactionMapper.add(new Transaction(props))
             .then(record => {
                 
@@ -295,4 +306,14 @@ getMediaTypeKey = (mediaType) => {
         case 'movie':
             return 'eidr';
     }
+}
+
+s4 = () => {
+    return Math.floor((1 + Math.random()) * 0x10000)
+        .toString(16)
+        .substring(1);
+}
+
+guid = () => {
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4();
 }
