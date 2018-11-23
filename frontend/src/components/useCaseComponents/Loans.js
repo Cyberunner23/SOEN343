@@ -41,65 +41,6 @@ export default class Loans extends Component {
                 res.json().then(
                     items => {
                         this.setState({items: items});
-                        // var catalogueItems = [];
-                        // for(var i = 0; i < this.state.items.length; i++){
-                        //     switch(this.state.items[i].mediaType){
-                        //         case "book":
-                        //             var isbn13 = this.state.items[i].mediaId;
-                        //             fetch('/api/catalogue/getBooks?' + "isbn13=" + isbn13, {
-                        //                 method: 'GET'
-                        //             }).then(res => {
-                        //                 res.json().then(
-                        //                     book => {
-                        //                         console.log("componentDidUpdate" + isbn13);
-                        //                         catalogueItems[isbn13] = book;
-                        //                     }
-                        //                 )
-                        //             });
-                        //             break;
-                        //         case "music":
-                        //             var asin = this.state.items[i].mediaId;
-                        //             fetch('/api/catalogue/getMusics?' + "asin=" + asin, {
-                        //                 method: 'GET'
-                        //             }).then(res => {
-                        //                 res.json().then(
-                        //                     music => {
-                        //                         catalogueItems[asin] = music;
-                        //                     }
-                        //                 )
-                        //             });
-                        //             break;
-                        //         case "magazine":
-                        //             var isbn13 = this.state.items[i].mediaId;
-                        //             fetch('/api/catalogue/getMagazines?' + "isbn13=" + isbn13, {
-                        //                 method: 'GET'
-                        //             }).then(res => {
-                        //                 res.json().then(
-                        //                     magazine => {
-                        //                         console.log("componentDidUpdate" + isbn13);
-                        //                         catalogueItems[isbn13] = magazine;
-                        //                     }
-                        //                 )
-                        //             });
-                        //             break;
-                        //         case "movie":
-                        //             var eidr = this.state.items[i].mediaId;
-                        //             fetch('/api/catalogue/getMovies?' + "eidr=" + eidr, {
-                        //                 method: 'GET'
-                        //             }).then(res => {
-                        //                 res.json().then(
-                        //                     movie => {
-                        //                         console.log("componentDidUpdate" + eidr);
-                        //                         catalogueItems[eidr] = movie;
-                        //                     }
-                        //                 )
-                        //             });
-                        //             break;
-                        //         default:
-                        //             break;
-                        //     }
-                        // }
-                        // this.setState({ catalogueItems: catalogueItems });
                     }
                 )
             }
