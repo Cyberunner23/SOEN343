@@ -151,6 +151,7 @@ export default class ViewCart extends Component {
     }
 
     itemToReturn = item => event =>  {
+        console.log('item: ' + JSON.stringify(item));
         var toReturn = this.state.loanedItemstoReturn;
         if(event.target.checked) toReturn.push(item);
         else {
@@ -164,8 +165,9 @@ export default class ViewCart extends Component {
     }
 
     async returnLoan() {
+        console.log('loanedItemsToReturn: ' + JSON.stringify(this.state.loanedItemstoReturn));
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/returnLoan', {
+            fetch('/api/transaction/returnRecord', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({returnItems: this.state.loanedItemstoReturn, authToken: this.state.authToken })

@@ -86,7 +86,6 @@ export default class ViewBooks extends Component {
                             <TableCell>
                                 <TableSortLabel onClick={() => this.sort('numTotal')} direction={'desc'}>Total Available</TableSortLabel>
                             </TableCell>
-                            <TableCell/>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -382,14 +381,14 @@ export default class ViewBooks extends Component {
         });
     }
 
-    async addBookToCart(props){
-        let isbn13 = props.isbn13;
-
+    async addBookToCart(isbn13){
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/addToCart', {
+            fetch('/api/cartItem/addToCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({isbn13 , authToken: this.state.authToken})
+                body: JSON.stringify({authToken: this.state.authToken,
+                                      mediaType: 'book',
+                                      mediaId: isbn13})
             }).then((response) => {
                 if (response.status === 200) {
                     response.json().then((book) => {

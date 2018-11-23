@@ -103,8 +103,15 @@ export default class AddBook extends Component {
                         onChange={this.handleChange} />
                     <br/>
                     <TextField
-                        label="Copies Available"
+                        label="Number of Copies Available"
                         name="numAvailable"
+                        margin="dense"
+                        style={style.page}
+                        onChange={this.handleChange} />
+                    <br/>
+                    <TextField
+                        label="Total Number of Copies"
+                        name="numTotal"
                         margin="dense"
                         style={style.page}
                         onChange={this.handleChange} />

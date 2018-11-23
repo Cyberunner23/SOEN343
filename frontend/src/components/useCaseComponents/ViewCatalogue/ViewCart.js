@@ -29,7 +29,11 @@ export default class ViewCart extends Component {
 
     componentDidMount() {
         // Change to getCartItems
-        fetch('/api/catalogue/getBooks')
+        fetch('/api/cartItem/getCartItems', {
+            method: 'POST',
+            headers: {'Content-type': 'application/json'},
+            body: JSON.stringify({authToken: this.state.app.state.currentUser.authToken})
+        })
             .then(res => {
                 res.json().then(
                     cart => this.setState({ cart: cart })
@@ -52,31 +56,36 @@ export default class ViewCart extends Component {
                     <TableHead>
                         <TableRow>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('title')} direction={'desc'}>Title</TableSortLabel>
+                                <TableSortLabel>CartItemId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('type')} direction={'desc'}>Type</TableSortLabel>
+                                <TableSortLabel>UserId</TableSortLabel>
                             </TableCell>
                             <TableCell>
-                                <TableSortLabel onClick={() => this.sort('id')} direction={'desc'}>ID</TableSortLabel>
+                                <TableSortLabel>MediaType</TableSortLabel>
                             </TableCell>
-                            <TableCell/>
+                            <TableCell>
+                                <TableSortLabel>MediaId</TableSortLabel>
+                            </TableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
                         {this.state.cart.map((item, i) =>
                             <TableRow key={i}>
                                 <TableCell>
-                                    {(item.title)}
+                                    {(item.cartItemId)}
                                 </TableCell>
                                 <TableCell>
-                                    {(item.type)}
+                                    {(item.userId)}
                                 </TableCell>
                                 <TableCell>
-                                    {item.id}
+                                    {(item.mediaType)}
                                 </TableCell>
                                 <TableCell>
-                                    <Button color="secondary" onClick={() => { this.removeCart(item.id) }} disabled>Remove</Button>
+                                    {(item.mediaId)}
+                                </TableCell>
+                                <TableCell>
+                                    <Button color="secondary" onClick={() => { this.removeCart(item.cartItemId) }}>Remove</Button>
                                 </TableCell>
                             </TableRow>
                         )}
@@ -114,11 +123,12 @@ export default class ViewCart extends Component {
     }
 
     async removeCart(id) {
+        console.log('id: ' + id);
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/removeCart', {
+            fetch('/api/cartItem/removeFromCart', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({itemID: id, authToken: this.state.authToken })
+                body: JSON.stringify({cartItemId: id, authToken: this.state.authToken })
             }).then((res => {
                 if (res.status === 200) {
                     console.log("deleted item");
@@ -133,10 +143,10 @@ export default class ViewCart extends Component {
 
     async loanCart() {
         return new Promise((resolve, reject) => {
-            fetch('/api/catalogue/loanCart', {
+            fetch('/api/transaction/borrowRecord', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({cartItems: this.state.cart, authToken: this.state.authToken })
+                body: JSON.stringify({mediaType: this.state.cart[0].mediaType, mediaId: this.state.cart[0].mediaId, authToken: this.state.authToken })
             }).then((res => {
                 if (res.status === 200) {
                     console.log("Items Loaned");
