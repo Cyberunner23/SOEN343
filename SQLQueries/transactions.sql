@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 18, 2018 at 09:03 PM
+-- Generation Time: Nov 23, 2018 at 10:24 PM
 -- Server version: 10.1.35-MariaDB
 -- PHP Version: 7.2.9
 
@@ -29,13 +29,14 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `transactions` (
-  `transactionId` int(11) NOT NULL,
+  `transactionId` varchar(255) NOT NULL,
   `userId` int(11) NOT NULL,
-  `transactionType` tinyint(1) NOT NULL, 
-  `transactionTime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `transactionType` tinyint(1) NOT NULL,
+  `transactionTime` datetime NOT NULL,
   `isReturned` tinyint(1) NOT NULL,
   `mediaId` varchar(17) NOT NULL,
-  `mediaType` varchar(13) NOT NULL
+  `mediaType` varchar(13) NOT NULL,
+  `dueDate` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
